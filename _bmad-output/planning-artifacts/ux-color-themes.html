@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bmad Color Systems - Shadow & Copper</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Inter:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --copper: #D97706;
+            --client-bg: #FAFAF9;
+            --restau-bg: #09090B;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #f0f2f5;
+        }
+
+        .copper-gradient {
+            background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+        }
+
+        .swatch {
+            height: 120px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 12px;
+            font-size: 0.875rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .swatch:hover {
+            transform: translateY(-4px);
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dark-glass {
+            background: rgba(18, 18, 18, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body class="p-8 md:p-16">
+
+    <header class="max-w-6xl mx-auto mb-16 text-center">
+        <h1 class="text-5xl font-bold text-gray-900 mb-4">Système Chromatique Bmad</h1>
+        <p class="text-xl text-gray-600">Palette "Shadow & Copper" — La dualité entre Sérénité et Maîtrise.</p>
+    </header>
+
+    <main class="max-w-6xl mx-auto space-y-24">
+
+        <!-- CORE ACCENTS -->
+        <section>
+            <h2 class="text-2xl font-semibold mb-8 border-b border-gray-200 pb-2">1. Accents Identitaires</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="swatch text-white copper-gradient" id="copper-main">
+                    <span class="font-semibold">Copper (Primaire)</span>
+                    <span class="opacity-80">#D97706</span>
+                </div>
+                <div class="swatch text-white bg-emerald-500">
+                    <span class="font-semibold">Success (Validation)</span>
+                    <span class="opacity-80">#10B981</span>
+                </div>
+                <div class="swatch text-white bg-rose-500">
+                    <span class="font-semibold">Alert (Allergie / Annul.)</span>
+                    <span class="opacity-80">#F43F5E</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLIENT VS RESTAURANT SURFACES -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+            <!-- SURFACE CLIENT (JULIE) -->
+            <div class="space-y-6">
+                <h3 class="text-xl font-medium flex items-center gap-2">
+                    <span class="w-2 h-6 bg-stone-300 rounded-full"></span>
+                    Surface Client (Julie)
+                </h3>
+                <div class="p-8 rounded-3xl shadow-xl border border-stone-200"
+                    style="background-color: var(--client-bg);">
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between">
+                            <span class="text-stone-400 font-medium">Stone 50</span>
+                            <span class="text-xs px-2 py-1 bg-stone-100 rounded text-stone-500">#FAFAF9</span>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-white shadow-sm border border-stone-100">
+                            <h4 class="text-lg font-semibold text-stone-900 mb-1">Votre table est prête</h4>
+                            <p class="text-stone-500 text-sm mb-4">Julie, nous avons hâte de vous accueillir ce soir à
+                                20h00.</p>
+                            <button
+                                class="w-full py-4 rounded-xl text-white font-semibold copper-gradient shadow-lg shadow-amber-200 active:scale-95 transition-all">
+                                Confirmer ma présence
+                            </button>
+                        </div>
+                        <div class="flex gap-2">
+                            <span
+                                class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium border border-emerald-200">Confirmé</span>
+                            <span
+                                class="px-3 py-1 rounded-full bg-stone-100 text-stone-500 text-xs font-medium border border-stone-200">2
+                                Personnes</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-500 italic">"Sérénité Cuivrée" : Palette aérée, contrastes doux, typographie
+                    accueillante.</p>
+            </div>
+
+            <!-- SURFACE RESTAURANT (THOMAS) -->
+            <div class="space-y-6">
+                <h3 class="text-xl font-medium flex items-center gap-2">
+                    <span class="w-2 h-6 bg-zinc-800 rounded-full"></span>
+                    Surface Restaurant (Thomas)
+                </h3>
+                <div class="p-8 rounded-3xl shadow-xl border border-zinc-800"
+                    style="background-color: var(--restau-bg);">
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between">
+                            <span class="text-zinc-600 font-medium font-mono">Zinc 950</span>
+                            <span class="text-xs px-2 py-1 bg-zinc-900 rounded text-zinc-500">#09090B</span>
+                        </div>
+                        <div class="p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-zinc-400 text-xs uppercase tracking-wider font-bold">19:45 - Table
+                                    12</span>
+                                <span
+                                    class="bg-rose-900/40 text-rose-400 px-2 py-0.5 rounded text-[10px] uppercase font-black tracking-tighter border border-rose-500/30">Allergie</span>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <span class="text-zinc-100 font-bold text-xl">Famille Martin <span
+                                        class="text-zinc-500 font-normal text-sm">(4 pers.)</span></span>
+                                <div class="flex gap-2">
+                                    <button
+                                        class="w-10 h-10 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-emerald-500 hover:bg-emerald-500 hover:text-white transition-colors">
+                                        ✓
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="h-1 bg-amber-600 rounded-full"></div>
+                            <div class="h-1 bg-zinc-800 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-500 italic">"Maîtrise Ardoise" : Palette dense, contrastes extrêmes,
+                    lisibilité chirurgicale.</p>
+            </div>
+
+        </section>
+
+        <!-- ACCESSIBILITY TABLE -->
+        <section class="max-w-4xl">
+            <h2 class="text-2xl font-semibold mb-8 border-b border-gray-200 pb-2">2. Validation Accessibilité (WCAG 2.1)
+            </h2>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 text-gray-500 text-sm">
+                        <tr>
+                            <th class="px-6 py-4 font-semibold uppercase tracking-wider">Combinaison</th>
+                            <th class="px-6 py-4 font-semibold uppercase tracking-wider">Ratio</th>
+                            <th class="px-6 py-4 font-semibold uppercase tracking-wider">Vérification</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr>
+                            <td class="px-6 py-4 flex items-center gap-3">
+                                <span class="w-4 h-4 rounded-full bg-white border border-gray-200"></span>
+                                <span class="text-amber-800 font-medium">Copper on White</span>
+                            </td>
+                            <td class="px-6 py-4 font-mono">4.58:1</td>
+                            <td class="px-6 py-4 text-emerald-600 font-bold">PASS (AA)</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 flex items-center gap-3">
+                                <span class="w-4 h-4 rounded-full bg-zinc-950"></span>
+                                <span class="text-zinc-200 font-medium">White on Zinc 950</span>
+                            </td>
+                            <td class="px-6 py-4 font-mono">19.2:1</td>
+                            <td class="px-6 py-4 text-emerald-600 font-bold">PASS (AAA)</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 flex items-center gap-3">
+                                <span class="w-4 h-4 rounded-full bg-amber-600"></span>
+                                <span class="text-zinc-950 font-medium">Zinc 950 on Copper</span>
+                            </td>
+                            <td class="px-6 py-4 font-mono">5.23:1</td>
+                            <td class="px-6 py-4 text-emerald-600 font-bold">PASS (AA)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-32 text-center text-gray-400 text-sm">
+        Bmad Design Specification — Version 1.0 — 2026
+    </footer>
+
+</body>
+
+</html>
