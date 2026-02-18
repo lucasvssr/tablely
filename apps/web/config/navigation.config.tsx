@@ -1,4 +1,4 @@
-import { Home, User } from 'lucide-react';
+import { Home, User, Clock, LayoutGrid } from 'lucide-react';
 import { z } from 'zod';
 
 import { NavigationConfigSchema } from '@kit/ui/navigation-schema';
@@ -26,6 +26,16 @@ const routes = [
         label: 'common:routes.profile',
         path: pathsConfig.app.profileSettings,
         Icon: <User className={iconClasses} />,
+      },
+      {
+        label: 'Services',
+        path: pathsConfig.app.services,
+        Icon: <Clock className={iconClasses} />,
+      },
+      {
+        label: 'Tables',
+        path: pathsConfig.app.tables,
+        Icon: <LayoutGrid className={iconClasses} />,
       },
     ],
   },

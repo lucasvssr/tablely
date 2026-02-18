@@ -1,6 +1,6 @@
 # Story 1.2: Configuration du Restaurant (Wizard d'Onboarding)
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -19,16 +19,18 @@ so that commencer à recevoir des réservations.
 
 ## Tasks / Subtasks
 
-- [ ] Schéma de base de données (AC: 4, 5, 6)
-  - [ ] Créer une migration Supabase pour la table `restaurants` liée à `organizations`
-  - [ ] Ajouter les colonnes : `id` (UUID), `organization_id` (FK), `name`, `location`, `total_capacity`, `created_at`
-  - [ ] Configurer les politiques RLS (Row Level Security) pour isoler les données par `organization_id`
-- [ ] UI de l'Onboarding (AC: 1, 2, 3)
-  - [ ] Créer/Adapter la page d'onboarding (ex: `/onboarding` ou adaptation du flow MakerKit)
-  - [ ] Implémenter le formulaire avec Validation Zod (Nom, Localisation, Capacité)
-- [ ] Logique Backend (AC: 4)
-  - [ ] Créer une Server Action `createRestaurantAction` pour persister les données
-  - [ ] Lier dynamiquement le restaurant à l'organisation de l'utilisateur actuel
+- [x] Schéma de base de données (AC: 4, 5, 6)
+  - [x] Créer une migration Supabase pour la table `restaurants` liée à `organizations`
+  - [x] Ajouter les colonnes : `id` (UUID), `organization_id` (FK), `name`, `location`, `total_capacity`, `created_at`
+  - [x] Configurer les politiques RLS (Row Level Security) pour isoler les données par `organization_id`
+  - [x] Appliquer la migration sur Supabase Cloud via MCP
+  - [x] Mettre à jour les types TypeScript avec `supabase gen types`
+- [x] UI de l'Onboarding (AC: 1, 2, 3)
+  - [x] Créer/Adapter la page d'onboarding (ex: `/onboarding` ou adaptation du flow MakerKit)
+  - [x] Implémenter le formulaire avec Validation Zod (Nom, Localisation, Capacité)
+- [x] Logique Backend (AC: 4)
+  - [x] Créer une Server Action `createRestaurantAction` pour persister les données
+  - [x] Lier dynamiquement le restaurant à l'organisation de l'utilisateur actuel
 
 ## Dev Notes
 
@@ -60,3 +62,7 @@ Antigravity (GPT-4o)
 ### Completion Notes List
 
 ### File List
+- `apps/web/supabase/migrations/20260213165000_bmad_multi_tenancy.sql`
+- `apps/web/lib/server/restaurant/restaurant.schema.ts`
+- `apps/web/lib/server/restaurant/restaurant-actions.ts`
+- `apps/web/app/onboarding/page.tsx`

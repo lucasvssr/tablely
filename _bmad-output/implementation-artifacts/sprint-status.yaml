@@ -42,8 +42,8 @@ story_location: c:\Users\l.vasseur\project\_bmad-output\implementation-artifacts
 development_status:
   epic-1: in-progress
   1-1-initialisation-du-projet-boilerplate: done
-  1-2-configuration-du-restaurant-wizard-donboarding: ready-for-dev
-  1-3-definition-des-services-midisoir: backlog
+  1-2-configuration-du-restaurant-wizard-donboarding: done
+  1-3-definition-des-services-midisoir: done
   1-4-gestion-dequipe-staff-roles: backlog
   epic-1-retrospective: optional
 
