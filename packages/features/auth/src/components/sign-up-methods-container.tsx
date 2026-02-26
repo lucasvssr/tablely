@@ -25,7 +25,7 @@ export function SignUpMethodsContainer(props: {
   displayTermsCheckbox?: boolean;
   email?: string;
   invitationId?: string;
-  customSignUpAction?: (credentials: { email: string; password: string; invitationId: string }) => Promise<any>;
+  customSignUpAction?: (credentials: { email: string; password: string; invitationId: string }) => Promise<unknown>;
 }) {
   const redirectUrl = getCallbackUrl(props);
   const defaultValues = props.email ? { email: props.email } : getDefaultValues();

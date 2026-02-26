@@ -38,7 +38,7 @@ class AccountsApi {
     id: string,
     data: { name?: string; picture_url?: string | null },
   ) {
-    const updatePayload: Record<string, any> = {};
+    const updatePayload: Record<string, string | null> = {};
     if (data.name !== undefined) updatePayload.display_name = data.name;
     if (data.picture_url !== undefined) updatePayload.avatar_url = data.picture_url;
 

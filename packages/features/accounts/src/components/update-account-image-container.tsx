@@ -98,7 +98,7 @@ function UploadProfileAvatarForm(props: {
         createToaster(promise);
       }
     },
-    [client, createToaster, props],
+    [client, createToaster, props, updateAccountMutation],
   );
 
   return (

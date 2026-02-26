@@ -24,7 +24,7 @@ interface EmailPasswordSignUpContainerProps {
 
   onSignUp?: (userId?: string) => unknown;
   emailRedirectTo: string;
-  customSignUpAction?: (credentials: { email: string; password: string; invitationId: string }) => Promise<any>;
+  customSignUpAction?: (credentials: { email: string; password: string; invitationId: string }) => Promise<unknown>;
 }
 
 export function EmailPasswordSignUpContainer({
@@ -98,10 +98,13 @@ export function EmailPasswordSignUpContainer({
     },
     [
       captchaToken,
+      customSignUpAction,
       emailRedirectTo,
+      invitationId,
       loading,
       onSignUp,
       resetCaptchaToken,
+      router,
       signUpMutation,
     ],
   );

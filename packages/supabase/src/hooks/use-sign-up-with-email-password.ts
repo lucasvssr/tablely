@@ -7,7 +7,7 @@ interface Credentials {
   password: string;
   emailRedirectTo: string;
   captchaToken?: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 }
 
 /**
