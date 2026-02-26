@@ -13,6 +13,7 @@ import { ImageUploader } from '@kit/ui/image-uploader';
 import { Trans } from '@kit/ui/trans';
 
 import { useRevalidatePersonalAccountDataQuery } from '../hooks/use-personal-account-data';
+import { useUpdateAccountData } from '../hooks/use-update-account';
 
 const AVATARS_BUCKET = 'account_image';
 
@@ -42,6 +43,7 @@ function UploadProfileAvatarForm(props: {
 }) {
   const client = useSupabase();
   const { t } = useTranslation('account');
+  const updateAccountMutation = useUpdateAccountData(props.userId);
 
   const createToaster = useCallback(
     (promise: () => Promise<unknown>) => {
@@ -71,13 +73,9 @@ function UploadProfileAvatarForm(props: {
           removeExistingStorageFile().then(() =>
             uploadUserProfilePhoto(client, file, props.userId)
               .then((pictureUrl) => {
-                return client
-                  .from('accounts')
-                  .update({
-                    picture_url: pictureUrl,
-                  })
-                  .eq('id', props.userId)
-                  .throwOnError();
+                return updateAccountMutation.mutateAsync({
+                  picture_url: pictureUrl,
+                });
               })
               .then(() => {
                 props.onAvatarUpdated();
@@ -89,13 +87,9 @@ function UploadProfileAvatarForm(props: {
         const promise = () =>
           removeExistingStorageFile()
             .then(() => {
-              return client
-                .from('accounts')
-                .update({
-                  picture_url: null,
-                })
-                .eq('id', props.userId)
-                .throwOnError();
+              return updateAccountMutation.mutateAsync({
+                picture_url: null,
+              });
             })
             .then(() => {
               props.onAvatarUpdated();

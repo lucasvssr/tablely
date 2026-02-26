@@ -39,16 +39,6 @@ function OnboardingPage() {
                             />
                         </div>
 
-                        <div className={'grid gap-2'}>
-                            <Label htmlFor="total_capacity">Capacité Totale (Couverts)</Label>
-                            <Input
-                                id="total_capacity"
-                                name="total_capacity"
-                                type="number"
-                                placeholder="Ex: 40"
-                                required
-                            />
-                        </div>
 
                         <Button type="submit" className={'w-full'}>
                             Créer mon établissement

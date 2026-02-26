@@ -27,6 +27,7 @@ export function PasswordSignUpForm({
   displayTermsCheckbox,
   onSubmit,
   loading,
+  readOnlyEmail,
 }: {
   defaultValues?: {
     email: string;
@@ -40,6 +41,7 @@ export function PasswordSignUpForm({
     repeatPassword: string;
   }) => unknown;
   loading: boolean;
+  readOnlyEmail?: boolean;
 }) {
   const { t } = useTranslation();
 
@@ -68,13 +70,25 @@ export function PasswordSignUpForm({
               </FormLabel>
 
               <FormControl>
-                <Input
-                  data-test={'email-input'}
-                  required
-                  type="email"
-                  placeholder={t('emailPlaceholder')}
-                  {...field}
-                />
+                {readOnlyEmail ? (
+                  <div className="flex flex-col space-y-1">
+                    <div className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-muted px-3 py-2 text-sm text-muted-foreground opacity-70">
+                      <span>{field.value}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">
+                        Confirmé
+                      </span>
+                    </div>
+                    <input type="hidden" {...field} />
+                  </div>
+                ) : (
+                  <Input
+                    data-test={'email-input'}
+                    required
+                    type="email"
+                    placeholder={t('emailPlaceholder')}
+                    {...field}
+                  />
+                )}
               </FormControl>
 
               <FormMessage />

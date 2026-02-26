@@ -14,6 +14,13 @@ const queryKey = ['supabase:user'];
 export function useUser(initialData?: JwtPayload | null) {
   const client = useSupabase();
 
+  const normalizedInitialData = initialData
+    ? ({
+      ...initialData,
+      id: initialData.id ?? initialData.sub,
+    } as JwtPayload & { id: string })
+    : undefined;
+
   const queryFn = async () => {
     const response = await client.auth.getClaims();
 
@@ -23,7 +30,10 @@ export function useUser(initialData?: JwtPayload | null) {
     }
 
     if (response.data?.claims) {
-      return response.data.claims;
+      return {
+        ...response.data.claims,
+        id: response.data.claims.sub,
+      } as JwtPayload & { id: string };
     }
 
     return Promise.reject(new Error('Unexpected result format'));
@@ -32,7 +42,11 @@ export function useUser(initialData?: JwtPayload | null) {
   return useQuery({
     queryFn,
     queryKey,
-    initialData,
+    initialData: normalizedInitialData,
+    // If initialData is provided from the server, disable the query entirely
+    // to avoid any client-side network call to /auth/v1/user
+    enabled: !initialData,
+    staleTime: Infinity,
     refetchInterval: false,
     refetchOnMount: false,
     refetchOnWindowFocus: false,

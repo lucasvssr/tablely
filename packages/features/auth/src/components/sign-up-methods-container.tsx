@@ -23,9 +23,13 @@ export function SignUpMethodsContainer(props: {
   };
 
   displayTermsCheckbox?: boolean;
+  email?: string;
+  invitationId?: string;
+  customSignUpAction?: (credentials: { email: string; password: string; invitationId: string }) => Promise<any>;
 }) {
   const redirectUrl = getCallbackUrl(props);
-  const defaultValues = getDefaultValues();
+  const defaultValues = props.email ? { email: props.email } : getDefaultValues();
+  const isEmailReadOnly = !!defaultValues.email;
 
   return (
     <>
@@ -34,6 +38,9 @@ export function SignUpMethodsContainer(props: {
           emailRedirectTo={redirectUrl}
           defaultValues={defaultValues}
           displayTermsCheckbox={props.displayTermsCheckbox}
+          readOnlyEmail={isEmailReadOnly}
+          invitationId={props.invitationId}
+          customSignUpAction={props.customSignUpAction}
         />
       </If>
 
@@ -98,13 +105,9 @@ function getDefaultValues() {
   }
 
   const searchParams = new URLSearchParams(window.location.search);
-  const inviteToken = searchParams.get('invite_token');
-
-  if (!inviteToken) {
-    return { email: '' };
-  }
+  const email = searchParams.get('email');
 
   return {
-    email: searchParams.get('email') ?? '',
+    email: email ?? '',
   };
 }

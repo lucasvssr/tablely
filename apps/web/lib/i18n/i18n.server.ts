@@ -56,6 +56,26 @@ async function createInstance() {
 
 export const createI18nServerInstance = cache(createInstance);
 
+/**
+ * @name getLanguage
+ * @description Gets the selected language from the cookie or the browser headers.
+ */
+export async function getLanguage() {
+  const cookieStore = await cookies();
+  const cookie = cookieStore.get(I18N_COOKIE_NAME)?.value;
+
+  if (cookie) {
+    return getLanguageOrFallback(cookie) ?? languages[0];
+  }
+
+  if (priority === 'user') {
+    const userPreferredLanguage = await getPreferredLanguageFromBrowser();
+    return getLanguageOrFallback(userPreferredLanguage) ?? languages[0];
+  }
+
+  return languages[0];
+}
+
 async function getPreferredLanguageFromBrowser() {
   const headersStore = await headers();
   const acceptLanguage = headersStore.get('accept-language');

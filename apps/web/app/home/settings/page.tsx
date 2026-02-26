@@ -1,5 +1,3 @@
-import { use } from 'react';
-
 import { PersonalAccountSettingsContainer } from '@kit/accounts/personal-account-settings';
 import { PageBody } from '@kit/ui/page';
 
@@ -8,6 +6,7 @@ import pathsConfig from '~/config/paths.config';
 import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { withI18n } from '~/lib/i18n/with-i18n';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
+import { getPersonalAccount, getMfaFactors } from '~/lib/server/accounts/queries';
 
 const callbackPath = pathsConfig.auth.callback;
 
@@ -29,8 +28,15 @@ export const generateMetadata = async () => {
   };
 };
 
-function PersonalAccountSettingsPage() {
-  const user = use(requireUserInServerComponent());
+async function PersonalAccountSettingsPage() {
+  const userPromise = requireUserInServerComponent();
+
+  const [user, account, initialFactors] = await Promise.all([
+    userPromise,
+    userPromise.then((user) => getPersonalAccount(user.id)),
+    getMfaFactors(),
+  ]);
+
   const userId = user.id;
 
   return (
@@ -38,8 +44,11 @@ function PersonalAccountSettingsPage() {
       <div className={'flex w-full flex-1 flex-col lg:max-w-2xl'}>
         <PersonalAccountSettingsContainer
           userId={userId}
+          user={user}
+          account={account ?? undefined}
           paths={paths}
           features={features}
+          initialFactors={initialFactors}
         />
       </div>
     </PageBody>

@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, useTransition } from 'react';
 
+import { useRouter } from 'next/navigation';
 import { CheckCircledIcon } from '@radix-ui/react-icons';
 
 import { useSignUpWithEmailAndPassword } from '@kit/supabase/hooks/use-sign-up-with-email-password';
@@ -15,12 +16,15 @@ import { PasswordSignUpForm } from './password-sign-up-form';
 
 interface EmailPasswordSignUpContainerProps {
   displayTermsCheckbox?: boolean;
+  readOnlyEmail?: boolean;
+  invitationId?: string;
   defaultValues?: {
     email: string;
   };
 
   onSignUp?: (userId?: string) => unknown;
   emailRedirectTo: string;
+  customSignUpAction?: (credentials: { email: string; password: string; invitationId: string }) => Promise<any>;
 }
 
 export function EmailPasswordSignUpContainer({
@@ -28,27 +32,58 @@ export function EmailPasswordSignUpContainer({
   onSignUp,
   emailRedirectTo,
   displayTermsCheckbox,
+  readOnlyEmail,
+  invitationId,
+  customSignUpAction,
 }: EmailPasswordSignUpContainerProps) {
   const { captchaToken, resetCaptchaToken } = useCaptchaToken();
+
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   const signUpMutation = useSignUpWithEmailAndPassword();
   const redirecting = useRef(false);
   const [showVerifyEmailAlert, setShowVerifyEmailAlert] = useState(false);
 
-  const loading = signUpMutation.isPending || redirecting.current;
+  const loading = signUpMutation.isPending || redirecting.current || isPending;
 
   const onSignupRequested = useCallback(
-    async (credentials: { email: string; password: string }) => {
+    async (credentials: { email: string; password: string; repeatPassword: string }) => {
       if (loading) {
         return;
       }
 
       try {
+        if (customSignUpAction) {
+          await customSignUpAction({
+            ...credentials,
+            invitationId: invitationId ?? ''
+          });
+
+          redirecting.current = true;
+
+          startTransition(() => {
+            router.push(emailRedirectTo);
+          });
+
+          return;
+        }
+
         const data = await signUpMutation.mutateAsync({
           ...credentials,
           emailRedirectTo,
           captchaToken,
         });
+
+        if (data.session) {
+          redirecting.current = true;
+
+          startTransition(() => {
+            router.push(emailRedirectTo);
+          });
+
+          return;
+        }
 
         setShowVerifyEmailAlert(true);
 
@@ -85,6 +120,7 @@ export function EmailPasswordSignUpContainer({
           loading={loading}
           defaultValues={defaultValues}
           displayTermsCheckbox={displayTermsCheckbox}
+          readOnlyEmail={readOnlyEmail}
         />
       </If>
     </>

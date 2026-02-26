@@ -5,7 +5,7 @@ import { cn } from '@kit/ui/utils';
 
 import { RootProviders } from '~/components/root-providers';
 import { heading, sans } from '~/lib/fonts';
-import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
+import { getLanguage } from '~/lib/i18n/i18n.server';
 import { generateRootMetadata } from '~/lib/root-metdata';
 
 import '../styles/globals.css';
@@ -15,8 +15,11 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { language } = await createI18nServerInstance();
-  const theme = await getTheme();
+  const [language = 'en', theme] = await Promise.all([
+    getLanguage(),
+    getTheme(),
+  ]);
+
   const className = getClassName(theme);
 
   return (

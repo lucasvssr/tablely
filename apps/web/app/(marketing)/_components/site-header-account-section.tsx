@@ -1,5 +1,7 @@
 'use client';
 
+import { Suspense, useMemo } from 'react';
+
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
@@ -38,17 +40,35 @@ export function SiteHeaderAccountSection({
 }: React.PropsWithChildren<{
   user: JwtPayload | null;
 }>) {
-  if (!user) {
-    return <AuthButtons />;
-  }
+  return (
+    <div className="flex items-center space-x-2">
+      <If condition={features.enableThemeToggle}>
+        <Suspense fallback={null}>
+          <ModeToggle />
+        </Suspense>
+      </If>
 
-  return <SuspendedPersonalAccountDropdown user={user} />;
+      {user ? (
+        <SuspendedPersonalAccountDropdown user={user} />
+      ) : (
+        <AuthButtons />
+      )}
+    </div>
+  );
 }
 
 function SuspendedPersonalAccountDropdown(props: { user: JwtPayload | null }) {
   const signOut = useSignOut();
   const user = useUser(props.user);
-  const userData = user.data ?? props.user ?? null;
+  const rawUserData = user.data ?? props.user ?? null;
+
+  const userData = useMemo(() => {
+    if (!rawUserData) return null;
+    return {
+      ...rawUserData,
+      id: (rawUserData as Record<string, unknown>).id as string ?? (rawUserData as Record<string, unknown>).sub as string,
+    } as JwtPayload & { id: string };
+  }, [rawUserData]);
 
   if (userData) {
     return (
@@ -57,6 +77,14 @@ function SuspendedPersonalAccountDropdown(props: { user: JwtPayload | null }) {
         paths={paths}
         features={features}
         user={userData}
+        account={{
+          id: userData.id,
+          name:
+            (userData.user_metadata?.full_name as string) ??
+            (userData.user_metadata?.name as string) ??
+            null,
+          picture_url: (userData.user_metadata?.avatar_url as string) ?? null,
+        }}
         signOutRequested={() => signOut.mutateAsync()}
       />
     );
@@ -67,20 +95,20 @@ function SuspendedPersonalAccountDropdown(props: { user: JwtPayload | null }) {
 
 function AuthButtons() {
   return (
-    <div className={'flex space-x-2'}>
-      <div className={'hidden space-x-0.5 md:flex'}>
-        <If condition={features.enableThemeToggle}>
-          <ModeToggle />
-        </If>
+    <div className={'flex items-center space-x-1 sm:space-x-2'}>
+      <Button asChild variant={'ghost'} size={'sm'} className="px-2 sm:px-4">
+        <Link href={pathsConfig.auth.signIn}>
+          <Trans i18nKey={'auth:signIn'} />
+        </Link>
+      </Button>
 
-        <Button asChild variant={'ghost'}>
-          <Link href={pathsConfig.auth.signIn}>
-            <Trans i18nKey={'auth:signIn'} />
-          </Link>
-        </Button>
-      </div>
+      <Button asChild className="group hidden xs:flex h-9 sm:h-10" variant={'default'}>
+        <Link href={pathsConfig.auth.signUp}>
+          <Trans i18nKey={'auth:signUp'} />
+        </Link>
+      </Button>
 
-      <Button asChild className="group" variant={'default'}>
+      <Button asChild className="group flex xs:hidden h-8 px-3 text-xs" variant={'default'}>
         <Link href={pathsConfig.auth.signUp}>
           <Trans i18nKey={'auth:signUp'} />
         </Link>

@@ -26,16 +26,20 @@ import { PasswordSignInSchema } from '../schemas/password-sign-in.schema';
 export function PasswordSignInForm({
   onSubmit,
   loading,
+  defaultValues,
 }: {
   onSubmit: (params: z.infer<typeof PasswordSignInSchema>) => unknown;
   loading: boolean;
+  defaultValues?: {
+    email: string;
+  };
 }) {
   const { t } = useTranslation('auth');
 
   const form = useForm<z.infer<typeof PasswordSignInSchema>>({
     resolver: zodResolver(PasswordSignInSchema),
     defaultValues: {
-      email: '',
+      email: defaultValues?.email ?? '',
       password: '',
     },
   });

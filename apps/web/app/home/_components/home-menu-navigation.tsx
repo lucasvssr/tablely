@@ -1,3 +1,5 @@
+import { ModeToggle } from '@kit/ui/mode-toggle';
+
 import {
   BorderedNavigationMenu,
   BorderedNavigationMenuItem,
@@ -7,17 +9,33 @@ import { AppLogo } from '~/components/app-logo';
 import { ProfileAccountDropdownContainer } from '~/components/personal-account-dropdown-container';
 import { navigationConfig } from '~/config/navigation.config';
 
-export function HomeMenuNavigation() {
+import type { JwtPayload } from '@supabase/supabase-js';
+
+export function HomeMenuNavigation(props: {
+  user: JwtPayload;
+  account?: {
+    id: string | null;
+    name: string | null;
+    picture_url: string | null;
+    role: string | null;
+  };
+}) {
   const routes = navigationConfig.routes.reduce<
     Array<{
       path: string;
       label: string;
       Icon?: React.ReactNode;
       end?: boolean | ((path: string) => boolean);
+      roles?: string[];
     }>
   >((acc, item) => {
     if ('children' in item) {
-      return [...acc, ...item.children];
+      const filteredChildren = item.children.filter((child) => {
+        const role = props.account?.role || 'client';
+        return !child.roles || child.roles.includes(role);
+      });
+
+      return [...acc, ...filteredChildren];
     }
 
     if ('divider' in item) {
@@ -39,10 +57,14 @@ export function HomeMenuNavigation() {
         </BorderedNavigationMenu>
       </div>
 
-      <div className={'flex justify-end space-x-2.5'}>
-        <div>
-          <ProfileAccountDropdownContainer showProfileName={false} />
-        </div>
+      <div className={'flex items-center justify-end space-x-4'}>
+        <ModeToggle />
+
+        <ProfileAccountDropdownContainer
+          user={props.user}
+          account={props.account}
+          showProfileName={false}
+        />
       </div>
     </div>
   );

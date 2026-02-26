@@ -14,6 +14,10 @@ const PathsSchema = z.object({
     profileSettings: z.string().min(1),
     services: z.string().min(1),
     tables: z.string().min(1),
+    team: z.string().min(1),
+    restaurant: z.string().min(1),
+    restaurantSettings: z.string().min(1),
+    join: z.string().min(1),
   }),
 });
 
@@ -31,6 +35,10 @@ const pathsConfig = PathsSchema.parse({
     profileSettings: '/home/settings',
     services: '/home/settings/services',
     tables: '/home/settings/tables',
+    team: '/home/settings/team',
+    restaurant: '/restaurant',
+    restaurantSettings: '/home/settings/restaurant',
+    join: '/join',
   },
 } satisfies z.infer<typeof PathsSchema>);
 

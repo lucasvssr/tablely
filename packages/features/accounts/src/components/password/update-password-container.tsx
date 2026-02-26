@@ -1,8 +1,6 @@
-'use client';
+import type { JwtPayload } from '@supabase/supabase-js';
 
-import { useUser } from '@kit/supabase/hooks/use-user';
 import { Alert } from '@kit/ui/alert';
-import { LoadingOverlay } from '@kit/ui/loading-overlay';
 import { Trans } from '@kit/ui/trans';
 
 import { UpdatePasswordForm } from './update-password-form';
@@ -10,13 +8,10 @@ import { UpdatePasswordForm } from './update-password-form';
 export function UpdatePasswordFormContainer(
   props: React.PropsWithChildren<{
     callbackPath: string;
+    user: JwtPayload;
   }>,
 ) {
-  const { data: user, isPending } = useUser();
-
-  if (isPending) {
-    return <LoadingOverlay fullPage={false} />;
-  }
+  const user = props.user;
 
   if (!user) {
     return null;

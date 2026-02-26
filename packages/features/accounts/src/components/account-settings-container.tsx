@@ -2,6 +2,8 @@
 
 import { useTranslation } from 'react-i18next';
 
+import type { Factor, JwtPayload } from '@supabase/supabase-js';
+
 import {
   Card,
   CardContent,
@@ -25,22 +27,51 @@ import { UpdateAccountImageContainer } from './update-account-image-container';
 export function PersonalAccountSettingsContainer(
   props: React.PropsWithChildren<{
     userId: string;
+    user: JwtPayload;
 
     features: {
       enableAccountDeletion: boolean;
       enablePasswordUpdate: boolean;
     };
 
+    account?: {
+      id: string | null;
+      name: string | null;
+      picture_url: string | null;
+    };
+
     paths: {
       callback: string;
     };
+
+    initialFactors?: {
+      all: Factor[];
+      totp: Factor[];
+      phone: Factor[];
+      webauthn: Factor[];
+    } | null;
   }>,
 ) {
   const supportsLanguageSelection = useSupportMultiLanguage();
-  const user = usePersonalAccountData(props.userId);
+  const user = usePersonalAccountData(props.userId, props.account);
 
-  if (!user.data || user.isPending) {
+  if (user.isPending) {
     return <LoadingOverlay fullPage />;
+  }
+
+  if (!user.data) {
+    return (
+      <div className={'flex flex-col space-y-4'}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Données introuvables</CardTitle>
+            <CardDescription>
+              Nous n&apos;avons pas pu trouver les informations de votre compte personnel.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
   }
 
   return (
@@ -112,7 +143,10 @@ export function PersonalAccountSettingsContainer(
         </CardHeader>
 
         <CardContent>
-          <UpdateEmailFormContainer callbackPath={props.paths.callback} />
+          <UpdateEmailFormContainer
+            user={props.user}
+            callbackPath={props.paths.callback}
+          />
         </CardContent>
       </Card>
 
@@ -129,7 +163,10 @@ export function PersonalAccountSettingsContainer(
           </CardHeader>
 
           <CardContent>
-            <UpdatePasswordFormContainer callbackPath={props.paths.callback} />
+            <UpdatePasswordFormContainer
+              user={props.user}
+              callbackPath={props.paths.callback}
+            />
           </CardContent>
         </Card>
       </If>
@@ -146,7 +183,10 @@ export function PersonalAccountSettingsContainer(
         </CardHeader>
 
         <CardContent>
-          <MultiFactorAuthFactorsList userId={props.userId} />
+          <MultiFactorAuthFactorsList
+            userId={props.userId}
+            initialFactors={props.initialFactors}
+          />
         </CardContent>
       </Card>
 

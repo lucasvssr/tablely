@@ -1,4 +1,4 @@
-import { Home, User, Clock, LayoutGrid } from 'lucide-react';
+import { Home, User, Clock, LayoutGrid, Users, Store } from 'lucide-react';
 import { z } from 'zod';
 
 import { NavigationConfigSchema } from '@kit/ui/navigation-schema';
@@ -16,6 +16,7 @@ const routes = [
         path: pathsConfig.app.home,
         Icon: <Home className={iconClasses} />,
         end: true,
+        roles: ['client', 'restaurateur'],
       },
     ],
   },
@@ -23,19 +24,34 @@ const routes = [
     label: 'common:routes.settings',
     children: [
       {
+        label: 'common:routes.restaurant',
+        path: pathsConfig.app.restaurantSettings,
+        Icon: <Store className={iconClasses} />,
+        roles: ['restaurateur'],
+      },
+      {
         label: 'common:routes.profile',
         path: pathsConfig.app.profileSettings,
         Icon: <User className={iconClasses} />,
+        roles: ['client', 'restaurateur'],
       },
       {
-        label: 'Services',
+        label: 'common:routes.services',
         path: pathsConfig.app.services,
         Icon: <Clock className={iconClasses} />,
+        roles: ['restaurateur'],
       },
       {
-        label: 'Tables',
+        label: 'common:routes.tables',
         path: pathsConfig.app.tables,
         Icon: <LayoutGrid className={iconClasses} />,
+        roles: ['restaurateur'],
+      },
+      {
+        label: 'common:routes.team',
+        path: pathsConfig.app.team,
+        Icon: <Users className={iconClasses} />,
+        roles: ['restaurateur'],
       },
     ],
   },

@@ -1,3 +1,4 @@
+import { use } from 'react';
 import Link from 'next/link';
 
 import { SignInMethodsContainer } from '@kit/auth/sign-in';
@@ -23,18 +24,36 @@ const paths = {
   home: pathsConfig.app.home,
 };
 
-function SignInPage() {
+interface SignInPageProps {
+  searchParams: Promise<{ next?: string; email?: string }>;
+}
+
+function SignInPage(props: SignInPageProps) {
+  const searchParams = use(props.searchParams);
+  const next = searchParams.next;
+  const email = searchParams.email;
+
+  const signUpPath = new URL(pathsConfig.auth.signUp, 'http://localhost');
+  if (next) signUpPath.searchParams.set('next', next);
+  if (email) signUpPath.searchParams.set('email', email);
+
+  const signUpUrl = signUpPath.pathname + signUpPath.search;
+
   return (
     <>
       <Heading level={5} className={'tracking-tight'}>
         <Trans i18nKey={'auth:signInHeading'} />
       </Heading>
 
-      <SignInMethodsContainer paths={paths} providers={authConfig.providers} />
+      <SignInMethodsContainer
+        paths={paths}
+        providers={authConfig.providers}
+        email={email}
+      />
 
       <div className={'flex justify-center'}>
         <Button asChild variant={'link'} size={'sm'}>
-          <Link href={pathsConfig.auth.signUp}>
+          <Link href={signUpUrl}>
             <Trans i18nKey={'auth:doNotHaveAccountYet'} />
           </Link>
         </Button>

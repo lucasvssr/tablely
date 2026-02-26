@@ -4,6 +4,13 @@ import { useCallback, useState } from 'react';
 
 import type { Factor } from '@supabase/supabase-js';
 
+type MfaFactors = {
+  all: Factor[];
+  totp: Factor[];
+  phone: Factor[];
+  webauthn: Factor[];
+};
+
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ShieldCheck, X } from 'lucide-react';
@@ -46,10 +53,16 @@ import { Trans } from '@kit/ui/trans';
 
 import { MultiFactorAuthSetupDialog } from './multi-factor-auth-setup-dialog';
 
-export function MultiFactorAuthFactorsList(props: { userId: string }) {
+export function MultiFactorAuthFactorsList(props: {
+  userId: string;
+  initialFactors?: MfaFactors | null;
+}) {
   return (
     <div className={'flex flex-col space-y-4'}>
-      <FactorsTableContainer userId={props.userId} />
+      <FactorsTableContainer
+        userId={props.userId}
+        initialFactors={props.initialFactors}
+      />
 
       <div>
         <MultiFactorAuthSetupDialog userId={props.userId} />
@@ -58,12 +71,15 @@ export function MultiFactorAuthFactorsList(props: { userId: string }) {
   );
 }
 
-function FactorsTableContainer(props: { userId: string }) {
+function FactorsTableContainer(props: {
+  userId: string;
+  initialFactors?: MfaFactors | null;
+}) {
   const {
     data: factors,
     isLoading,
     isError,
-  } = useFetchAuthFactors(props.userId);
+  } = useFetchAuthFactors(props.userId, props.initialFactors);
 
   if (isLoading) {
     return (

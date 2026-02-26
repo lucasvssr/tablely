@@ -4,8 +4,8 @@ import { cn } from '../../lib/utils';
 import { CardDescription, CardHeader, CardTitle } from '../../shadcn/card';
 
 interface FeatureCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  label: string;
-  description: string;
+  label: React.ReactNode;
+  description: React.ReactNode;
 }
 
 export const FeatureCard: React.FC<FeatureCardProps> = ({

@@ -21,7 +21,9 @@ async function TermsOfServicePage() {
       />
 
       <div className={'container mx-auto py-8'}>
-        <div>Your terms of service content here</div>
+        <p>
+          {t('marketing:termsOfServiceContent')}
+        </p>
       </div>
     </div>
   );

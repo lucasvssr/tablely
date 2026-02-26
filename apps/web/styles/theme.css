@@ -12,6 +12,10 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
+  --color-brand-copper: var(--brand-copper);
+  --color-brand-copper-foreground: var(--brand-copper-foreground);
+  --color-brand-zinc: var(--brand-zinc);
+
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 
@@ -91,9 +95,11 @@
       opacity: 0;
       transform: translateY(10px);
     }
+
     80% {
       opacity: 0.6;
     }
+
     100% {
       opacity: 1;
       transform: translateY(0px);
@@ -105,9 +111,11 @@
       opacity: 0;
       transform: translateY(-10px);
     }
+
     80% {
       opacity: 0.6;
     }
+
     100% {
       opacity: 1;
       transform: translateY(0px);

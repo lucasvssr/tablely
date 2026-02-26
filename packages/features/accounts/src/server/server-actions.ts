@@ -10,6 +10,7 @@ import { getSupabaseServerClient } from '@kit/supabase/server-client';
 
 import { DeletePersonalAccountSchema } from '../schema/delete-personal-account.schema';
 import { createDeletePersonalAccountService } from './services/delete-personal-account.service';
+import { createAccountsApi } from './api';
 
 const enableAccountDeletion =
   process.env.NEXT_PUBLIC_ENABLE_PERSONAL_ACCOUNT_DELETION === 'true';
@@ -72,4 +73,19 @@ export const deletePersonalAccountAction = enhanceAction(
     redirect('/');
   },
   {},
+);
+export const updateAccountAction = enhanceAction(
+  async (data: { name?: string; picture_url?: string | null }, user) => {
+    const client = getSupabaseServerClient();
+    const api = createAccountsApi(client);
+
+    await api.updateAccount(user.id, data);
+
+    revalidatePath('/home/settings', 'page');
+
+    return { success: true };
+  },
+  {
+    auth: true,
+  },
 );

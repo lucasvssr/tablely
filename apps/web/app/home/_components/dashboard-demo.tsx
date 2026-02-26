@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { LoadingOverlay } from '@kit/ui/loading-overlay';
 import { Trans } from '@kit/ui/trans';
 
-export const DashboardDemo = dynamic(() => import('./dashboard-demo-charts'), {
+const DashboardDemoCharts = dynamic(() => import('./dashboard-demo-charts'), {
   ssr: false,
   loading: () => (
     <LoadingOverlay>
@@ -15,3 +15,13 @@ export const DashboardDemo = dynamic(() => import('./dashboard-demo-charts'), {
     </LoadingOverlay>
   ),
 });
+
+export interface DashboardStats {
+  servicesCount: number;
+  tablesCount: number;
+  totalCapacity: number;
+}
+
+export function DashboardDemo({ stats }: { stats: DashboardStats }) {
+  return <DashboardDemoCharts stats={stats} />;
+}

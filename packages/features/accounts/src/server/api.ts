@@ -8,7 +8,7 @@ import { Database } from '@kit/supabase/database';
  * @param {SupabaseClient<Database>} client - The Supabase client instance.
  */
 class AccountsApi {
-  constructor(private readonly client: SupabaseClient<Database>) {}
+  constructor(private readonly client: SupabaseClient<Database>) { }
 
   /**
    * @name getAccount
@@ -17,8 +17,8 @@ class AccountsApi {
    */
   async getAccount(id: string) {
     const { data, error } = await this.client
-      .from('accounts')
-      .select('*')
+      .from('profiles')
+      .select('id, name:display_name, picture_url:avatar_url')
       .eq('id', id)
       .single();
 
@@ -26,7 +26,30 @@ class AccountsApi {
       throw error;
     }
 
-    return data;
+    return data as { id: string; name: string | null; picture_url: string | null };
+  }
+  /**
+   * @name updateAccount
+   * @description Update the account data for the given ID.
+   * @param id
+   * @param data
+   */
+  async updateAccount(
+    id: string,
+    data: { name?: string; picture_url?: string | null },
+  ) {
+    const updatePayload: Record<string, any> = {};
+    if (data.name !== undefined) updatePayload.display_name = data.name;
+    if (data.picture_url !== undefined) updatePayload.avatar_url = data.picture_url;
+
+    const { error } = await this.client
+      .from('profiles')
+      .update(updatePayload)
+      .eq('id', id);
+
+    if (error) {
+      throw error;
+    }
   }
 }
 

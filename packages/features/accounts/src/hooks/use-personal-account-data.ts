@@ -21,16 +21,16 @@ export function usePersonalAccountData(
     }
 
     const response = await client
-      .from('accounts')
+      .from('profiles')
       .select(
         `
         id,
-        name,
-        picture_url
+        name:display_name,
+        picture_url:avatar_url
     `,
       )
       .eq('id', userId)
-      .single();
+      .maybeSingle();
 
     if (response.error) {
       throw response.error;
@@ -42,15 +42,16 @@ export function usePersonalAccountData(
   return useQuery({
     queryKey,
     queryFn,
-    enabled: !!userId,
+    enabled: !!userId && !partialAccount?.id,
+    staleTime: Infinity,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     initialData: partialAccount?.id
       ? {
-          id: partialAccount.id,
-          name: partialAccount.name,
-          picture_url: partialAccount.picture_url,
-        }
+        id: partialAccount.id,
+        name: partialAccount.name,
+        picture_url: partialAccount.picture_url,
+      }
       : undefined,
   });
 }

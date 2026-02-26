@@ -9,6 +9,7 @@ import { Input } from '@kit/ui/input';
 import { Label } from '@kit/ui/label';
 import { useTransition, useEffect } from 'react';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export function TableForm({
     initialData,
@@ -17,6 +18,7 @@ export function TableForm({
     initialData?: TableSchemaType & { id?: string },
     onSuccess?: () => void
 }) {
+    const router = useRouter();
     const [isPending, startTransition] = useTransition();
 
     const form = useForm<TableSchemaType & { id?: string }>({
@@ -54,8 +56,9 @@ export function TableForm({
 
                 toast.success(data.id ? 'Table mise à jour !' : 'Table ajoutée !');
                 form.reset();
+                router.refresh();
                 if (onSuccess) onSuccess();
-            } catch (error) {
+            } catch {
                 toast.error('Erreur lors de l\'enregistrement');
             }
         });

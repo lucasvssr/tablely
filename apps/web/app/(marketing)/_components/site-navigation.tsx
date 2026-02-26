@@ -1,3 +1,7 @@
+'use client';
+
+import { Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
 import { Menu } from 'lucide-react';
@@ -10,6 +14,17 @@ import {
 } from '@kit/ui/dropdown-menu';
 import { NavigationMenu, NavigationMenuList } from '@kit/ui/navigation-menu';
 import { Trans } from '@kit/ui/trans';
+import { DropdownMenuSeparator } from '@kit/ui/dropdown-menu';
+
+const ModeToggle = dynamic(
+  () =>
+    import('@kit/ui/mode-toggle').then((mod) => ({
+      default: mod.ModeToggle,
+    })),
+  {
+    ssr: false,
+  },
+);
 
 import { SiteNavigationItem } from './site-navigation-item';
 
@@ -36,14 +51,7 @@ const links: Record<
     label: string;
     path: string;
   }
-> = {
-  /*
-    FAQ: {
-      label: 'marketing:faq',
-      path: '/faq',
-    },
-     */
-};
+> = {};
 
 export function SiteNavigation() {
   const NavItems = Object.values(links).map((item) => {
@@ -74,8 +82,10 @@ export function SiteNavigation() {
 function MobileDropdown() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger aria-label={'Open Menu'}>
-        <Menu className={'h-8 w-8'} />
+      <DropdownMenuTrigger asChild>
+        <button className="flex items-center outline-hidden" aria-label={'Open Menu'}>
+          <Menu className={'h-8 w-8'} />
+        </button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className={'w-full'}>
@@ -90,6 +100,15 @@ function MobileDropdown() {
             </DropdownMenuItem>
           );
         })}
+
+        <DropdownMenuSeparator />
+
+        <div className="p-2 flex items-center justify-between">
+          <span className="text-sm font-medium px-2">Theme</span>
+          <Suspense fallback={null}>
+            <ModeToggle />
+          </Suspense>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

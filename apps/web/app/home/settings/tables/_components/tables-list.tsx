@@ -6,6 +6,7 @@ import { Button } from '@kit/ui/button';
 import { deleteTableAction } from '~/lib/server/restaurant/restaurant-actions';
 import { useTransition } from 'react';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface Table {
     id: string;
@@ -16,11 +17,14 @@ interface Table {
 
 export function TablesList({
     initialTables,
-    onEdit
+    onEdit,
+    isAdmin
 }: {
     initialTables: Table[],
-    onEdit?: (table: Table) => void
+    onEdit?: (table: Table) => void,
+    isAdmin: boolean
 }) {
+    const router = useRouter();
     const [isPending, startTransition] = useTransition();
 
     const onDelete = (id: string) => {
@@ -30,8 +34,8 @@ export function TablesList({
             try {
                 await deleteTableAction({ id });
                 toast.success('Table supprimée');
-                window.location.reload();
-            } catch (error) {
+                router.refresh();
+            } catch {
                 toast.error('Erreur lors de la suppression');
             }
         });
@@ -75,26 +79,28 @@ export function TablesList({
                         ) : (
                             <Badge variant="secondary">Inactive</Badge>
                         )}
-                        <div className="flex items-center">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-primary transition-colors"
-                                onClick={() => onEdit?.(table)}
-                                disabled={isPending}
-                            >
-                                <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
-                                onClick={() => onDelete(table.id)}
-                                disabled={isPending}
-                            >
-                                <Trash2 className="h-4 w-4" />
-                            </Button>
-                        </div>
+                        {isAdmin && (
+                            <div className="flex items-center">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-muted-foreground hover:text-primary transition-colors"
+                                    onClick={() => onEdit?.(table)}
+                                    disabled={isPending}
+                                >
+                                    <Pencil className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
+                                    onClick={() => onDelete(table.id)}
+                                    disabled={isPending}
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </div>
             ))}

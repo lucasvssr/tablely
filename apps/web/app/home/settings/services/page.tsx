@@ -1,36 +1,18 @@
-'use client';
-
 import { PageBody, PageHeader } from '@kit/ui/page';
-import { ServicesList } from './_components/services-list';
-import { ServiceForm } from './_components/service-form';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@kit/ui/card';
-import { useState, useEffect } from 'react';
-import { getSupabaseBrowserClient } from '@kit/supabase/browser-client';
+import { ServicesContainer } from './_components/services-container';
+import { getServicesAction, getUserRoleAction } from '~/lib/server/restaurant/restaurant-actions';
 
-interface Service {
-    id: string;
-    name: string;
-    start_time: string;
-    end_time: string;
-    days_of_week: number[];
-}
+export const metadata = {
+    title: 'Services & Horaires | Tablely',
+};
 
-export default function ServicesSettingsPage() {
-    const [services, setServices] = useState<Service[]>([]);
-    const [editingService, setEditingService] = useState<Service | null>(null);
-    const supabase = getSupabaseBrowserClient();
+export default async function ServicesSettingsPage() {
+    const [services, role] = await Promise.all([
+        getServicesAction({}),
+        getUserRoleAction({})
+    ]);
 
-    const fetchServices = async () => {
-        const { data } = await supabase
-            .from('services')
-            .select('*')
-            .order('start_time', { ascending: true });
-        setServices(data || []);
-    };
-
-    useEffect(() => {
-        fetchServices();
-    }, []);
+    const isAdmin = role === 'owner' || role === 'admin';
 
     return (
         <>
@@ -40,53 +22,7 @@ export default function ServicesSettingsPage() {
             />
 
             <PageBody>
-                <div className="flex flex-col gap-8 lg:flex-row">
-                    <div className="flex-1">
-                        <Card className="border-none bg-gradient-to-br from-background to-muted/50 shadow-xl">
-                            <CardHeader>
-                                <CardTitle>Services configurés</CardTitle>
-                                <CardDescription>Les périodes durant lesquelles Julie peut réserver une table.</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <ServicesList
-                                    initialServices={services}
-                                    onEdit={(service) => setEditingService(service)}
-                                />
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    <div className="w-full lg:w-96">
-                        <Card className="sticky top-4 overflow-hidden border-primary/10 shadow-lg">
-                            <div className="h-1.5 w-full bg-secondary" />
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                                <div className="space-y-1">
-                                    <CardTitle>{editingService ? 'Modifier le service' : 'Nouveau Service'}</CardTitle>
-                                    <CardDescription>
-                                        {editingService ? 'Mettez à jour les horaires' : 'Ajoutez une plage horaire de service.'}
-                                    </CardDescription>
-                                </div>
-                                {editingService && (
-                                    <button
-                                        onClick={() => setEditingService(null)}
-                                        className="text-xs text-primary hover:underline"
-                                    >
-                                        Annuler
-                                    </button>
-                                )}
-                            </CardHeader>
-                            <CardContent>
-                                <ServiceForm
-                                    initialData={editingService || undefined}
-                                    onSuccess={() => {
-                                        setEditingService(null);
-                                        fetchServices();
-                                    }}
-                                />
-                            </CardContent>
-                        </Card>
-                    </div>
-                </div>
+                <ServicesContainer initialServices={services} isAdmin={isAdmin} />
             </PageBody>
         </>
     );

@@ -20,9 +20,9 @@ export function LanguageSelector({
   const { i18n } = useTranslation();
   const { language: currentLanguage, options } = i18n;
 
-  const locales = (options.supportedLngs as string[]).filter(
-    (locale) => locale.toLowerCase() !== 'cimode',
-  );
+  const locales = Array.from(
+    new Set(options.supportedLngs as string[]),
+  ).filter((locale) => locale.toLowerCase() !== 'cimode');
 
   const languageNames = useMemo(() => {
     return new Intl.DisplayNames([currentLanguage], {

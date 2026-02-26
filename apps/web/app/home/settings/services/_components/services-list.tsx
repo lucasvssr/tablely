@@ -1,11 +1,11 @@
 'use client';
 
-import { Badge } from '@kit/ui/badge';
 import { Clock, Calendar, Trash2, Pencil } from 'lucide-react';
 import { Button } from '@kit/ui/button';
 import { deleteServiceAction } from '~/lib/server/restaurant/restaurant-actions';
 import { useTransition } from 'react';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface Service {
     id: string;
@@ -27,11 +27,14 @@ const DAY_LABELS: Record<number, string> = {
 
 export function ServicesList({
     initialServices,
-    onEdit
+    onEdit,
+    isAdmin
 }: {
     initialServices: Service[],
-    onEdit?: (service: Service) => void
+    onEdit?: (service: Service) => void,
+    isAdmin: boolean
 }) {
+    const router = useRouter();
     const [isPending, startTransition] = useTransition();
 
     const onDelete = (id: string) => {
@@ -41,8 +44,8 @@ export function ServicesList({
             try {
                 await deleteServiceAction({ id });
                 toast.success('Service supprimé');
-                window.location.reload();
-            } catch (error) {
+                router.refresh();
+            } catch {
                 toast.error('Erreur lors de la suppression');
             }
         });
@@ -73,7 +76,7 @@ export function ServicesList({
                     <Clock className="h-8 w-8 opacity-20" />
                 </div>
                 <p>Aucun service configuré.</p>
-                <p className="text-sm">Définissez vos horaires d'ouverture (ex: Midi 12:00-14:30).</p>
+                <p className="text-sm">Définissez vos horaires d&apos;ouverture (ex: Midi 12:00-14:30).</p>
             </div>
         );
     }
@@ -104,28 +107,30 @@ export function ServicesList({
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        <div className="flex items-center">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-primary transition-colors"
-                                onClick={() => onEdit?.(service)}
-                                disabled={isPending}
-                            >
-                                <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
-                                onClick={() => onDelete(service.id)}
-                                disabled={isPending}
-                            >
-                                <Trash2 className="h-4 w-4" />
-                            </Button>
+                    {isAdmin && (
+                        <div className="flex items-center gap-2">
+                            <div className="flex items-center">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-muted-foreground hover:text-primary transition-colors"
+                                    onClick={() => onEdit?.(service)}
+                                    disabled={isPending}
+                                >
+                                    <Pencil className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
+                                    onClick={() => onDelete(service.id)}
+                                    disabled={isPending}
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             ))}
         </div>

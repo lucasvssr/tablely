@@ -1,3 +1,5 @@
+'use client';
+
 import { If } from './if';
 import { LoadingOverlay } from './loading-overlay';
 import { TopLoadingBarIndicator } from './top-loading-bar-indicator';

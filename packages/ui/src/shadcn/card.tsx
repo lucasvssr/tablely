@@ -32,11 +32,11 @@ const CardTitle: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({
 );
 CardTitle.displayName = 'CardTitle';
 
-const CardDescription: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({
+const CardDescription: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   className,
   ...props
 }) => (
-  <p className={cn('text-muted-foreground text-sm', className)} {...props} />
+  <div className={cn('text-muted-foreground text-sm', className)} {...props} />
 );
 CardDescription.displayName = 'CardDescription';
 

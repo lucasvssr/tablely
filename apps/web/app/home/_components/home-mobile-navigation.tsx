@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 
-import { LogOut, Menu } from 'lucide-react';
+import { LogOut, Menu as MenuIcon } from 'lucide-react';
+import type { JwtPayload } from '@supabase/supabase-js';
 
 import { useSignOut } from '@kit/supabase/hooks/use-sign-out';
 import {
@@ -21,21 +22,34 @@ import { navigationConfig } from '~/config/navigation.config';
  * Mobile navigation for the home page
  * @constructor
  */
-export function HomeMobileNavigation() {
+export function HomeMobileNavigation(props: {
+  user: JwtPayload;
+  account?: {
+    id: string | null;
+    name: string | null;
+    picture_url: string | null;
+    role: string | null;
+  };
+}) {
   const signOut = useSignOut();
 
   const Links = navigationConfig.routes.map((item, index) => {
     if ('children' in item) {
-      return item.children.map((child) => {
-        return (
-          <DropdownLink
-            key={child.path}
-            Icon={child.Icon}
-            path={child.path}
-            label={child.label}
-          />
-        );
-      });
+      return item.children
+        .filter((child) => {
+          const role = props.account?.role || 'client';
+          return !child.roles || child.roles.includes(role);
+        })
+        .map((child) => {
+          return (
+            <DropdownLink
+              key={child.path}
+              Icon={child.Icon}
+              path={child.path}
+              label={child.label}
+            />
+          );
+        });
     }
 
     if ('divider' in item) {
@@ -46,7 +60,7 @@ export function HomeMobileNavigation() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Menu className={'h-9'} />
+        <MenuIcon className={'h-9'} />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent sideOffset={10} className={'w-screen rounded-none'}>

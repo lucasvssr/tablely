@@ -10,6 +10,7 @@ import { Label } from '@kit/ui/label';
 import { Checkbox } from '@kit/ui/checkbox';
 import { useTransition, useEffect } from 'react';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 const DAYS = [
     { label: 'Lun', value: 1 },
@@ -30,12 +31,13 @@ export function ServiceForm({
     initialData,
     onSuccess
 }: {
-    initialData?: ServiceSchemaType & { id?: string },
+    initialData?: ServiceSchemaType,
     onSuccess?: () => void
 }) {
+    const router = useRouter();
     const [isPending, startTransition] = useTransition();
 
-    const form = useForm<ServiceSchemaType & { id?: string }>({
+    const form = useForm<ServiceSchemaType>({
         resolver: zodResolver(ServiceSchema),
         defaultValues: initialData ? {
             ...initialData,
@@ -45,6 +47,8 @@ export function ServiceForm({
             name: '',
             start_time: '12:00',
             end_time: '14:30',
+            duration_minutes: 90,
+            buffer_minutes: 15,
             days_of_week: [1, 2, 3, 4, 5, 6, 7],
         },
     });
@@ -61,12 +65,14 @@ export function ServiceForm({
                 name: '',
                 start_time: '12:00',
                 end_time: '14:30',
+                duration_minutes: 90,
+                buffer_minutes: 15,
                 days_of_week: [1, 2, 3, 4, 5, 6, 7],
             });
         }
     }, [initialData, form]);
 
-    const onSubmit = (data: ServiceSchemaType & { id?: string }) => {
+    const onSubmit = (data: ServiceSchemaType) => {
         startTransition(async () => {
             try {
                 const formData = new FormData();
@@ -75,13 +81,16 @@ export function ServiceForm({
                 formData.append('start_time', data.start_time);
                 formData.append('end_time', data.end_time);
                 formData.append('days_of_week', JSON.stringify(data.days_of_week));
+                formData.append('duration_minutes', data.duration_minutes.toString());
+                formData.append('buffer_minutes', (data.buffer_minutes ?? 15).toString());
 
                 await upsertServiceAction(formData);
 
                 toast.success(data.id ? 'Service mis à jour !' : 'Service enregistré !');
                 form.reset();
+                router.refresh();
                 if (onSuccess) onSuccess();
-            } catch (error) {
+            } catch {
                 toast.error('Erreur lors de l\'enregistrement');
             }
         });
@@ -125,10 +134,38 @@ export function ServiceForm({
                         <p className="text-xs text-destructive">{form.formState.errors.end_time.message}</p>
                     )}
                 </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="duration_minutes">Durée d&apos;un repas (min)</Label>
+                    <Input
+                        id="duration_minutes"
+                        type="number"
+                        min="15"
+                        step="15"
+                        {...form.register('duration_minutes')}
+                    />
+                    {form.formState.errors.duration_minutes && (
+                        <p className="text-xs text-destructive">{form.formState.errors.duration_minutes.message}</p>
+                    )}
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="buffer_minutes">Marge de rotation (min)</Label>
+                    <Input
+                        id="buffer_minutes"
+                        type="number"
+                        min="0"
+                        step="5"
+                        {...form.register('buffer_minutes')}
+                    />
+                    {form.formState.errors.buffer_minutes && (
+                        <p className="text-xs text-destructive">{form.formState.errors.buffer_minutes.message}</p>
+                    )}
+                </div>
             </div>
 
             <div className="space-y-3">
-                <Label>Jours d'ouverture</Label>
+                <Label>Jours d&apos;ouverture</Label>
                 <div className="flex flex-wrap gap-3">
                     {DAYS.map((day) => (
                         <div key={day.value} className="flex items-center gap-2">

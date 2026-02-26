@@ -23,6 +23,8 @@ export function SignInMethodsContainer(props: {
     magicLink: boolean;
     oAuth: Provider[];
   };
+
+  email?: string;
 }) {
   const router = useRouter();
   const nextPath = useSearchParams().get('next') ?? props.paths.home;
@@ -38,13 +40,17 @@ export function SignInMethodsContainer(props: {
   return (
     <>
       <If condition={props.providers.password}>
-        <PasswordSignInContainer onSignIn={onSignIn} />
+        <PasswordSignInContainer
+          onSignIn={onSignIn}
+          defaultValues={props.email ? { email: props.email } : undefined}
+        />
       </If>
 
       <If condition={props.providers.magicLink}>
         <MagicLinkAuthContainer
           redirectUrl={redirectUrl}
           shouldCreateUser={false}
+          defaultValues={props.email ? { email: props.email } : undefined}
         />
       </If>
 

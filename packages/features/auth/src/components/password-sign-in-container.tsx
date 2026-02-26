@@ -13,8 +13,12 @@ import { PasswordSignInForm } from './password-sign-in-form';
 
 export function PasswordSignInContainer({
   onSignIn,
+  defaultValues,
 }: {
   onSignIn?: (userId?: string) => unknown;
+  defaultValues?: {
+    email: string;
+  };
 }) {
   const { captchaToken, resetCaptchaToken } = useCaptchaToken();
   const signInMutation = useSignInWithEmailPassword();
@@ -46,7 +50,7 @@ export function PasswordSignInContainer({
     <>
       <AuthErrorAlert error={signInMutation.error} />
 
-      <PasswordSignInForm onSubmit={onSubmit} loading={isLoading} />
+      <PasswordSignInForm onSubmit={onSubmit} loading={isLoading} defaultValues={defaultValues} />
     </>
   );
 }
