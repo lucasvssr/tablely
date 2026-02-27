@@ -53,11 +53,11 @@ development_status:
   2-3-saisie-validation-de-la-reservation: done
   epic-2-retrospective: optional
 
-  epic-3: backlog
-  3-1-vue-centralisee-des-reservations-du-jour: backlog
-  3-2-mise-a-jour-du-statut-arrive-no-show: backlog
-  3-3-alertes-visuelles-prioritaires-allergies: backlog
-  3-4-edition-dynamique-en-salle: backlog
+  epic-3: done
+  3-1-vue-centralisee-des-reservations-du-jour: done
+  3-2-mise-a-jour-du-statut-arrive-no-show: done
+  3-3-alertes-visuelles-prioritaires-allergies: done
+  3-4-edition-dynamique-en-salle: done
   epic-3-retrospective: optional
 
   epic-4: backlog

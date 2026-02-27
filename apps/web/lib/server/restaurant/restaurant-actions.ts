@@ -1,13 +1,17 @@
 'use server';
 
+import { isAfter, subMinutes, addMinutes, parseISO } from 'date-fns';
+
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
+import { getSupabaseServerAdminClient } from '@kit/supabase/server-admin-client';
 import { enhanceAction } from '@kit/next/actions';
-import { RestaurantSchema, ServiceSchema, TableSchema, ReservationSchema } from './restaurant.schema';
+import { RestaurantSchema, ServiceSchema, TableSchema, ReservationSchema, UpdateReservationSchema } from './restaurant.schema';
 import { Database } from '@kit/supabase/database';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
+import { encrypt, decrypt } from '~/lib/security/encryption';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function getUserAccount(supabase: SupabaseClient<any>, userId: string) {
@@ -427,6 +431,7 @@ export async function getAvailableSlotsAction({
  */
 export const createReservationAction = enhanceAction(
     async (payload) => {
+        console.log('createReservationAction called with payload:', payload);
         const supabase = getSupabaseServerClient<Database>();
 
         // 1. Get account_id from restaurant
@@ -435,6 +440,8 @@ export const createReservationAction = enhanceAction(
             .select('account_id, id')
             .eq('id', payload.restaurant_id)
             .single();
+
+        console.log('Restaurant lookup result:', { restaurant, restaurantError });
 
         if (restaurantError || !restaurant) {
             throw new Error('Restaurant non trouvé');
@@ -538,30 +545,39 @@ export const createReservationAction = enhanceAction(
         }
 
         // 4. Create the reservation
+        const reservationData = {
+            account_id: restaurant.account_id,
+            restaurant_id: payload.restaurant_id,
+            service_id: payload.service_id,
+            table_id: availableTable.id,
+            client_name: payload.client_name,
+            client_email: payload.client_email,
+            client_phone: payload.client_phone,
+            date: payload.date,
+            start_time: payload.start_time,
+            duration_minutes: duration,
+            guest_count: payload.guest_count,
+            notes: payload.notes, // Keep as is for now or set to null
+            sensitive_notes: payload.notes ? encrypt(payload.notes) : null,
+            status: 'confirmed',
+            user_id: user?.id ?? payload.user_id
+        };
 
-        const { error: insertError } = await supabase
+
+
+        const adminSupabase = getSupabaseServerAdminClient<Database>();
+        const { error: insertError } = await adminSupabase
             .from('reservations')
-            .insert({
-                account_id: restaurant.account_id,
-                restaurant_id: payload.restaurant_id,
-                service_id: payload.service_id,
-                table_id: availableTable.id,
-                client_name: payload.client_name,
-                client_email: payload.client_email,
-                client_phone: payload.client_phone,
-                date: payload.date,
-                start_time: payload.start_time,
-                duration_minutes: duration,
-                guest_count: payload.guest_count,
-                notes: payload.notes,
-                status: 'confirmed',
-                user_id: user?.id ?? payload.user_id
-            });
+            .insert(reservationData)
+            .select()
+            .single();
 
         if (insertError) {
-            console.error('Insert error:', insertError);
-            throw new Error('Erreur lors de la validation de la réservation');
+            console.error('Insert error details:', insertError);
+            throw new Error(`Erreur lors de la validation de la réservation: ${insertError.message}`);
         }
+
+
 
         return { success: true };
     },
@@ -678,4 +694,265 @@ export const getUserRoleAction = enhanceAction(
         return data.role;
     },
     { auth: true }
+);
+
+/**
+ * @name getDailyReservationsAction
+ * @description Fetches all reservations for a specific date and account.
+ */
+export const getDailyReservationsAction = enhanceAction(
+    async ({ date }: { date: string }) => {
+        const user = await requireUserInServerComponent();
+        const supabase = getSupabaseServerClient<Database>();
+
+        const { data: membership, error: mError } = await supabase
+            .from('memberships')
+            .select('account_id')
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+        if (mError || !membership) {
+            return [];
+        }
+
+        const { data, error } = await supabase
+            .from('reservations')
+            .select('*')
+            .eq('account_id', membership.account_id)
+            .eq('date', date)
+            .order('start_time', { ascending: true });
+
+        if (error) {
+            console.error('Error fetching daily reservations:', error);
+            throw new Error('Erreur lors de la récupération des réservations');
+        }
+
+        // Decrypt notes if sensitive_notes is present
+        return (data || []).map(res => ({
+            ...res,
+            notes: res.sensitive_notes ? decrypt(res.sensitive_notes) : res.notes
+        }));
+    },
+    { auth: true }
+);
+
+/**
+ * @name updateReservationStatusAction
+ * @description Updates the status of a reservation.
+ */
+export const updateReservationStatusAction = enhanceAction(
+    async ({
+        reservationId,
+        status
+    }: {
+        reservationId: string;
+        status: 'confirmed' | 'cancelled' | 'arrived' | 'no-show';
+    }) => {
+        const user = await requireUserInServerComponent();
+        const supabase = getSupabaseServerClient<Database>();
+
+        // 1. Get the reservation to check its account_id and timing
+        const { data: reservation, error: rError } = await supabase
+            .from('reservations')
+            .select('account_id, date, start_time')
+            .eq('id', reservationId)
+            .single();
+
+        if (rError || !reservation) {
+            throw new Error('Réservation non trouvée');
+        }
+
+        // 2. Check if the current user is a member of that account
+        const { data: membership, error: mError } = await supabase
+            .from('memberships')
+            .select('role')
+            .eq('user_id', user.id)
+            .eq('account_id', reservation.account_id)
+            .maybeSingle();
+
+        if (mError || !membership) {
+            throw new Error('Permission refusée');
+        }
+
+        // 3. Time-based validation
+        const now = new Date();
+        const reservationTime = parseISO(`${reservation.date}T${reservation.start_time}`);
+
+        if (status === 'arrived') {
+            const canMarkArrived = isAfter(now, subMinutes(reservationTime, 30));
+            if (!canMarkArrived) {
+                throw new Error("Impossible de marquer comme arrivé plus de 30 min à l'avance");
+            }
+        }
+
+        if (status === 'no-show') {
+            const canMarkNoShow = isAfter(now, addMinutes(reservationTime, 15));
+            if (!canMarkNoShow) {
+                throw new Error("Impossible de marquer comme No-show avant 15 min après l'heure");
+            }
+        }
+
+        // 4. Update the status
+        const { error: updateError } = await supabase
+            .from('reservations')
+            .update({ status, updated_at: new Date().toISOString() })
+            .eq('id', reservationId);
+
+        if (updateError) {
+            console.error('Error updating reservation status:', updateError);
+            throw new Error('Erreur lors de la mise à jour du statut');
+        }
+
+        revalidatePath('/home', 'page');
+
+        return { success: true };
+    },
+    { auth: true }
+);
+
+/**
+ * @name updateReservationDetailsAction
+ * @description Updates reservation details (guest count, time, notes) with availability check.
+ */
+export const updateReservationDetailsAction = enhanceAction(
+    async (payload) => {
+        const user = await requireUserInServerComponent();
+        const supabase = getSupabaseServerClient<Database>();
+
+        // 1. Get current reservation
+        const { data: currentRes, error: resError } = await supabase
+            .from('reservations')
+            .select(`
+                *,
+                services (
+                    duration_minutes,
+                    buffer_minutes
+                )
+            `)
+            .eq('id', payload.id)
+            .single();
+
+        if (resError || !currentRes) {
+            throw new Error('Réservation non trouvée');
+        }
+
+        // 2. Check permission (must belong to user's account)
+        const { data: membership } = await supabase
+            .from('memberships')
+            .select('account_id')
+            .eq('user_id', user.id)
+            .eq('account_id', currentRes.account_id)
+            .maybeSingle();
+
+        if (!membership) {
+            throw new Error('Vous n\'avez pas la permission de modifier cette réservation');
+        }
+
+        const timeChanged = payload.start_time !== currentRes.start_time;
+        const guestsChanged = payload.guest_count !== currentRes.guest_count;
+
+        let tableId = currentRes.table_id;
+
+        // 3. If time or guest count changed, re-check availability
+        if (timeChanged || guestsChanged) {
+            // Find a table for the new configuration
+            const { data: tables } = await supabase
+                .from('dining_tables')
+                .select('id')
+                .eq('account_id', currentRes.account_id)
+                .eq('is_active', true)
+                .gte('capacity', payload.guest_count)
+                .order('capacity', { ascending: true });
+
+            if (!tables || tables.length === 0) {
+                throw new Error('Aucune table disponible pour ce nombre de couverts');
+            }
+
+            const resObj = currentRes as unknown as {
+                duration_minutes: number | null;
+                services?: { duration_minutes: number; buffer_minutes: number; }
+            };
+            const duration = resObj.duration_minutes ?? resObj.services?.duration_minutes ?? 90;
+            const buffer = resObj.services?.buffer_minutes ?? 15;
+
+            const { data: otherReservations } = await supabase
+                .from('reservations')
+                .select(`
+                    table_id, 
+                    start_time, 
+                    duration_minutes,
+                    services (
+                        duration_minutes,
+                        buffer_minutes
+                    )
+                `)
+                .eq('restaurant_id', currentRes.restaurant_id)
+                .eq('date', currentRes.date)
+                .eq('status', 'confirmed')
+                .neq('id', currentRes.id); // Exclude self
+
+            const timeToMin = (t: string | null | undefined) => {
+                if (!t) return 0;
+                const parts = t.split(':');
+                const h = parseInt(parts[0] || '0', 10);
+                const m = parseInt(parts[1] || '0', 10);
+                return h * 60 + m;
+            };
+
+            const isOverlapping = (s1: number, e1: number, s2: number, e2: number) => {
+                return s1 < e2 && s2 < e1;
+            };
+
+            const requestedStart = timeToMin(payload.start_time);
+            const requestedEnd = requestedStart + duration;
+
+            const occupiedIds = new Set();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (otherReservations as any[] || []).forEach((r) => {
+                const rStart = timeToMin(r.start_time as string);
+                const rBaseDuration = r.duration_minutes ?? r.services?.duration_minutes ?? 90;
+                const rBuffer = r.services?.buffer_minutes ?? 15;
+                const rEnd = rStart + rBaseDuration;
+
+                if (isOverlapping(requestedStart, requestedEnd + buffer, rStart, rEnd + rBuffer)) {
+                    occupiedIds.add(r.table_id);
+                }
+            });
+
+            const bestTable = tables.find(t => !occupiedIds.has(t.id));
+
+            if (!bestTable) {
+                throw new Error('Désolé, plus de disponibilité pour ce changement (tables complètes)');
+            }
+
+            tableId = bestTable.id;
+        }
+
+        // 4. Perform update
+        const updateData = {
+            guest_count: payload.guest_count,
+            start_time: payload.start_time,
+            notes: payload.notes,
+            sensitive_notes: payload.notes ? encrypt(payload.notes) : null,
+            table_id: tableId,
+            updated_at: new Date().toISOString(),
+        };
+
+        const { error: updateError } = await supabase
+            .from('reservations')
+            .update(updateData)
+            .eq('id', payload.id);
+
+        if (updateError) {
+            console.error('Update error:', updateError);
+            throw new Error('Erreur lors de la mise à jour');
+        }
+
+        revalidatePath('/home');
+        return { success: true };
+    },
+    {
+        auth: true,
+        schema: UpdateReservationSchema,
+    }
 );

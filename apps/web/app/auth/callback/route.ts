@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   const service = createAuthCallbackService(getSupabaseServerClient());
 
   const { nextPath } = await service.exchangeCodeForSession(request, {
-    redirectPath: pathsConfig.app.home,
+    redirectPath: request.nextUrl.searchParams.get('next') || pathsConfig.app.home,
   });
 
   return redirect(nextPath);

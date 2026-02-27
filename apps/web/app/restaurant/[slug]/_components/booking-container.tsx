@@ -15,6 +15,7 @@ import { getAvailableSlotsAction, createReservationAction } from '~/lib/server/r
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
+import type { ReservationSchemaType } from '~/lib/server/restaurant/restaurant.schema';
 import type { JwtPayload } from '@supabase/supabase-js';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -68,54 +69,66 @@ export function BookingContainer({
         }
     }, [user, name, email, phone]);
 
-    // Handle return from auth to complete booking
-    useEffect(() => {
-        const confirmBooking = searchParams.get('confirm_booking');
-        if (confirmBooking === 'true' && user) {
-            const pending = localStorage.getItem('pending_booking');
-            if (pending) {
-                try {
-                    const data = JSON.parse(pending);
-                    // Populate state
-                    if (data.date) setDate(new Date(data.date));
-                    if (data.guest_count) setGuests(data.guest_count);
-                    if (data.client_name) setName(data.client_name);
-                    if (data.client_email) setEmail(data.client_email);
-                    if (data.client_phone) setPhone(data.client_phone);
-                    if (data.notes) setNotes(data.notes);
+    const handleConfirm = useCallback(async (manualPayload?: unknown) => {
+        console.log('handleConfirm called with manualPayload:', manualPayload);
 
-                    // We need to find the correct slot in the newly fetched slots
-                    // or wait for slots to be loaded.
-                    // Actually, handleConfirm will use these state values.
-                    // We just need to make sure handleConfirm is called when state is ready.
+        // If it's a click event or non-payload object, manualPayload will be something else
+        const isManual = !!(manualPayload && typeof manualPayload === 'object' && 'restaurant_id' in manualPayload);
 
-                    // Clean up URL and storage
-                    const newUrl = window.location.pathname;
-                    window.history.replaceState({}, '', newUrl);
-                    localStorage.removeItem('pending_booking');
+        const payload: ReservationSchemaType = isManual ? (manualPayload as ReservationSchemaType) : {
+            restaurant_id: restaurantId,
+            date: date ? format(date, 'yyyy-MM-dd') : '',
+            start_time: selectedSlot?.slot_time || '',
+            service_id: selectedSlot?.service_id || '',
+            guest_count: guests,
+            client_name: name,
+            client_email: email,
+            client_phone: phone || '',
+            notes: notes,
+            user_id: user?.id,
+        };
 
-                    // The slots might not be loaded yet, but handleConfirm only needs selectedSlot.
-                    // If we stored selectedSlot info, we should restore it.
-                    if (data.start_time && data.service_id) {
-                        setSelectedSlot({
-                            slot_time: data.start_time,
-                            service_id: data.service_id,
-                            service_name: '', // Will be updated by slots fetch if needed
-                            available: true
-                        });
-                    }
+        console.log('Final payload before validation:', payload);
 
-                    // Trigger confirmation
-                    setTimeout(() => {
-                        handleConfirm();
-                    }, 500);
-                } catch (e) {
-                    console.error('Error restoring pending booking', e);
-                }
-            }
+        if (!payload.date || !payload.start_time || !payload.service_id) {
+            console.log('Validation failed: missing required fields', {
+                date: !!payload.date,
+                start_time: !!payload.start_time,
+                service_id: !!payload.service_id
+            });
+            return;
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user, searchParams]);
+
+        if (!user && !isManual) {
+            console.log('User not logged in, saving to localStorage and redirecting to /home...');
+            const bookingData = {
+                ...payload,
+                date: payload.date,
+            };
+            localStorage.setItem('pending_booking', JSON.stringify(bookingData));
+
+            // Per user request: redirect to home instead of back here
+            const currentUrl = '/home?confirm_booking=true';
+            router.push(`/auth/sign-up?next=${encodeURIComponent(currentUrl)}&email=${encodeURIComponent(email)}`);
+            return;
+        }
+
+        console.log('Proceeding with createReservationAction call...');
+        setSubmitting(true);
+        try {
+            const result = await createReservationAction(payload);
+            console.log('createReservationAction result:', result);
+            setStep('success');
+            toast.success(t('public:booking.successTitle'));
+        } catch (error: unknown) {
+            console.error('createReservationAction error:', error);
+            toast.error(error instanceof Error ? error.message : t('public:booking.errorGeneric'));
+        } finally {
+            setSubmitting(false);
+        }
+    }, [restaurantId, date, selectedSlot, guests, name, email, phone, notes, user, router, t]);
+
+
 
     const selectedSlotRef = useRef(selectedSlot);
     selectedSlotRef.current = selectedSlot;
@@ -125,6 +138,72 @@ export function BookingContainer({
 
     const tRef = useRef(t);
     tRef.current = t;
+
+
+    // Handle return from auth to complete booking
+    const processedRedirectionRef = useRef(false);
+    useEffect(() => {
+        const confirmBooking = searchParams.get('confirm_booking');
+
+        if (confirmBooking === 'true' && user && !processedRedirectionRef.current) {
+            const pending = localStorage.getItem('pending_booking');
+            if (pending) {
+                try {
+                    const data = JSON.parse(pending);
+
+                    processedRedirectionRef.current = true;
+
+                    // Populate state for UI consistency
+                    if (data.date) setDate(new Date(data.date));
+                    if (data.guest_count) setGuests(Number(data.guest_count));
+                    if (data.client_name) setName(data.client_name || '');
+                    if (data.client_email) setEmail(data.client_email || '');
+                    if (data.client_phone) setPhone(data.client_phone || '');
+                    if (data.notes) setNotes(data.notes || '');
+
+                    if (data.start_time && data.service_id) {
+                        setSelectedSlot({
+                            slot_time: data.start_time,
+                            service_id: data.service_id,
+                            service_name: '',
+                            available: true
+                        });
+                    }
+
+                    // Clean up: Remove param from URL and clear storage
+                    const params = new URLSearchParams(searchParams.toString());
+                    params.delete('confirm_booking');
+                    const queryString = params.toString();
+                    const newUrl = window.location.pathname + (queryString ? `?${queryString}` : '');
+                    router.replace(newUrl, { scroll: false });
+
+                    localStorage.removeItem('pending_booking');
+
+                    // Trigger confirmation
+                    const payload = {
+                        restaurant_id: restaurantId,
+                        date: data.date,
+                        start_time: data.start_time,
+                        service_id: data.service_id,
+                        guest_count: Number(data.guest_count),
+                        client_name: data.client_name,
+                        client_email: data.client_email,
+                        client_phone: data.client_phone || '',
+                        notes: data.notes || '',
+                        user_id: user.id,
+                    };
+
+                    setTimeout(() => {
+                        handleConfirm(payload);
+                    }, 800);
+                } catch (e) {
+                    console.error('DEBUG [useEffect]: Error restoring pending booking', e);
+                }
+            } else {
+                console.log('DEBUG [useEffect]: No pending_booking in localStorage');
+            }
+        }
+    }, [user, searchParams, restaurantId, router, handleConfirm]);
 
     const fetchSlots = useCallback(async (isBackground = false) => {
         const currentDate = date;
@@ -193,54 +272,6 @@ export function BookingContainer({
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [date, guests, step, fetchSlots, slotsCache]);
-
-
-
-    async function handleConfirm() {
-        if (!date || !selectedSlot) return;
-
-        if (!user) {
-            const bookingData = {
-                restaurantId,
-                date: format(date, 'yyyy-MM-dd'),
-                start_time: selectedSlot.slot_time,
-                service_id: selectedSlot.service_id,
-                guest_count: guests,
-                client_name: name,
-                client_email: email,
-                client_phone: phone,
-                notes: notes,
-            };
-            localStorage.setItem('pending_booking', JSON.stringify(bookingData));
-
-            const currentUrl = window.location.pathname + '?confirm_booking=true';
-            router.push(`/auth/sign-up?next=${encodeURIComponent(currentUrl)}&email=${encodeURIComponent(email)}`);
-            return;
-        }
-
-        setSubmitting(true);
-        try {
-            await createReservationAction({
-                restaurant_id: restaurantId,
-                date: format(date, 'yyyy-MM-dd'),
-                start_time: selectedSlot.slot_time,
-                service_id: selectedSlot.service_id,
-                guest_count: guests,
-                client_name: name,
-                client_email: email,
-                client_phone: phone,
-                notes: notes,
-                user_id: user.id,
-            });
-            setStep('success');
-            toast.success(t('public:booking.successTitle'));
-        } catch (error: unknown) {
-            console.error(error);
-            toast.error(error instanceof Error ? error.message : t('public:booking.errorGeneric'));
-        } finally {
-            setSubmitting(false);
-        }
-    }
 
     const services = slots.reduce((acc, slot) => {
         const serviceId = slot.service_id;

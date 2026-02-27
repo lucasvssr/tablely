@@ -19,11 +19,6 @@ export const generateMetadata = async () => {
   };
 };
 
-const paths = {
-  callback: pathsConfig.auth.callback,
-  home: pathsConfig.app.home,
-};
-
 interface SignInPageProps {
   searchParams: Promise<{ next?: string; email?: string }>;
 }
@@ -32,6 +27,12 @@ function SignInPage(props: SignInPageProps) {
   const searchParams = use(props.searchParams);
   const next = searchParams.next;
   const email = searchParams.email;
+
+  const paths = {
+    callback: pathsConfig.auth.callback,
+    home: next || pathsConfig.app.home,
+    appHome: next || pathsConfig.app.home,
+  };
 
   const signUpPath = new URL(pathsConfig.auth.signUp, 'http://localhost');
   if (next) signUpPath.searchParams.set('next', next);

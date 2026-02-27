@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import { useCallback, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -409,7 +411,7 @@ function FactorNameForm(
 
 function QrImage({ src }: { src: string }) {
   return (
-    <img
+    <Image
       alt={'QR Code'}
       src={src}
       width={160}

@@ -15,6 +15,7 @@ export const signUpWithRoleAction = enhanceAction(
         password: string;
         role: 'client' | 'restaurateur';
         invitationId?: string;
+        redirectTo?: string;
     }) => {
         const adminClient = getSupabaseServerAdminClient<Database>();
         const userClient = getSupabaseServerClient<Database>();
@@ -63,7 +64,8 @@ export const signUpWithRoleAction = enhanceAction(
                 options: {
                     data: {
                         role: credentials.role,
-                    }
+                    },
+                    emailRedirectTo: credentials.redirectTo,
                 }
             });
 

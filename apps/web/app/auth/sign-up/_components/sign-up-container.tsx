@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+
 import type { Provider } from '@supabase/supabase-js';
 import { SignUpMethodsContainer } from '@kit/auth/sign-up';
 import { SignUpRoleSelector } from './role-selector';
@@ -19,6 +20,7 @@ interface SignUpContainerProps {
     };
     email?: string;
     invitationId?: string;
+    next?: string;
 }
 
 export function SignUpContainer({
@@ -27,14 +29,22 @@ export function SignUpContainer({
     paths,
     email,
     invitationId,
+    next,
 }: SignUpContainerProps) {
     const [role, setRole] = useState<'client' | 'restaurateur'>('client');
 
     const handleSignUp = async (credentials: { email: string; password: string; invitationId: string }) => {
-        return signUpWithRoleAction({
+        const result = await signUpWithRoleAction({
             ...credentials,
             role,
+            redirectTo: next,
         });
+
+        if (result.success && next) {
+            window.location.href = next;
+        }
+
+        return result;
     };
 
     return (

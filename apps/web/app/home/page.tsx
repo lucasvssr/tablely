@@ -3,11 +3,15 @@ import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
 import { DashboardDemo } from '~/home/_components/dashboard-demo';
 import { PublicPageLinkCard } from './_components/public-page-link-card';
-import { getDashboardStatsAction } from '~/lib/server/restaurant/restaurant-actions';
+import { getDashboardStatsAction, getDailyReservationsAction } from '~/lib/server/restaurant/restaurant-actions';
+import { ReservationsList, Reservation } from './_components/reservations-list';
+import { format } from 'date-fns';
 import { Button } from '@kit/ui/button';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@kit/ui/card';
 import { Utensils, Search } from 'lucide-react';
+import { BookingFinalizer } from './_components/booking-finalizer';
+import { Suspense } from 'react';
 
 export default async function HomePage() {
   const user = await requireUserInServerComponent();
@@ -38,6 +42,9 @@ export default async function HomePage() {
           title="Bienvenue sur Tablely"
           description="Trouvez et réservez les meilleures tables près de chez vous."
         />
+        <Suspense fallback={null}>
+          <BookingFinalizer />
+        </Suspense>
         <PageBody>
           <Card className="max-w-2xl border-none shadow-xl bg-gradient-to-br from-background to-muted/20">
             <CardHeader>
@@ -61,7 +68,7 @@ export default async function HomePage() {
   }
 
   // If restaurateur but no organization yet
-  if (!slug) {
+  if (!membership || !slug) {
     return (
       <>
         <PageHeader
@@ -92,7 +99,11 @@ export default async function HomePage() {
     );
   }
 
-  const stats = await getDashboardStatsAction({});
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const [stats, reservations] = await Promise.all([
+    getDashboardStatsAction({}),
+    getDailyReservationsAction({ date: today })
+  ]);
 
   return (
     <>
@@ -100,15 +111,31 @@ export default async function HomePage() {
         title="Tableau de bord"
         description="Gérez votre restaurant et vos réservations en un coup d'œil."
       />
+      <Suspense fallback={null}>
+        <BookingFinalizer />
+      </Suspense>
 
       <PageBody>
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-10">
           {slug && (
             <div className="max-w-xl">
               <PublicPageLinkCard slug={slug} />
             </div>
           )}
-          <DashboardDemo stats={stats} />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+            <div className="lg:col-span-8 flex flex-col gap-10">
+              <ReservationsList
+                initialReservations={reservations as Reservation[]}
+                accountId={membership.account_id}
+              />
+              <DashboardDemo stats={stats} />
+            </div>
+
+            <div className="lg:col-span-4 flex flex-col gap-8">
+              {/* Secondary column for other widgets if needed */}
+            </div>
+          </div>
         </div>
       </PageBody>
     </>

@@ -38,7 +38,15 @@ export const ReservationSchema = z.object({
     user_id: z.string().uuid().optional(),
 });
 
+export const UpdateReservationSchema = z.object({
+    id: z.string().uuid(),
+    guest_count: z.coerce.number().min(1),
+    start_time: z.string().regex(/^([01]\d|2[0-3]):?([0-5]\d)$/, 'Format HH:MM requis'),
+    notes: z.string().optional(),
+});
+
 export type RestaurantSchemaType = z.infer<typeof RestaurantSchema>;
 export type ServiceSchemaType = z.infer<typeof ServiceSchema>;
 export type TableSchemaType = z.infer<typeof TableSchema>;
 export type ReservationSchemaType = z.infer<typeof ReservationSchema>;
+export type UpdateReservationSchemaType = z.infer<typeof UpdateReservationSchema>;

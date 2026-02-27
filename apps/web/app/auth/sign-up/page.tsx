@@ -20,11 +20,6 @@ export const generateMetadata = async () => {
   };
 };
 
-const paths = {
-  callback: pathsConfig.auth.callback,
-  appHome: pathsConfig.app.home,
-};
-
 interface SignUpPageProps {
   searchParams: Promise<{ next?: string; email?: string; invitationId?: string }>;
 }
@@ -34,6 +29,13 @@ function SignUpPage(props: SignUpPageProps) {
   const next = searchParams.next;
   const email = searchParams.email;
   const invitationId = searchParams.invitationId;
+
+  const paths = {
+    callback: pathsConfig.auth.callback,
+    appHome: next || pathsConfig.app.home,
+    home: next || pathsConfig.app.home,
+  };
+
   const signInPath = new URL(pathsConfig.auth.signIn, 'http://localhost');
   if (next) signInPath.searchParams.set('next', next);
   if (email) signInPath.searchParams.set('email', email);
@@ -52,6 +54,7 @@ function SignUpPage(props: SignUpPageProps) {
         paths={paths}
         email={email}
         invitationId={invitationId}
+        next={next}
       />
 
       <div className={'flex justify-center'}>
