@@ -34,16 +34,16 @@ function Home() {
             <div className="flex flex-col space-y-6 md:space-y-8">
               <div>
                 <Pill label={'Tablely'} className="bg-zinc-300/50 dark:bg-zinc-900 text-white dark:text-zinc-50 border-zinc-500">
-                  <Trans i18nKey={'marketing:heroPill'} />
+                  <Trans i18nKey={'home:heroPill'} />
                 </Pill>
               </div>
 
               <div className="space-y-4">
                 <h1 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-6xl text-balance">
-                  <Trans i18nKey={'marketing:title'} />
+                  <Trans i18nKey={'home:title'} />
                 </h1>
                 <p className="max-w-xl text-base sm:text-lg text-muted-foreground">
-                  <Trans i18nKey={'marketing:subtitle'} />
+                  <Trans i18nKey={'home:subtitle'} />
                 </p>
               </div>
 
@@ -74,10 +74,10 @@ function Home() {
       <div className={'container mx-auto px-4 md:px-6 space-y-16'}>
         <div className="flex flex-col items-center space-y-4 text-center">
           <h2 className="font-heading text-3xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-4xl">
-            <Trans i18nKey={'marketing:dualExperienceHeading'} />
+            <Trans i18nKey={'home:dualExperienceHeading'} />
           </h2>
           <p className="max-w-2xl text-muted-foreground">
-            <Trans i18nKey={'marketing:dualExperienceSubtitle'} />
+            <Trans i18nKey={'home:dualExperienceSubtitle'} />
           </p>
         </div>
         <DualExperienceSection />
@@ -91,11 +91,11 @@ function Home() {
             heading={
               <>
                 <b className="font-heading font-semibold text-zinc-900 dark:text-white">
-                  <Trans i18nKey={'marketing:featuresHeading'} />
+                  <Trans i18nKey={'home:featuresHeading'} />
                 </b>
                 .{' '}
                 <span className="text-muted-foreground font-normal font-sans">
-                  <Trans i18nKey={'marketing:featuresSubtitle'} />
+                  <Trans i18nKey={'home:featuresSubtitle'} />
                 </span>
               </>
             }
@@ -103,7 +103,7 @@ function Home() {
               <FeatureShowcaseIconContainer>
                 <LayoutDashboard className="h-5 text-brand-copper" />
                 <span className="font-heading font-medium">
-                  <Trans i18nKey={'marketing:featuresPill'} />
+                  <Trans i18nKey={'home:featuresPill'} />
                 </span>
               </FeatureShowcaseIconContainer>
             }
@@ -111,26 +111,26 @@ function Home() {
             <FeatureGrid>
               <FeatureCard
                 className={'relative col-span-2 overflow-hidden border-stone-300 bg-white dark:border-zinc-700 dark:bg-zinc-900/50'}
-                label={<span className="font-heading text-lg"><Trans i18nKey={'marketing:feature1Label'} /></span>}
-                description={<Trans i18nKey={'marketing:feature1Description'} />}
+                label={<span className="font-heading text-lg"><Trans i18nKey={'home:feature1Label'} /></span>}
+                description={<Trans i18nKey={'home:feature1Description'} />}
               />
 
               <FeatureCard
                 className={'relative col-span-2 w-full overflow-hidden border-stone-300 bg-white lg:col-span-1 dark:border-zinc-700 dark:bg-zinc-900/50'}
-                label={<span className="font-heading text-lg"><Trans i18nKey={'marketing:feature2Label'} /></span>}
-                description={<Trans i18nKey={'marketing:feature2Description'} />}
+                label={<span className="font-heading text-lg"><Trans i18nKey={'home:feature2Label'} /></span>}
+                description={<Trans i18nKey={'home:feature2Description'} />}
               />
 
               <FeatureCard
                 className={'relative col-span-2 overflow-hidden border-stone-300 bg-white lg:col-span-1 dark:border-zinc-700 dark:bg-zinc-900/50'}
-                label={<span className="font-heading text-lg"><Trans i18nKey={'marketing:feature3Label'} /></span>}
-                description={<Trans i18nKey={'marketing:feature3Description'} />}
+                label={<span className="font-heading text-lg"><Trans i18nKey={'home:feature3Label'} /></span>}
+                description={<Trans i18nKey={'home:feature3Description'} />}
               />
 
               <FeatureCard
                 className={'relative col-span-2 overflow-hidden border-stone-300 bg-white dark:border-zinc-700 dark:bg-zinc-900/50'}
-                label={<span className="font-heading text-lg"><Trans i18nKey={'marketing:feature4Label'} /></span>}
-                description={<Trans i18nKey={'marketing:feature4Description'} />}
+                label={<span className="font-heading text-lg"><Trans i18nKey={'home:feature4Label'} /></span>}
+                description={<Trans i18nKey={'home:feature4Description'} />}
               />
             </FeatureGrid>
           </FeatureShowcase>
@@ -140,7 +140,7 @@ function Home() {
       <div className={'container mx-auto px-4 md:px-6 space-y-16'}>
         <div className="flex flex-col items-center space-y-4 text-center">
           <h2 className="font-heading text-3xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-4xl">
-            <Trans i18nKey={'marketing:howItWorksHeading'} />
+            <Trans i18nKey={'home:howItWorksHeading'} />
           </h2>
         </div>
         <HowItWorksSection />
@@ -149,10 +149,10 @@ function Home() {
       <div className="container mx-auto px-4 md:px-6">
         <div className="rounded-[2.5rem] bg-zinc-100 dark:bg-zinc-950 p-8 md:p-16 text-center text-zinc-900 dark:text-white shadow-2xl shadow-brand-copper-foreground/20">
           <h2 className="font-heading text-3xl font-bold md:text-5xl mb-6">
-            <Trans i18nKey={'marketing:title'} />
+            <Trans i18nKey={'home:title'} />
           </h2>
           <p className="text-zinc-900 dark:text-white text-lg mb-10 max-w-2xl mx-auto opacity-100">
-            <Trans i18nKey={'marketing:subtitle'} />
+            <Trans i18nKey={'home:subtitle'} />
           </p>
           <div className="flex justify-center">
             <CtaButton className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-none px-8 py-6 text-lg">

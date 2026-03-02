@@ -8,8 +8,8 @@ import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { BookingContainer } from './_components/booking-container';
 import { getRestaurantBySlugAction, getUserReservationsAction } from '~/lib/server/restaurant/restaurant-actions';
 import { UserReservations } from './_components/user-reservations';
-import { SiteHeader } from '~/(marketing)/_components/site-header';
-import { PublicFooter } from '~/(marketing)/_components/public-footer';
+import { SiteHeader } from '~/(home)/_components/site-header';
+import { PublicFooter } from '~/(home)/_components/public-footer';
 import {
     CtaButton,
     FeatureCard,

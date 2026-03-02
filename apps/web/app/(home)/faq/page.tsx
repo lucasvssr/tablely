@@ -5,7 +5,7 @@ import { ArrowRight, ChevronDown } from 'lucide-react';
 import { Button } from '@kit/ui/button';
 import { Trans } from '@kit/ui/trans';
 
-import { SitePageHeader } from '~/(marketing)/_components/site-page-header';
+import { SitePageHeader } from '~/(home)/_components/site-page-header';
 import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { withI18n } from '~/lib/i18n/with-i18n';
 
@@ -13,7 +13,7 @@ export const generateMetadata = async () => {
   const { t } = await createI18nServerInstance();
 
   return {
-    title: t('marketing:faq'),
+    title: t('home:faq'),
   };
 };
 
@@ -23,9 +23,9 @@ async function FAQPage() {
   // replace this content with translations
   const faqItems = [
     {
-      // or: t('marketing:faq.question1')
+      // or: t('home:faq.question1')
       question: `Do you offer a free trial?`,
-      // or: t('marketing:faq.answer1')
+      // or: t('home:faq.answer1')
       answer: `Yes, we offer a 14-day free trial. You can cancel at any time during the trial period and you won't be charged.`,
     },
     {
@@ -75,8 +75,8 @@ async function FAQPage() {
 
       <div className={'flex flex-col space-y-4 xl:space-y-8'}>
         <SitePageHeader
-          title={t('marketing:faq')}
-          subtitle={t('marketing:faqSubtitle')}
+          title={t('home:faq')}
+          subtitle={t('home:faqSubtitle')}
         />
 
         <div className={'container flex flex-col space-y-8 pb-16'}>
@@ -90,7 +90,7 @@ async function FAQPage() {
             <Button asChild variant={'outline'}>
               <Link href={'/contact'}>
                 <span>
-                  <Trans i18nKey={'marketing:contactFaq'} />
+                  <Trans i18nKey={'home:contactFaq'} />
                 </span>
 
                 <ArrowRight className={'ml-2 w-4'} />

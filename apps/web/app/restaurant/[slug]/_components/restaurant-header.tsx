@@ -1,6 +1,6 @@
 'use client';
 
-import { SiteHeaderAccountSection } from '~/(marketing)/_components/site-header-account-section';
+import { SiteHeaderAccountSection } from '~/(home)/_components/site-header-account-section';
 
 import type { JwtPayload } from '@supabase/supabase-js';
 

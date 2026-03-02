@@ -12,21 +12,21 @@ export default function DualExperienceSection() {
                 <div className="space-y-4">
                     <div className="space-y-1">
                         <span className="text-xs font-bold uppercase tracking-[0.2em] text-brand-copper-foreground">
-                            <Trans i18nKey={'marketing:clientExperienceLabel'} />
+                            <Trans i18nKey={'home:clientExperienceLabel'} />
                         </span>
                         <h3 className="font-heading text-2xl font-bold text-zinc-900 dark:text-white">
-                            <Trans i18nKey={'marketing:clientExperienceTitle'} />
+                            <Trans i18nKey={'home:clientExperienceTitle'} />
                         </h3>
                     </div>
                     <p className="text-muted-foreground leading-relaxed font-sans">
-                        <Trans i18nKey={'marketing:clientExperienceDescription'} />
+                        <Trans i18nKey={'home:clientExperienceDescription'} />
                     </p>
                 </div>
                 <ul className="grid gap-4 pt-4 text-sm text-zinc-600 dark:text-zinc-400">
                     {[
-                        'marketing:clientFeature1',
-                        'marketing:clientFeature2',
-                        'marketing:clientFeature3',
+                        'home:clientFeature1',
+                        'home:clientFeature2',
+                        'home:clientFeature3',
                     ].map((key, i) => (
                         <li key={i} className="flex items-center gap-3">
                             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-copper/10 text-brand-copper">
@@ -61,21 +61,21 @@ export default function DualExperienceSection() {
                 <div className="space-y-4">
                     <div className="space-y-1">
                         <span className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                            <Trans i18nKey={'marketing:proExperienceLabel'} />
+                            <Trans i18nKey={'home:proExperienceLabel'} />
                         </span>
                         <h3 className="font-heading text-2xl font-bold text-zinc-900 dark:text-white">
-                            <Trans i18nKey={'marketing:proExperienceTitle'} />
+                            <Trans i18nKey={'home:proExperienceTitle'} />
                         </h3>
                     </div>
                     <p className="text-muted-foreground leading-relaxed font-sans">
-                        <Trans i18nKey={'marketing:proExperienceDescription'} />
+                        <Trans i18nKey={'home:proExperienceDescription'} />
                     </p>
                 </div>
                 <ul className="grid gap-4 pt-4 text-sm text-zinc-600 dark:text-zinc-400">
                     {[
-                        'marketing:proFeature1',
-                        'marketing:proFeature2',
-                        'marketing:proFeature3',
+                        'home:proFeature1',
+                        'home:proFeature2',
+                        'home:proFeature3',
                     ].map((key, i) => (
                         <li key={i} className="flex items-center gap-3">
                             <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">

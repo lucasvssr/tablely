@@ -69,8 +69,101 @@
     "termsOfServiceModificationContent": "Tablely se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront informés de toute modification majeure par email ou via une notification sur la plateforme.",
     "cookiePolicy": "Politique de cookies",
     "cookiePolicyDescription": "Notre politique de cookies et utilisation",
+    "cookiePolicyLastUpdated": "Dernière mise à jour : {{date}}",
+    "cookiePolicyWhatIsACookieTitle": "1. Qu'est-ce qu'un cookie ?",
+    "cookiePolicyWhatIsACookieContent": "Un cookie est un petit fichier texte déposé sur votre terminal (ordinateur, tablette, smartphone) lorsque vous visitez un site web. Il permet de reconnaître l'utilisateur lors de ses prochaines visites et d'améliorer son expérience.",
+    "cookiePolicyWhyDoWeUseCookiesTitle": "2. Les Cookies que nous utilisons",
+    "cookiePolicyWhyDoWeUseCookiesContent": "Nous utilisons trois catégories de cookies sur Tablely ",
+    "cookiePolicyNecessaryList": [
+        "Cookies Essentiels (Strictement nécessaires) :",
+        [
+            "Authentification (Supabase) : Permettent de vous maintenir connecté à votre compte pendant votre navigation",
+            "Sécurité : Permettent de protéger votre compte et nos serveurs contre les attaques",
+            "Session : Indispensables pour le bon fonctionnement du tunnel de réservation"
+        ]
+    ],
+    "cookiePolicyFunctionalityList": [
+        "Cookies Fonctionnels :",
+        [
+            "Utilisés pour sécuriser et traiter les paiements ou les empreintes bancaires. Ils sont nécessaires pour assurer la fiabilité des transactions."
+        ]
+    ],
+    "cookiePolicyAnalyticsList": [
+        "Cookies de Mesure d'Audience (Analytiques) :",
+        [
+            "Nous permettent de comprendre comment les utilisateurs naviguent sur le site afin d'optimiser l'ergonomie (ex: pages les plus visitées). Ces données sont généralement anonymisées."
+        ]
+    ],
+    "cookiePolicyChoiceTitle": "3. Vos Choix concernant les Cookies",
+    "cookiePolicyChoiceContent": [
+        "Lors de votre première visite, une bannière vous informe de la présence de cookies.",
+        [
+            "Cookies techniques : Ils ne peuvent pas être désactivés car le site ne pourrait pas fonctionner sans eux (ex: rester connecté).",
+            "Cookies tiers : Vous pouvez configurer votre navigateur pour bloquer les cookies de tiers ou être alerté lorsqu'un cookie est envoyé."
+        ]
+    ],
+    "cookiePolicyParametrageNavigateurTitle": "4. Paramétrage du navigateur",
+    "cookiePolicyParametrageNavigateurContent": [
+        "Chaque navigateur propose des réglages différents pour gérer les cookies :",
+        [
+            "Chrome : Menu > Paramètres > Confidentialité et sécurité.",
+            "Firefox : Menu > Outils > Options > Vie privée et sécurité.",
+            "Safari : Menu > Préférences > Sécurité.",
+            "Edge : Menu > Paramètres > Confidentialité, recherche et services."
+        ]
+    ],
+    "cookiePolicyContactTitle": "5. Contact",
+    "cookiePolicyContactContent": "Si vous avez des questions concernant notre politique de cookies, n'hésitez pas à nous contacter à l'adresse suivante : {{email}}",
     "privacyPolicy": "Politique de confidentialité",
     "privacyPolicyDescription": "Protection de vos données personnelles",
+    "privacyPolicyLastUpdated": "Dernière mise à jour : {{date}}",
+    "privacyPolicyResponsibilityDataTreatmentTitle": "1. Responsable du Traitement des Données",
+    "privacyPolicyResponsibilityDataTreatmentContent": "La plateforme Tablely est responsable du traitement des données personnelles collectées via le site. Nous nous engageons à protéger la vie privée de nos utilisateurs (Clients et Restaurateurs).",
+    "privacyPolicyDataCollectedTitle": "2. Données Collectées",
+    "privacyPolicyDataCollectedContent": [
+        "Nous collectons uniquement les informations strictement nécessaires :",
+        [
+            "Pour les Clients : Nom, prénom, adresse e-mail, numéro de téléphone (pour les rappels de réservation) et historique des réservations.",
+            "Pour les Restaurateurs : Informations professionnelles, adresse de l'établissement, plan de salle et données de facturation.",
+            "Données de Paiement : Les informations de carte bancaire sont traitées exclusivement par Stripe. Tablely n'a jamais accès à vos numéros de carte."
+        ]
+    ],
+    "privacyPolicyTreatmentPurposeTitle": "3. Finalités du Traitement",
+    "privacyPolicyTreatmentPurposeContent": [
+        "Vos données sont utilisées pour :",
+        [
+            "Gérer et confirmer vos réservations en temps réel.",
+            "Envoyer des notifications (emails de confirmation et rappels).",
+            "Permettre aux restaurateurs de vous identifier lors de votre arrivée.",
+            "Lutter contre la fraude et les réservations abusives (no-shows)."
+        ]
+    ],
+    "privacyPolicyShareDataTitle": "4. Partage des Données",
+    "privacyPolicyShareDataContent": [
+        "Vos données personnelles ne sont partagées qu'avec les tiers indispensables au service :",
+        [
+            "Le Restaurateur : Reçoit vos nom/prénom/téléphone pour préparer votre accueil.",
+            "Supabase : Pour l'hébergement sécurisé de la base de données et l'authentification.",
+            "Stripe : Pour la gestion sécurisée des transactions et des empreintes bancaires.",
+            "Aucune donnée n'est vendue ou partagée à des fins commerciales.",
+            "Vos données sont stockées de manière sécurisée sur les serveurs de Supabase (UE)."
+        ]
+    ],
+    "privacyPolicyDataRetentionTitle": "5. Conservation des Données",
+    "privacyPolicyDataRetentionContent": "Les données sont conservées tant que votre compte est actif. En cas d'inactivité prolongée (2 ans), vos données personnelles sont anonymisées ou supprimées, sauf obligation légale de conservation.",
+    "privacyPolicyUserRightsTitle": "6. Vos Droits",
+    "privacyPolicyUserRightsContent": [
+        "Conformément au RGPD, vous disposez des droits suivants :",
+        [
+            "Droit d'accès : Obtenir une copie de vos données.",
+            "Droit de rectification : Corriger des informations inexactes.",
+            "Droit à l'effacement : Demander la suppression de vos données. (sauf si obligation légale de conservation)",
+            "Droit d'opposition : Vous opposer au traitement de vos données à des fins commerciales."
+        ],
+        "Pour exercer ces droits, veuillez nous contacter à l'adresse suivante : {{email}}"
+    ],
+    "privacyPolicySecurityTitle": "7. Sécurité",
+    "privacyPolicySecurityContent": "Nous mettons en œuvre toutes les mesures techniques et organisationnelles appropriées pour garantir la sécurité de vos données personnelles et prévenir toute perte, altération ou accès non autorisé.",
     "contactDescription": "Contactez-nous pour toute question ou remarque",
     "contactHeading": "Envoyez-nous un message",
     "contactSubheading": "Nous vous répondrons dans les plus brefs délais",

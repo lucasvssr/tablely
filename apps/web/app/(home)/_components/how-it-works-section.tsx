@@ -9,10 +9,10 @@ export default function HowItWorksSection() {
                         {step}
                     </div>
                     <h3 className="font-heading text-xl font-bold text-zinc-900 dark:text-white">
-                        <Trans i18nKey={`marketing:step${step}Title`} />
+                        <Trans i18nKey={`home:step${step}Title`} />
                     </h3>
                     <p className="text-muted-foreground leading-relaxed">
-                        <Trans i18nKey={`marketing:step${step}Description`} />
+                        <Trans i18nKey={`home:step${step}Description`} />
                     </p>
                 </div>
             ))}

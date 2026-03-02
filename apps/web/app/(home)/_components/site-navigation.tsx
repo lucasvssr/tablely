@@ -35,11 +35,11 @@ import { SiteNavigationItem } from './site-navigation-item';
  *
  * {
  *   FAQ: {
- *     label: 'marketing:faq',
+ *     label: 'home:faq',
  *     path: '/faq',
  *   },
  *   Pricing: {
- *     label: 'marketing:pricing',
+ *     label: 'home:pricing',
  *     path: '/pricing',
  *   },
  * }
