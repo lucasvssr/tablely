@@ -204,5 +204,11 @@
   "step2Description": "Integrate the booking module on your website and social networks.",
   "step3Title": "Navigate with ease",
   "step3Description": "Receive your bookings and coordinate your team in real-time during service.",
-  "copyright": "© Copyright {{year}} {{product}}. All rights reserved."
+  "copyright": "© Copyright {{year}} {{product}}. All rights reserved.",
+  "browseRestaurants": "Explore our restaurants",
+  "browseRestaurantsSubtitle": "Book a table in the best establishments partnered with Tablely.",
+  "restaurantPreviewHeading": "Our partner establishments",
+  "restaurantPreviewSubtitle": "Discover a selection of restaurants that trust us for their daily management.",
+  "viewAllRestaurants": "View all restaurants",
+  "bookNow": "Book now"
 }

@@ -10,6 +10,14 @@ import { ProfileAccountDropdownContainer } from '~/components/personal-account-d
 import { navigationConfig } from '~/config/navigation.config';
 
 import type { JwtPayload } from '@supabase/supabase-js';
+import { AccountSwitcher } from './account-switcher';
+
+interface Account {
+  id: string;
+  name: string;
+  slug: string;
+  role: string;
+}
 
 export function HomeMenuNavigation(props: {
   user: JwtPayload;
@@ -19,7 +27,13 @@ export function HomeMenuNavigation(props: {
     picture_url: string | null;
     role: string | null;
   };
+  accounts?: Account[];
+  activeAccountId?: string;
 }) {
+  const accounts = props.accounts ?? [];
+  const isRestaurateur = props.account?.role === 'restaurateur';
+  const activeAccountId = props.activeAccountId ?? accounts[0]?.id;
+
   const routes = navigationConfig.routes.reduce<
     Array<{
       path: string;
@@ -46,9 +60,18 @@ export function HomeMenuNavigation(props: {
   }, []);
 
   return (
-    <div className={'flex w-full flex-1 justify-between'}>
+    <div className={'flex flex-1 items-center justify-between space-x-4'}>
       <div className={'flex items-center space-x-8'}>
-        <AppLogo />
+        {isRestaurateur && accounts.length > 0 && activeAccountId ? (
+          <div className="max-w-[200px]">
+            <AccountSwitcher
+              accounts={accounts}
+              activeAccountId={activeAccountId as string}
+            />
+          </div>
+        ) : (
+          <AppLogo />
+        )}
 
         <BorderedNavigationMenu>
           {routes.map((route) => (

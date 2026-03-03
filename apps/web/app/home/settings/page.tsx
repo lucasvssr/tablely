@@ -1,5 +1,5 @@
 import { PersonalAccountSettingsContainer } from '@kit/accounts/personal-account-settings';
-import { PageBody } from '@kit/ui/page';
+import { PageBody, PageHeader } from '@kit/ui/page';
 
 import authConfig from '~/config/auth.config';
 import pathsConfig from '~/config/paths.config';
@@ -30,6 +30,7 @@ export const generateMetadata = async () => {
 
 async function PersonalAccountSettingsPage() {
   const userPromise = requireUserInServerComponent();
+  const i18n = await createI18nServerInstance();
 
   const [user, account, initialFactors] = await Promise.all([
     userPromise,
@@ -40,18 +41,24 @@ async function PersonalAccountSettingsPage() {
   const userId = user.id;
 
   return (
-    <PageBody>
-      <div className={'flex w-full flex-1 flex-col lg:max-w-2xl'}>
-        <PersonalAccountSettingsContainer
-          userId={userId}
-          user={user}
-          account={account ?? undefined}
-          paths={paths}
-          features={features}
-          initialFactors={initialFactors}
-        />
-      </div>
-    </PageBody>
+    <>
+      <PageHeader
+        title={i18n.t('account:settingsTab')}
+        description={i18n.t('account:settingsTabDescription', { defaultValue: 'Gérez vos informations personnelles et votre compte.' })}
+      />
+      <PageBody>
+        <div className={'flex w-full flex-1 flex-col lg:max-w-2xl'}>
+          <PersonalAccountSettingsContainer
+            userId={userId}
+            user={user}
+            account={account ?? undefined}
+            paths={paths}
+            features={features}
+            initialFactors={initialFactors}
+          />
+        </div>
+      </PageBody>
+    </>
   );
 }
 

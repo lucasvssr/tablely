@@ -19,6 +19,7 @@ export default async function ServicesSettingsPage() {
             <PageHeader
                 title="Services & Horaires"
                 description="Configurez vos périodes de service (Midi, Soir) pour ouvrir vos créneaux de réservation."
+                displaySidebarTrigger={false}
             />
 
             <PageBody>

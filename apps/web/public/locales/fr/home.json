@@ -204,5 +204,11 @@
     "step2Description": "Intégrez le module de réservation sur votre site et vos réseaux sociaux.",
     "step3Title": "Pilotez avec aisée",
     "step3Description": "Recevez vos réservations et coordonnez votre équipe en temps réel pendant le service.",
-    "copyright": "© Copyright {{year}} {{product}}. Tous droits réservés."
+    "copyright": "© Copyright {{year}} {{product}}. Tous droits réservés.",
+    "browseRestaurants": "Découvrez nos restaurants",
+    "browseRestaurantsSubtitle": "Réservez une table dans les meilleurs établissements partenaires de Tablely.",
+    "restaurantPreviewHeading": "Nos établissements partenaires",
+    "restaurantPreviewSubtitle": "Découvrez une sélection de restaurants qui nous font confiance pour leur gestion quotidienne.",
+    "viewAllRestaurants": "Voir tous les restaurants",
+    "bookNow": "Réserver maintenant"
 }

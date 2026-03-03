@@ -4,33 +4,25 @@ import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
 import { RestaurantSettingsForm } from './_components/restaurant-settings-form';
 import { notFound } from 'next/navigation';
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '~/lib/database.types';
-import { getUserRoleAction } from '~/lib/server/restaurant/restaurant-actions';
+import { getUserRoleAction, getActiveMembership } from '~/lib/server/restaurant/restaurant-actions';
 
 export const metadata = {
     title: 'Paramètres du Restaurant',
 };
 
-async function getUserAccount(supabase: SupabaseClient<Database>, userId: string) {
-    const { data: membership } = await supabase
-        .from('memberships')
-        .select('account_id')
-        .eq('user_id', userId)
-        .limit(1)
-        .maybeSingle();
-
-    return membership?.account_id;
-}
+// Helper getUserAccount removed in favor of restaurant-actions
 
 export default async function RestaurantSettingsPage() {
     const user = await requireUserInServerComponent();
     const supabase = getSupabaseServerClient<Database>();
 
-    const [accountId, role] = await Promise.all([
-        getUserAccount(supabase, user.id),
+    const [activeMembership, role] = await Promise.all([
+        getActiveMembership(supabase, user.id),
         getUserRoleAction({})
     ]);
+
+    const accountId = activeMembership?.account_id;
 
     if (!accountId) return notFound();
 
@@ -55,6 +47,7 @@ export default async function RestaurantSettingsPage() {
             <PageHeader
                 title="Paramètres du Restaurant"
                 description="Gérez les informations générales de votre établissement."
+                displaySidebarTrigger={false}
             />
 
             <PageBody>

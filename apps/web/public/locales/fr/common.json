@@ -68,7 +68,8 @@
         "restaurant": "Restaurant",
         "services": "Services",
         "tables": "Tables",
-        "team": "Équipe"
+        "team": "Équipe",
+        "restaurants": "Restaurants"
     },
     "roles": {
         "owner": {

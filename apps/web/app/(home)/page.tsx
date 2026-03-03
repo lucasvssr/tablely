@@ -20,6 +20,7 @@ import { MainCallToActionButton } from './_components/main-cta-button';
 
 import DualExperienceSection from './_components/dual-experience-section';
 import HowItWorksSection from './_components/how-it-works-section';
+import { RestaurantPreviewSection } from './_components/restaurant-preview-section';
 
 function Home() {
   return (
@@ -136,6 +137,8 @@ function Home() {
           </FeatureShowcase>
         </div>
       </div>
+
+      <RestaurantPreviewSection />
 
       <div className={'container mx-auto px-4 md:px-6 space-y-16'}>
         <div className="flex flex-col items-center space-y-4 text-center">

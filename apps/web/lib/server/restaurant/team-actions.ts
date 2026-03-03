@@ -5,7 +5,6 @@ import { getSupabaseServerAdminClient } from '@kit/supabase/server-admin-client'
 import { Database } from '@kit/supabase/database';
 import { enhanceAction } from '@kit/next/actions';
 import { z } from 'zod';
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
 
 const InviteSchema = z.object({
@@ -13,18 +12,7 @@ const InviteSchema = z.object({
     role: z.enum(['admin', 'member']),
 });
 
-async function getUserAccount(supabase: SupabaseClient<any>, userId: string) { // eslint-disable-line @typescript-eslint/no-explicit-any
-    const { data: memberships, error } = await supabase
-        .from('memberships')
-        .select('account_id')
-        .eq('user_id', userId);
-
-    if (error || !memberships || memberships.length === 0) {
-        return null;
-    }
-
-    return memberships[0]!.account_id;
-}
+import { getUserAccount } from '~/lib/server/restaurant/restaurant-actions';
 
 /**
  * @name inviteMemberAction
@@ -34,6 +22,7 @@ export const inviteMemberAction = enhanceAction(
         const user = await requireUserInServerComponent();
         const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
+        if (!accountId) throw new Error('Compte non trouvé');
 
         const result = InviteSchema.safeParse(Object.fromEntries(formData.entries()));
         if (!result.success) throw new Error('Données d\'invitation invalides');

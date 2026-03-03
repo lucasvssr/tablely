@@ -3,7 +3,7 @@ import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
 import { DashboardDemo } from '~/home/_components/dashboard-demo';
 import { PublicPageLinkCard } from './_components/public-page-link-card';
-import { getDashboardStatsAction, getDailyReservationsAction } from '~/lib/server/restaurant/restaurant-actions';
+import { getDashboardStatsAction, getDailyReservationsAction, getActiveMembership } from '~/lib/server/restaurant/restaurant-actions';
 import { ReservationsList, Reservation } from './_components/reservations-list';
 import { format } from 'date-fns';
 import { Button } from '@kit/ui/button';
@@ -27,11 +27,7 @@ export default async function HomePage() {
   const role = profile?.role || 'client';
 
   // Get user's active account (Organization/Restaurant)
-  const { data: membership } = await supabase
-    .from('memberships')
-    .select('account_id, accounts(name, slug)')
-    .eq('user_id', user.id)
-    .maybeSingle();
+  const membership = await getActiveMembership(supabase, user.id);
 
   const slug = (membership?.accounts as Record<string, string> | null)?.slug;
 

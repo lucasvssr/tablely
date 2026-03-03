@@ -12,6 +12,14 @@ import {
 import { AppLogo } from '~/components/app-logo';
 import { ProfileAccountDropdownContainer } from '~/components/personal-account-dropdown-container';
 import { navigationConfig } from '~/config/navigation.config';
+import { AccountSwitcher } from './account-switcher';
+
+interface Account {
+  id: string;
+  name: string;
+  slug: string;
+  role: string;
+}
 
 export function HomeSidebar(props: {
   account?: {
@@ -21,11 +29,24 @@ export function HomeSidebar(props: {
     role: string | null;
   };
   user: JwtPayload;
+  accounts?: Account[];
+  activeAccountId?: string;
 }) {
+  const accounts = props.accounts ?? [];
+  const isRestaurateur = props.account?.role === 'restaurateur';
+  const activeAccountId = props.activeAccountId ?? accounts[0]?.id;
+
   return (
     <Sidebar collapsible={'icon'}>
       <SidebarHeader className={'h-16 justify-center'}>
-        <AppLogo />
+        {isRestaurateur && accounts.length > 0 && activeAccountId ? (
+          <AccountSwitcher
+            accounts={accounts}
+            activeAccountId={activeAccountId as string}
+          />
+        ) : (
+          <AppLogo />
+        )}
       </SidebarHeader>
 
       <SidebarContent>

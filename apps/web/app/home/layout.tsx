@@ -23,6 +23,15 @@ import { getPersonalAccount } from '~/lib/server/accounts/queries';
 import { HomeMenuNavigation } from './_components/home-menu-navigation';
 import { HomeMobileNavigation } from './_components/home-mobile-navigation';
 import { HomeSidebar } from './_components/home-sidebar';
+import { getActiveMembership, getMembershipsAction } from '~/lib/server/restaurant/restaurant-actions';
+import { getSupabaseServerClient } from '@kit/supabase/server-client';
+
+interface Account {
+  id: string;
+  name: string;
+  slug: string;
+  role: string;
+}
 
 function HomeLayout({ children }: React.PropsWithChildren) {
   const style = use(getLayoutStyle());
@@ -44,6 +53,8 @@ function MobileNavigation(props: {
     picture_url: string | null;
     role: string | null;
   };
+  accounts?: Account[];
+  activeAccountId?: string;
 }) {
   return (
     <div className={'flex items-center space-x-4'}>
@@ -51,7 +62,12 @@ function MobileNavigation(props: {
 
       <div className={'flex items-center space-x-2'}>
         <ModeToggle />
-        <HomeMobileNavigation user={props.user} account={props.account} />
+        <HomeMobileNavigation
+          user={props.user}
+          account={props.account}
+          accounts={props.accounts}
+          activeAccountId={props.activeAccountId}
+        />
       </div>
     </div>
   );
@@ -60,23 +76,43 @@ function MobileNavigation(props: {
 function SidebarLayout({ children }: React.PropsWithChildren) {
   const sidebarMinimized = navigationConfig.sidebarCollapsed;
   const userPromise = requireUserInServerComponent();
+  const supabase = getSupabaseServerClient();
 
-  const [user, account] = use(
+  const [user, account, activeMembership, memberships] = use(
     Promise.all([
       userPromise,
       userPromise.then((user) => getPersonalAccount(user.id)),
+      userPromise.then((user) => getActiveMembership(supabase, user.id)),
+      getMembershipsAction({}),
     ]),
   );
+
+  const sidebarAccount = account ? {
+    id: account.id,
+    name: account.name,
+    picture_url: account.picture_url,
+    role: account.role
+  } : undefined;
 
   return (
     <SidebarProvider defaultOpen={sidebarMinimized}>
       <Page style={'sidebar'}>
         <PageNavigation>
-          <HomeSidebar user={user} account={account ?? undefined} />
+          <HomeSidebar
+            user={user}
+            account={sidebarAccount}
+            accounts={memberships}
+            activeAccountId={activeMembership?.account_id}
+          />
         </PageNavigation>
 
         <PageMobileNavigation className={'flex items-center justify-between'}>
-          <MobileNavigation user={user} account={account ?? undefined} />
+          <MobileNavigation
+            user={user}
+            account={sidebarAccount}
+            accounts={memberships}
+            activeAccountId={activeMembership?.account_id}
+          />
         </PageMobileNavigation>
 
         {children}
@@ -87,22 +123,42 @@ function SidebarLayout({ children }: React.PropsWithChildren) {
 
 function HeaderLayout({ children }: React.PropsWithChildren) {
   const userPromise = requireUserInServerComponent();
+  const supabase = getSupabaseServerClient();
 
-  const [user, account] = use(
+  const [user, account, activeMembership, memberships] = use(
     Promise.all([
       userPromise,
       userPromise.then((user) => getPersonalAccount(user.id)),
+      userPromise.then((user) => getActiveMembership(supabase, user.id)),
+      getMembershipsAction({}),
     ]),
   );
+
+  const headerAccount = account ? {
+    id: account.id,
+    name: account.name,
+    picture_url: account.picture_url,
+    role: account.role
+  } : undefined;
 
   return (
     <Page style={'header'}>
       <PageNavigation>
-        <HomeMenuNavigation user={user} account={account ?? undefined} />
+        <HomeMenuNavigation
+          user={user}
+          account={headerAccount}
+          accounts={memberships as Account[]}
+          activeAccountId={activeMembership?.account_id}
+        />
       </PageNavigation>
 
       <PageMobileNavigation className={'flex items-center justify-between'}>
-        <MobileNavigation user={user} account={account ?? undefined} />
+        <MobileNavigation
+          user={user}
+          account={headerAccount}
+          accounts={memberships}
+          activeAccountId={activeMembership?.account_id}
+        />
       </PageMobileNavigation>
 
       {children}

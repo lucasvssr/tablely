@@ -16,6 +16,7 @@
   "modalConfirmationQuestion": "Are you sure you want to continue?",
   "imageInputLabel": "Click here to upload an image",
   "cancel": "Cancel",
+  "confirm": "Confirm",
   "clear": "Clear",
   "notFound": "Not Found",
   "backToHomePage": "Back to Home Page",
@@ -63,11 +64,19 @@
     "dashboard": "Dashboard",
     "settings": "Settings",
     "profile": "Profile",
-    "application": "Application"
+    "application": "Application",
+    "restaurant": "Restaurant",
+    "services": "Services",
+    "tables": "Tables",
+    "team": "Team",
+    "restaurants": "Restaurants"
   },
   "roles": {
     "owner": {
       "label": "Owner"
+    },
+    "admin": {
+      "label": "Admin"
     },
     "member": {
       "label": "Member"

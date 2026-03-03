@@ -4,6 +4,14 @@ import Link from 'next/link';
 
 import { LogOut, Menu as MenuIcon } from 'lucide-react';
 import type { JwtPayload } from '@supabase/supabase-js';
+import { AccountSwitcher } from './account-switcher';
+
+interface Account {
+  id: string;
+  name: string;
+  slug: string;
+  role: string;
+}
 
 import { useSignOut } from '@kit/supabase/hooks/use-sign-out';
 import {
@@ -30,8 +38,13 @@ export function HomeMobileNavigation(props: {
     picture_url: string | null;
     role: string | null;
   };
+  accounts?: Account[];
+  activeAccountId?: string;
 }) {
+  const isRestaurateur = props.account?.role === 'restaurateur';
   const signOut = useSignOut();
+  const accounts = props.accounts ?? [];
+  const activeAccountId = props.activeAccountId ?? accounts[0]?.id;
 
   const Links = navigationConfig.routes.map((item, index) => {
     if ('children' in item) {
@@ -63,7 +76,15 @@ export function HomeMobileNavigation(props: {
         <MenuIcon className={'h-9'} />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent sideOffset={10} className={'w-screen rounded-none'}>
+      <DropdownMenuContent sideOffset={10} className={'w-screen rounded-none p-4'}>
+        {isRestaurateur && accounts.length > 0 && activeAccountId && (
+          <div className="mb-4 px-2">
+            <AccountSwitcher
+              accounts={accounts}
+              activeAccountId={activeAccountId as string}
+            />
+          </div>
+        )}
         <DropdownMenuGroup>{Links}</DropdownMenuGroup>
 
         <DropdownMenuSeparator />

@@ -4,19 +4,36 @@ import { isAfter, subMinutes, addMinutes, parseISO } from 'date-fns';
 
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { getSupabaseServerAdminClient } from '@kit/supabase/server-admin-client';
 import { enhanceAction } from '@kit/next/actions';
 import { RestaurantSchema, ServiceSchema, TableSchema, ReservationSchema, UpdateReservationSchema } from './restaurant.schema';
-import { Database } from '@kit/supabase/database';
+import { Database } from '~/lib/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
 import { encrypt, decrypt } from '~/lib/security/encryption';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function getUserAccount(supabase: SupabaseClient<any>, userId: string) {
-    // Get all memberships for the user. Since accounts table now only contains
-    // organizations (restaurants), any membership is a valid restaurant account.
+export async function getUserAccount(supabase: SupabaseClient<Database>, userId: string) {
+    // 1. Check for active account cookie
+    const cookieStore = await cookies();
+    const activeAccountId = cookieStore.get('active_account_id')?.value;
+
+    if (activeAccountId) {
+        // Verify user still has membership for this account
+        const { data: membership } = await supabase
+            .from('memberships')
+            .select('account_id')
+            .eq('user_id', userId)
+            .eq('account_id', activeAccountId)
+            .maybeSingle();
+
+        if (membership) {
+            return membership.account_id;
+        }
+    }
+
+    // 2. Fallback to first membership if no cookie or invalid cookie
     const { data: memberships, error } = await supabase
         .from('memberships')
         .select('account_id')
@@ -31,13 +48,32 @@ async function getUserAccount(supabase: SupabaseClient<any>, userId: string) {
 }
 
 /**
+ * @name getActiveMembership
+ * @description Helper to get the full membership record for the active account.
+ */
+export async function getActiveMembership(supabase: SupabaseClient<Database>, userId: string) {
+    const accountId = await getUserAccount(supabase, userId);
+    if (!accountId) return null;
+
+    const { data: membership } = await supabase
+        .from('memberships')
+        .select('account_id, role, accounts(name, slug)')
+        .eq('user_id', userId)
+        .eq('account_id', accountId)
+        .single();
+
+    return membership;
+}
+
+/**
  * @name upsertServiceAction
  */
 export const upsertServiceAction = enhanceAction(
     async (formData: FormData) => {
         const user = await requireUserInServerComponent();
-        const supabase = getSupabaseServerClient();
+        const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
+        if (!accountId) throw new Error('Restaurant non trouvé');
 
         const rawData = Object.fromEntries(formData.entries());
         const validatedData = {
@@ -56,12 +92,12 @@ export const upsertServiceAction = enhanceAction(
         let serviceId = id;
 
         if (id) {
-            const { error } = await supabase.from('services').update(data).eq('id', id).eq('account_id', accountId);
+            const { error } = await supabase.from('services').update(data).eq('id', id).eq('account_id', accountId as string);
             if (error) throw new Error(error.message);
         } else {
             const { data: newService, error } = await supabase
                 .from('services')
-                .insert({ ...data, account_id: accountId })
+                .insert({ ...data, account_id: accountId as string })
                 .select('id')
                 .single();
             if (error) throw new Error(error.message);
@@ -93,7 +129,7 @@ export const upsertServiceAction = enhanceAction(
 export const upsertTableAction = enhanceAction(
     async (formData: FormData) => {
         const user = await requireUserInServerComponent();
-        const supabase = getSupabaseServerClient();
+        const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
 
         if (!accountId) {
@@ -146,7 +182,7 @@ function slugify(text: string) {
 export const createRestaurantAction = enhanceAction(
     async (formData: FormData) => {
         const user = await requireUserInServerComponent();
-        const supabase = getSupabaseServerClient();
+        const supabase = getSupabaseServerClient<Database>();
 
         const result = RestaurantSchema.safeParse(
             Object.fromEntries(formData.entries()),
@@ -215,14 +251,15 @@ export const createRestaurantAction = enhanceAction(
 export const deleteServiceAction = enhanceAction(
     async ({ id }: { id: string }) => {
         const user = await requireUserInServerComponent();
-        const supabase = getSupabaseServerClient();
+        const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
+        if (!accountId) throw new Error('Compte non trouvé');
 
         const { error } = await supabase
             .from('services')
             .delete()
             .eq('id', id)
-            .eq('account_id', accountId);
+            .eq('account_id', accountId as string);
 
         if (error) throw new Error(error.message);
     },
@@ -235,14 +272,15 @@ export const deleteServiceAction = enhanceAction(
 export const deleteTableAction = enhanceAction(
     async ({ id }: { id: string }) => {
         const user = await requireUserInServerComponent();
-        const supabase = getSupabaseServerClient();
+        const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
+        if (!accountId) throw new Error('Compte non trouvé');
 
         const { error } = await supabase
             .from('dining_tables')
             .delete()
             .eq('id', id)
-            .eq('account_id', accountId);
+            .eq('account_id', accountId as string);
 
         if (error) throw new Error(error.message);
     },
@@ -254,8 +292,9 @@ export const deleteTableAction = enhanceAction(
 export const updateRestaurantAction = enhanceAction(
     async (formData: FormData) => {
         const user = await requireUserInServerComponent();
-        const supabase = getSupabaseServerClient();
+        const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
+        if (!accountId) throw new Error('Compte non trouvé');
 
         const result = RestaurantSchema.safeParse(
             Object.fromEntries(formData.entries()),
@@ -308,8 +347,9 @@ export const updateRestaurantAction = enhanceAction(
 export const getServicesAction = enhanceAction(
     async (_: unknown) => {
         const user = await requireUserInServerComponent();
-        const supabase = getSupabaseServerClient();
+        const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
+        if (!accountId) throw new Error('Compte non trouvé');
 
         const { data, error } = await supabase
             .from('services')
@@ -334,8 +374,9 @@ export const getServicesAction = enhanceAction(
 export const getTablesAction = enhanceAction(
     async (_: unknown) => {
         const user = await requireUserInServerComponent();
-        const supabase = getSupabaseServerClient();
+        const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
+        if (!accountId) throw new Error('Compte non trouvé');
 
         const { data, error } = await supabase
             .from('dining_tables')
@@ -354,7 +395,7 @@ export const getTablesAction = enhanceAction(
 export const getDashboardStatsAction = enhanceAction(
     async (_: unknown) => {
         const user = await requireUserInServerComponent();
-        const supabase = getSupabaseServerClient();
+        const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
 
         if (!accountId) {
@@ -638,6 +679,27 @@ export async function getRestaurantBySlugAction(slug: string) {
 }
 
 /**
+ * @name getRestaurantsAction
+ * @description Fetches all restaurants for the public list.
+ */
+export async function getRestaurantsAction() {
+    const supabase = getSupabaseServerClient<Database>();
+
+    const { data, error: _error } = await supabase
+        .from('restaurants')
+        .select('id, name, location, phone, accounts(slug)')
+        .order('name');
+
+    return ((data as unknown as Record<string, unknown>[]) || []).map((r) => ({
+        id: r.id as string,
+        name: r.name as string,
+        location: r.location as string,
+        phone: r.phone as string,
+        slug: (r.accounts as unknown as { slug: string })?.slug
+    }));
+}
+
+/**
  * @name getUserReservationsAction
  * @description Fetches upcoming reservations for a specific user at a specific restaurant.
  * This ensures that sensitive booking details are fetched via a server-side call.
@@ -678,7 +740,7 @@ export async function getUserReservationsAction({
 export const getUserRoleAction = enhanceAction(
     async (_: unknown) => {
         const user = await requireUserInServerComponent();
-        const supabase = getSupabaseServerClient();
+        const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
 
         if (!accountId) return 'member';
@@ -705,20 +767,16 @@ export const getDailyReservationsAction = enhanceAction(
         const user = await requireUserInServerComponent();
         const supabase = getSupabaseServerClient<Database>();
 
-        const { data: membership, error: mError } = await supabase
-            .from('memberships')
-            .select('account_id')
-            .eq('user_id', user.id)
-            .maybeSingle();
+        const accountId = await getUserAccount(supabase, user.id);
 
-        if (mError || !membership) {
+        if (!accountId) {
             return [];
         }
 
         const { data, error } = await supabase
             .from('reservations')
             .select('*')
-            .eq('account_id', membership.account_id)
+            .eq('account_id', accountId)
             .eq('date', date)
             .order('start_time', { ascending: true });
 
@@ -956,3 +1014,70 @@ export const updateReservationDetailsAction = enhanceAction(
         schema: UpdateReservationSchema,
     }
 );
+
+/**
+ * @name getMembershipsAction
+ * @description Fetches all memberships with account details for the current user.
+ */
+export const getMembershipsAction = enhanceAction(
+    async (_: unknown) => {
+        const user = await requireUserInServerComponent();
+        const supabase = getSupabaseServerClient<Database>();
+
+        const { data, error } = await supabase
+            .from('memberships')
+            .select('account_id, role, accounts(name, slug)')
+            .eq('user_id', user.id);
+
+        if (error) throw new Error(error.message);
+
+        return (data || []).map(m => {
+            const accounts = m.accounts as unknown as { name: string; slug: string };
+            return {
+                id: m.account_id,
+                role: m.role,
+                name: accounts?.name,
+                slug: accounts?.slug
+            };
+        });
+    },
+    { auth: true }
+);
+
+/**
+ * @name switchToAccountAction
+ * @description Sets the active account cookie and revalidates.
+ */
+export const switchToAccountAction = enhanceAction(
+    async ({ accountId }: { accountId: string }) => {
+        const user = await requireUserInServerComponent();
+        const supabase = getSupabaseServerClient<Database>();
+
+        // Verify membership
+        const { data: membership } = await supabase
+            .from('memberships')
+            .select('account_id')
+            .eq('user_id', user.id)
+            .eq('account_id', accountId)
+            .maybeSingle();
+
+        if (!membership) {
+            throw new Error('Vous n\'avez pas accès à ce compte');
+        }
+
+        const cookieStore = await cookies();
+        cookieStore.set('active_account_id', accountId, {
+            path: '/',
+            maxAge: 60 * 60 * 24 * 30, // 30 days
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+        });
+
+        revalidatePath('/home', 'layout');
+        revalidatePath('/home', 'page');
+        return { success: true };
+    },
+    { auth: true }
+);
+

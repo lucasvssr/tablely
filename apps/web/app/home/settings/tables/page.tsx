@@ -19,6 +19,7 @@ export default async function TablesSettingsPage() {
             <PageHeader
                 title="Plan de Salle"
                 description="Gérez les tables de votre restaurant pour calculer précisément vos disponibilités."
+                displaySidebarTrigger={false}
             />
 
             <PageBody>

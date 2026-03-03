@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@kit/ui/tabs';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
 import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { getTeamMembersAction, getInvitationsAction } from '~/lib/server/restaurant/team-actions';
-import { getUserRoleAction } from '~/lib/server/restaurant/restaurant-actions';
+import { getUserRoleAction, getActiveMembership } from '~/lib/server/restaurant/restaurant-actions';
 
 export default async function TeamSettingsPage() {
     const user = await requireUserInServerComponent();
@@ -17,17 +17,12 @@ export default async function TeamSettingsPage() {
     const i18n = await createI18nServerInstance();
     const t = i18n.getFixedT(null, 'teams');
 
-    const [role, { data: membership }] = await Promise.all([
+    const [role, activeMembership] = await Promise.all([
         getUserRoleAction({}),
-        supabase
-            .from('memberships')
-            .select('account_id')
-            .eq('user_id', user.id)
-            .limit(1)
-            .maybeSingle()
+        getActiveMembership(supabase, user.id)
     ]);
 
-    const accountId = membership?.account_id || null;
+    const accountId = activeMembership?.account_id || null;
     const isAdmin = role === 'owner' || role === 'admin';
 
     // Prefetching data on server for better performance and SEO
@@ -39,6 +34,7 @@ export default async function TeamSettingsPage() {
             <PageHeader
                 title={t('members.pageTitle')}
                 description={t('members.pageDescription')}
+                displaySidebarTrigger={false}
             />
 
             <PageBody>
@@ -54,7 +50,7 @@ export default async function TeamSettingsPage() {
                                 <Card className="border-none shadow-xl bg-gradient-to-br from-background to-muted/30">
                                     <CardHeader>
                                         <CardTitle>{t('membersTabLabel')}</CardTitle>
-                                        <CardDescription>{t('pageDescription')}</CardDescription>
+                                        <CardDescription>{t('members.pageDescription')}</CardDescription>
                                     </CardHeader>
                                     <CardContent>
                                         {accountId ? (
