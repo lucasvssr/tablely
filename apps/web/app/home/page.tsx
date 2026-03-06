@@ -16,6 +16,7 @@ import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { getClientReservationsAction, getRestaurantsAction } from '~/lib/server/restaurant/restaurant-actions';
 import { ClientReservationsList } from './_components/client-reservations-list';
 import { RestaurantCard } from './_components/restaurant-card';
+import { PublicFooter } from '../(home)/_components/public-footer';
 
 export default async function HomePage() {
   const user = await requireUserInServerComponent();
@@ -56,9 +57,9 @@ export default async function HomePage() {
         <PageBody>
           <div className="flex flex-col gap-10 w-full">
             <div className="w-full">
-               <ClientReservationsList reservations={clientReservations} />
+              <ClientReservationsList reservations={clientReservations} />
             </div>
-            
+
             <div className="w-full">
               <div className="flex items-center justify-between mb-4 px-1">
                 <h3 className="text-xl font-bold font-heading">{i18n.t('dashboard:welcome.readyTitle')}</h3>
@@ -69,12 +70,13 @@ export default async function HomePage() {
                   </Link>
                 </Button>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {allRestaurants.slice(0, 6).map((restaurant) => (
                   <RestaurantCard key={restaurant.id} restaurant={restaurant} />
                 ))}
               </div>
+              <PublicFooter className="pt-16" />
             </div>
           </div>
         </PageBody>
@@ -97,13 +99,13 @@ export default async function HomePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Utensils className="h-5 w-5 text-brand-copper" />
-                {isMember 
-                  ? i18n.t('dashboard:setup.noAccessTitle') 
+                {isMember
+                  ? i18n.t('dashboard:setup.noAccessTitle')
                   : i18n.t('dashboard:setup.createTitle')}
               </CardTitle>
               <CardDescription>
-                {isMember 
-                  ? i18n.t('dashboard:setup.noAccessDescription') 
+                {isMember
+                  ? i18n.t('dashboard:setup.noAccessDescription')
                   : i18n.t('dashboard:setup.createDescription')}
               </CardDescription>
             </CardHeader>
@@ -117,6 +119,7 @@ export default async function HomePage() {
               </CardContent>
             )}
           </Card>
+          <PublicFooter className="pt-16" />
         </PageBody>
       </>
     );
@@ -141,24 +144,21 @@ export default async function HomePage() {
       <PageBody>
         <div className="flex flex-col gap-10">
           {slug && (
-            <div className="max-w-xl">
+            <div className="max-w-xl px-6">
               <PublicPageLinkCard slug={slug} />
             </div>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start" id="reservations-section">
-            <div className="lg:col-span-8 flex flex-col gap-10">
+          <div className="flex flex-col gap-10" id="reservations-section">
+            <div className="flex flex-col gap-10 px-14 py-6">
               <ReservationsList
                 initialReservations={reservations as Reservation[]}
                 accountId={membership.account_id}
               />
               <DashboardDemo stats={stats} />
             </div>
-
-            <div className="lg:col-span-4 flex flex-col gap-8">
-              {/* Secondary column for other widgets if needed */}
-            </div>
           </div>
+          <PublicFooter className="pt-16" />
         </div>
       </PageBody>
     </>

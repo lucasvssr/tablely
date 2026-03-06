@@ -1,6 +1,6 @@
 'use server';
 
-import { isAfter, subMinutes, addMinutes, parseISO } from 'date-fns';
+import { isAfter, subMinutes, addMinutes, parseISO, subDays, format } from 'date-fns';
 
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
@@ -424,31 +424,113 @@ export const getDashboardStatsAction = enhanceAction(
             return {
                 servicesCount: 0,
                 tablesCount: 0,
-                totalCapacity: 0
+                totalCapacity: 0,
+                reservationsCount: 0,
+                clientsCount: 0,
+                reservationsTrend: [],
+                guestsTrend: [],
+                clientsTrend: [],
+                topCustomers: []
             };
         }
+
+        const thirtyDaysAgo = format(subDays(new Date(), 30), 'yyyy-MM-dd');
 
         const [
             { count: servicesCount, error: servicesError },
             { count: tablesCount, error: tablesError },
-            { data: tablesData, error: tablesDataError }
+            { data: tablesData, error: tablesDataError },
+            { count: reservationsCount, error: reservationsError },
+            { data: trendData, error: trendError },
+            { data: topCustomersData, error: topCustomersError }
         ] = await Promise.all([
             supabase.from('services').select('*', { count: 'exact', head: true }).eq('account_id', accountId),
             supabase.from('dining_tables').select('*', { count: 'exact', head: true }).eq('account_id', accountId),
-            supabase.from('dining_tables').select('capacity').eq('account_id', accountId).eq('is_active', true)
+            supabase.from('dining_tables').select('capacity').eq('account_id', accountId).eq('is_active', true),
+            supabase.from('reservations').select('*', { count: 'exact', head: true }).eq('account_id', accountId).eq('status', 'confirmed'),
+            supabase.from('reservations').select('date, guest_count, client_email').eq('account_id', accountId).eq('status', 'confirmed').gte('date', thirtyDaysAgo).order('date', { ascending: true }),
+            supabase.from('reservations').select('client_name, client_email, guest_count, date').eq('account_id', accountId).eq('status', 'confirmed')
         ]);
 
-        if (servicesError || tablesError || tablesDataError) {
-            console.error('Error fetching dashboard stats:', servicesError || tablesError || tablesDataError);
+        if (servicesError || tablesError || tablesDataError || reservationsError || trendError || topCustomersError) {
+            console.error('Error fetching dashboard stats:', { servicesError, tablesError, tablesDataError, reservationsError, trendError, topCustomersError });
             throw new Error(t('actions.fetchStatsError'));
         }
 
-        const totalCapacity = tablesData?.reduce((acc, table) => acc + (table.capacity || 0), 0) || 0;
+        const totalCapacity = (tablesData || []).reduce((acc: number, table: { capacity: number | null }) => acc + (table.capacity || 0), 0);
+
+        // Process Trends (Last 30 days)
+        const reservationsTrendMap = new Map<string, number>();
+        const guestsTrendMap = new Map<string, number>();
+        const clientsTrendMap = new Map<string, Set<string>>();
+
+        // Pre-fill with last 30 days to ensure continuous charts
+        for (let i = 30; i >= 0; i--) {
+            const dateStr = format(subDays(new Date(), i), 'yyyy-MM-dd');
+            reservationsTrendMap.set(dateStr, 0);
+            guestsTrendMap.set(dateStr, 0);
+            clientsTrendMap.set(dateStr, new Set());
+        }
+
+        (trendData || []).forEach(res => {
+            const date = res.date;
+            if (date && reservationsTrendMap.has(date)) {
+                reservationsTrendMap.set(date, (reservationsTrendMap.get(date) || 0) + 1);
+                guestsTrendMap.set(date, (guestsTrendMap.get(date) || 0) + (res.guest_count || 0));
+                if (res.client_email) {
+                    clientsTrendMap.get(date)?.add(res.client_email);
+                }
+            }
+        });
+
+        const reservationsTrend = Array.from(reservationsTrendMap.entries()).map(([name, value]) => ({ name, value }));
+        const guestsTrend = Array.from(guestsTrendMap.entries()).map(([name, value]) => ({ name, value }));
+        const clientsTrend = Array.from(clientsTrendMap.entries()).map(([name, set]) => ({ name, value: set.size }));
+
+        // Process Top Customers
+        const customerMap = new Map<string, {
+            name: string;
+            email: string;
+            reservationsCount: number;
+            guestCount: number;
+            lastReservation: string;
+        }>();
+
+        (topCustomersData || []).forEach(res => {
+            const email = res.client_email;
+            if (!email) return;
+
+            const current = customerMap.get(email) || {
+                name: res.client_name || 'Anonymous',
+                email: email,
+                reservationsCount: 0,
+                guestCount: 0,
+                lastReservation: res.date || ''
+            };
+
+            current.reservationsCount += 1;
+            current.guestCount += (res.guest_count || 0);
+            if (res.date && res.date > current.lastReservation) {
+                current.lastReservation = res.date;
+            }
+
+            customerMap.set(email, current);
+        });
+
+        const topCustomers = Array.from(customerMap.values())
+            .sort((a, b) => b.reservationsCount - a.reservationsCount)
+            .slice(0, 10);
 
         return {
             servicesCount: servicesCount || 0,
             tablesCount: tablesCount || 0,
-            totalCapacity
+            totalCapacity,
+            reservationsCount: reservationsCount || 0,
+            clientsCount: customerMap.size,
+            reservationsTrend,
+            guestsTrend,
+            clientsTrend,
+            topCustomers
         };
     },
     { auth: true }
@@ -476,8 +558,8 @@ export async function getAvailableSlotsAction({
         p_restaurant_id: restaurantId,
         p_date: date,
         p_guest_count: guestCount,
-        p_user_id: userId ?? null,
-        p_client_email: clientEmail ?? null
+        p_user_id: (userId ?? null) as string | null,
+        p_client_email: (clientEmail ?? null) as string | null
     });
 
     if (error) {

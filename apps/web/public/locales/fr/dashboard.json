@@ -86,5 +86,33 @@
         "successUpdate": "Réservation mise à jour",
         "successCancel": "Réservation annulée",
         "error": "Une erreur est survenue"
+    },
+    "stats": {
+        "services": "Services",
+        "servicesDesc": "Nombre de services configurés",
+        "reservations": "Réservations",
+        "reservationsDesc": "Nombre total de réservations confirmées",
+        "guests": "Couverts",
+        "guestsDesc": "Nombre total d'invités accueillis",
+        "clients": "Clients",
+        "clientsDesc": "Nombre total de clients uniques",
+        "dailyReservations": "Volume quotidien de réservations",
+        "dailyGuests": "Nombre cumulé de convives accueillis par jour",
+        "topClients": "Top Clients",
+        "topClientsDesc": "Les clients les plus fréquents de votre établissement",
+        "active": "Actif",
+        "total": "Total",
+        "service": "Service",
+        "loyal": "Fidèle",
+        "vip": "VIP",
+        "regular": "Régulier",
+        "noClients": "Aucun client pour le moment",
+        "table": {
+            "client": "Client",
+            "reservations": "Réservations",
+            "totalGuests": "Total Couverts",
+            "lastVisit": "Dernière visite",
+            "status": "Statut"
+        }
     }
 }

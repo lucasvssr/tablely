@@ -12,6 +12,18 @@ export interface DashboardStats {
   servicesCount: number;
   tablesCount: number;
   totalCapacity: number;
+  reservationsCount: number;
+  clientsCount: number;
+  reservationsTrend: { name: string, value: number }[];
+  guestsTrend: { name: string, value: number }[];
+  clientsTrend: { name: string, value: number }[];
+  topCustomers: {
+    name: string;
+    email: string;
+    reservationsCount: number;
+    guestCount: number;
+    lastReservation: string;
+  }[];
 }
 
 export function DashboardDemo({ stats }: { stats: DashboardStats }) {
