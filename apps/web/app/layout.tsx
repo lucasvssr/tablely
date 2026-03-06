@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/react';
 import { Toaster } from '@kit/ui/sonner';
 import { cn } from '@kit/ui/utils';
 
@@ -32,6 +33,7 @@ export default async function RootLayout({
 
         <Toaster richColors={true} theme={theme} position="top-center" />
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
