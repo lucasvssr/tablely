@@ -184,7 +184,7 @@ function MiniChart({ data, color }: { data: { name: string, value: number }[], c
       <LineChart accessibilityLayer data={data}>
         <Line
           dataKey="value"
-          type="natural"
+          type="monotone"
           stroke={color}
           strokeWidth={2}
           dot={false}
@@ -345,7 +345,7 @@ export function ReservationsChart({ data, label, desc }: { data: { name: string,
             />
             <Area
               dataKey="value"
-              type="natural"
+              type="monotone"
               fill="url(#fillReservations)"
               fillOpacity={0.4}
               stroke="var(--chart-1)"

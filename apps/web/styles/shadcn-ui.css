@@ -51,8 +51,8 @@
         --chart-1: var(--color-orange-400);
         --chart-2: var(--color-teal-600);
         --chart-3: var(--color-green-800);
-        --chart-4: var(--color-yellow-200);
-        --chart-5: var(--color-orange-200);
+        --chart-4: var(--color-amber-600);
+        --chart-5: var(--color-pink-600);
 
         --sidebar-background: var(--color-neutral-50);
         --sidebar-foreground: oklch(37.05% 0.012 285.8);
