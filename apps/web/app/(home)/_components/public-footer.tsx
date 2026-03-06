@@ -27,11 +27,6 @@ export function PublicFooter() {
                         </h3>
                         <ul className="space-y-4">
                             <li>
-                                <Link href="/#features" className="text-zinc-600 dark:text-zinc-300 hover:text-brand-copper transition-colors text-lg font-medium">
-                                    <Trans i18nKey="home:featuresHeading" />
-                                </Link>
-                            </li>
-                            <li>
                                 <Link href="/pricing" className="text-zinc-600 dark:text-zinc-300 hover:text-brand-copper transition-colors text-lg font-medium">
                                     <Trans i18nKey="home:pricing" />
                                 </Link>
