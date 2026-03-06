@@ -16,7 +16,7 @@
     "@next/eslint-plugin-next": "15.5.4",
     "@types/eslint": "9.6.1",
     "eslint-config-next": "15.5.7",
-    "eslint-config-turbo": "^2.8.11",
+    "eslint-config-turbo": "^2.8.13",
     "typescript-eslint": "8.46.0"
   },
   "devDependencies": {
