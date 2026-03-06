@@ -46,7 +46,7 @@ const AppConfigSchema = z
         return true;
       }
 
-      return !schema.url.startsWith('https:');
+      return schema.url.startsWith('https:');
     },
     {
       message: `Please provide a valid HTTPS URL. Set the variable NEXT_PUBLIC_SITE_URL with a valid URL, such as: 'https://example.com'`,
