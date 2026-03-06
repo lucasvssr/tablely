@@ -1,0 +1,12 @@
+{
+    "title": "Welcome to Tablely",
+    "description": "Let's set up your establishment to get started.",
+    "form": {
+        "restaurantName": "Restaurant Name",
+        "restaurantNamePlaceholder": "e.g. The Little Bistro",
+        "location": "Location / City",
+        "locationPlaceholder": "e.g. New York, Brooklyn",
+        "submit": "Create my establishment",
+        "creating": "Creating..."
+    }
+}

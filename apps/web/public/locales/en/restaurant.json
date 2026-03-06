@@ -1,0 +1,141 @@
+{
+    "settings": {
+        "pageTitle": "Restaurant Settings",
+        "pageDescription": "Manage your establishment's general information.",
+        "cardTitle": "Establishment Information",
+        "cardDescriptionAdmin": "This information will be visible to your customers on the booking page.",
+        "cardDescriptionStaff": "View your establishment's general information.",
+        "form": {
+            "nameLabel": "Restaurant Name",
+            "namePlaceholder": "The Little Bistro",
+            "nameDescription": "The name displayed on your public page and receipts.",
+            "locationLabel": "Location / Address",
+            "locationPlaceholder": "123 Peace Street, Paris",
+            "phoneLabel": "Phone Number",
+            "phonePlaceholder": "01 23 45 67 89",
+            "submit": "Save Changes",
+            "submitting": "Saving...",
+            "success": "Restaurant settings updated",
+            "errorUnknown": "Unknown error"
+        }
+    },
+    "services": {
+        "pageTitle": "Services & Hours",
+        "pageDescription": "Configure your service periods (Lunch, Dinner) to open your booking slots.",
+        "container": {
+            "title": "Configured Services",
+            "description": "Periods during which customers can book a table.",
+            "newService": "New Service",
+            "editService": "Edit Service",
+            "newServiceDescription": "Add a service time range.",
+            "editServiceDescription": "Update service hours",
+            "cancel": "Cancel"
+        },
+        "list": {
+            "deleteConfirm": "Are you sure you want to delete this service?",
+            "deleteSuccess": "Service deleted",
+            "deleteError": "Error during deletion",
+            "noDays": "No days",
+            "allDays": "Every day",
+            "noServices": "No services configured.",
+            "noServicesDesc": "Define your opening hours (e.g., Lunch 12:00-14:30)."
+        },
+        "form": {
+            "nameLabel": "Service Name",
+            "namePlaceholder": "e.g., Lunch, Dinner, Brunch",
+            "startTimeLabel": "Start",
+            "endTimeLabel": "End",
+            "durationLabel": "Meal Duration (min)",
+            "bufferLabel": "Turnover Margin (min)",
+            "daysLabel": "Opening Days",
+            "submitCreate": "Add Service",
+            "submitUpdate": "Save Changes",
+            "submitting": "Saving...",
+            "successCreate": "Service saved!",
+            "successUpdate": "Service updated!",
+            "error": "Error while saving"
+        },
+        "days": {
+            "1": "Mon",
+            "2": "Tue",
+            "3": "Wed",
+            "4": "Thu",
+            "5": "Fri",
+            "6": "Sat",
+            "7": "Sun"
+        }
+    },
+    "tables": {
+        "pageTitle": "Table Plan",
+        "pageDescription": "Manage your restaurant's tables to accurately calculate your availability.",
+        "container": {
+            "title": "Your Tables",
+            "description": "List of tables available in your establishment.",
+            "newTable": "New Table",
+            "editTable": "Edit Table",
+            "newTableDescription": "Add a table to your table plan.",
+            "editTableDescription": "Update table details.",
+            "cancel": "Cancel"
+        },
+        "list": {
+            "deleteConfirm": "Are you sure you want to delete this table?",
+            "deleteSuccess": "Table deleted",
+            "deleteError": "Error during deletion",
+            "noTables": "No tables configured yet.",
+            "noTablesDesc": "Use the form to add your first table.",
+            "capacity": "{{count}} guests",
+            "active": "Active",
+            "inactive": "Inactive"
+        },
+        "form": {
+            "nameLabel": "Name or Number",
+            "namePlaceholder": "e.g., Table 4, Square A1",
+            "capacityLabel": "Capacity (people)",
+            "submitCreate": "Add Table",
+            "submitUpdate": "Save Changes",
+            "submitting": "Saving...",
+            "successCreate": "Table added!",
+            "successUpdate": "Table updated!",
+            "error": "Error while saving"
+        }
+    },
+    "validation": {
+        "nameMin2": "Name must be at least 2 characters",
+        "locationMin5": "Location must be at least 5 characters",
+        "serviceNameRequired": "Service name is required",
+        "formatHHMM": "Format HH:MM required",
+        "durationMin15": "Minimum duration of 15 min",
+        "bufferNonNegative": "Buffer cannot be negative",
+        "tableNameRequired": "Table name is required",
+        "capacityMin1": "Minimum capacity of 1",
+        "nameRequired": "Name is required",
+        "emailInvalid": "Invalid email"
+    },
+    "actions": {
+        "restaurantNotFound": "Restaurant not found",
+        "invalidServiceData": "Invalid service data",
+        "invalidTableData": "Invalid table data",
+        "accountNotFound": "Account not found",
+        "invalidRestaurantData": "Invalid restaurant data",
+        "orgCreationError": "Error creating organization",
+        "membershipCreationError": "Error creating membership",
+        "restaurantCreationError": "Error creating restaurant",
+        "fetchSlotsError": "Error fetching slots",
+        "existingReservation": "You already have a confirmed reservation for this service on this day",
+        "noTableAvailable": "No table available for this number of guests",
+        "tablesFull": "All our tables are full at this time (considering meal duration)",
+        "validationError": "Error validating reservation",
+        "fetchReservationsError": "Error fetching reservations",
+        "reservationNotFound": "Reservation not found",
+        "permissionDenied": "Permission denied",
+        "arrivedTooEarly": "Cannot mark as arrived more than 30 min in advance",
+        "noShowTooEarly": "Cannot mark as No-show before 15 min after the time",
+        "updateStatusError": "Error updating status",
+        "updatePermissionDenied": "You do not have permission to modify this reservation",
+        "availabilityChangeError": "Sorry, no more availability for this change (tables full)",
+        "updateError": "Error updating",
+        "accountAccessDenied": "You do not have access to this account",
+        "fetchStatsError": "Error fetching stats",
+        "invalidReservationData": "Invalid reservation data"
+    }
+}

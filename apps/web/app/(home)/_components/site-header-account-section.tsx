@@ -1,8 +1,7 @@
 'use client';
 
-import { Suspense, useMemo } from 'react';
+import { Suspense, useMemo, useState, useEffect } from 'react';
 
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
 import type { JwtPayload } from '@supabase/supabase-js';
@@ -17,15 +16,7 @@ import { Trans } from '@kit/ui/trans';
 import featuresFlagConfig from '~/config/feature-flags.config';
 import pathsConfig from '~/config/paths.config';
 
-const ModeToggle = dynamic(
-  () =>
-    import('@kit/ui/mode-toggle').then((mod) => ({
-      default: mod.ModeToggle,
-    })),
-  {
-    ssr: false,
-  },
-);
+import { ModeToggle } from '@kit/ui/mode-toggle';
 
 const paths = {
   home: pathsConfig.app.home,
@@ -40,9 +31,14 @@ export function SiteHeaderAccountSection({
 }: React.PropsWithChildren<{
   user: JwtPayload | null;
 }>) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   return (
     <div className="flex items-center space-x-2">
-      <If condition={features.enableThemeToggle}>
+      <If condition={isMounted && features.enableThemeToggle}>
         <Suspense fallback={null}>
           <ModeToggle />
         </Suspense>

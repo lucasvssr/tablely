@@ -66,8 +66,8 @@
         "profile": "Profil",
         "application": "Application",
         "restaurant": "Restaurant",
-        "services": "Services",
-        "tables": "Tables",
+        "services": "Services & Horaires",
+        "tables": "Plan de Salle",
         "team": "Équipe",
         "restaurants": "Restaurants"
     },

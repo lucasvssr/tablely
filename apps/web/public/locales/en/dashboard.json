@@ -1,0 +1,64 @@
+{
+    "welcome": {
+        "title": "Welcome to Tablely",
+        "description": "Find and book the best tables near you.",
+        "readyTitle": "Ready for a culinary experience?",
+        "readyDescription": "Explore our partner restaurants and book your table in a few clicks.",
+        "browseButton": "Browse restaurants"
+    },
+    "setup": {
+        "title": "Configuring your restaurant",
+        "description": "Let's start by creating your first establishment.",
+        "createTitle": "Create your restaurant",
+        "createDescription": "You don't have a restaurant configured yet. Create your establishment to start managing your services and bookings.",
+        "createButton": "Create my establishment"
+    },
+    "main": {
+        "title": "Dashboard",
+        "description": "Manage your restaurant and bookings at a glance."
+    },
+    "reservations": {
+        "title": "Today's bookings",
+        "today": "Today",
+        "noReservations": "No bookings",
+        "noReservationsDesc": "There are no bookings for this date yet.",
+        "table": {
+            "time": "Time",
+            "client": "Client",
+            "guests": "Guests",
+            "status": "Status",
+            "actions": "Actions"
+        },
+        "status": {
+            "confirmed": "Confirmed",
+            "cancelled": "Cancelled",
+            "arrived": "Arrived",
+            "noshow": "No-show"
+        },
+        "actions": {
+            "markArrived": "Mark Arrived",
+            "markNoShow": "Mark No-show",
+            "confirmReset": "Confirm (Reset)",
+            "cancel": "Cancel",
+            "edit": "Edit",
+            "arrivedRestriction": "Possible 30 mins before time",
+            "noshowRestriction": "Possible 15 mins after time"
+        },
+        "notes": {
+            "allergyAlert": "Allergy Alert",
+            "clientNote": "Client note"
+        },
+        "toasts": {
+            "statusUpdated": "Status updated",
+            "updateError": "Error during update",
+            "refreshError": "Error during booking refresh"
+        }
+    },
+    "publicPageCard": {
+        "title": "Your booking page",
+        "description": "Share this link with your customers on social networks or your website to receive bookings.",
+        "copyButton": "Copy link",
+        "copySuccess": "Link copied to clipboard",
+        "viewPage": "View my public page"
+    }
+}

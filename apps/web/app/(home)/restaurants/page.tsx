@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { MapPin, Phone, ArrowRight, Utensils, SearchX } from 'lucide-react';
 import { Trans } from '@kit/ui/trans';
 import { withI18n } from '~/lib/i18n/with-i18n';
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { RestaurantSearchBar } from './_components/restaurant-search-bar';
 import { Suspense } from 'react';
 
@@ -15,6 +16,7 @@ interface RestaurantsPageProps {
 async function RestaurantsPage({ searchParams }: RestaurantsPageProps) {
     const { q } = await searchParams;
     const allRestaurants = await getRestaurantsAction();
+    const i18n = await createI18nServerInstance();
 
     // Filter client-side on the server — fast since data is already loaded
     const query = q?.toLowerCase().trim() ?? '';
@@ -31,13 +33,10 @@ async function RestaurantsPage({ searchParams }: RestaurantsPageProps) {
             {/* Header */}
             <div className="flex flex-col gap-4 mb-10">
                 <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white">
-                    <Trans i18nKey="home:browseRestaurants" defaults="Découvrez nos restaurants" />
+                    <Trans i18nKey="home:browseRestaurants" />
                 </h1>
                 <p className="text-xl text-muted-foreground">
-                    <Trans
-                        i18nKey="home:browseRestaurantsSubtitle"
-                        defaults="Réservez une table dans les meilleurs établissements partenaires de Tablely."
-                    />
+                    <Trans i18nKey="home:browseRestaurantsSubtitle" />
                 </p>
             </div>
 
@@ -51,12 +50,13 @@ async function RestaurantsPage({ searchParams }: RestaurantsPageProps) {
                 {query && (
                     <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
                         {restaurants.length === 0 ? (
-                            <span>Aucun résultat pour <span className="font-semibold text-zinc-700 dark:text-zinc-200">&quot;{q}&quot;</span></span>
+                            <Trans i18nKey="home:noResultsFor" values={{ query: q }} />
                         ) : (
                             <span>
-                                <span className="font-semibold text-zinc-700 dark:text-zinc-200">{restaurants.length}</span>{' '}
-                                {restaurants.length === 1 ? 'restaurant trouvé' : 'restaurants trouvés'} pour{' '}
-                                <span className="font-semibold text-zinc-700 dark:text-zinc-200">&quot;{q}&quot;</span>
+                                <span className="font-semibold text-zinc-700 dark:text-zinc-200">
+                                    {i18n.t('home:restaurantsFound', { count: restaurants.length })}
+                                </span>{' '}
+                                {i18n.t('home:resultsFor', { query: q })}
                             </span>
                         )}
                     </p>
@@ -74,15 +74,21 @@ async function RestaurantsPage({ searchParams }: RestaurantsPageProps) {
                 /* No restaurants at all */
                 <div className="text-center py-20 flex flex-col items-center gap-4 bg-muted/20 rounded-xl border-2 border-dashed border-zinc-200 dark:border-white/10">
                     <Utensils className="h-12 w-12 text-muted-foreground" />
-                    <p className="text-lg text-muted-foreground">Aucun restaurant n&apos;est disponible pour le moment.</p>
+                    <p className="text-lg text-muted-foreground">
+                        <Trans i18nKey="home:noRestaurantsAvailable" />
+                    </p>
                 </div>
             ) : (
                 /* No results for this search */
                 <div className="text-center py-20 flex flex-col items-center gap-4 bg-muted/20 rounded-xl border-2 border-dashed border-zinc-200 dark:border-white/10">
                     <SearchX className="h-12 w-12 text-muted-foreground" />
                     <div className="space-y-1">
-                        <p className="text-lg font-semibold text-zinc-900 dark:text-white">Aucun restaurant ne correspond</p>
-                        <p className="text-muted-foreground">Essayez avec un autre nom ou une autre ville.</p>
+                        <p className="text-lg font-semibold text-zinc-900 dark:text-white">
+                            <Trans i18nKey="home:noMatchingRestaurant" />
+                        </p>
+                        <p className="text-muted-foreground">
+                            <Trans i18nKey="home:tryAnotherName" />
+                        </p>
                     </div>
                 </div>
             )}
@@ -123,7 +129,7 @@ function RestaurantCard({ restaurant, query }: { restaurant: RestaurantItem; que
                 </div>
                 <div className="absolute top-4 right-4 capitalize">
                     <div className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold shadow-sm border border-zinc-200/50 dark:border-white/10">
-                        Restaurant
+                        <Trans i18nKey="home:restaurantType" />
                     </div>
                 </div>
             </div>
@@ -149,7 +155,7 @@ function RestaurantCard({ restaurant, query }: { restaurant: RestaurantItem; que
             <CardFooter className="pt-0 pb-6 px-6">
                 <Button asChild className="w-full bg-brand-copper hover:bg-brand-copper/90 shadow-md shadow-brand-copper/10 transition-all active:scale-95">
                     <Link href={`/restaurant/${restaurant.slug}`}>
-                        Réserver maintenant
+                        <Trans i18nKey="home:bookNow" />
                         <ArrowRight className="ml-2 h-4 w-4 animate-in slide-in-from-left-1" />
                     </Link>
                 </Button>

@@ -54,7 +54,7 @@ export function MembersList({
                 toast.success(t('removeMemberSuccessMessage'));
                 router.refresh();
             } catch (error: unknown) {
-                toast.error(error instanceof Error ? error.message : 'Erreur inconnue');
+                toast.error(error instanceof Error ? error.message : t('errors.unknownError'));
             }
         });
     };
@@ -78,15 +78,15 @@ export function MembersList({
                             <div>
                                 <div className="font-medium flex items-center gap-2">
                                     {member.profiles?.display_name || member.profiles?.email.split('@')[0]}
-                                    <Badge variant={member.role === 'admin' ? 'default' : 'secondary'} className="text-[10px] h-4 px-1">
-                                        {member.role === 'admin' ? 'Admin' : 'Staff'}
+                                    <Badge variant={member.role === 'owner' ? 'default' : member.role === 'admin' ? 'default' : 'secondary'} className={`text-[10px] h-4 px-1 ${member.role === 'owner' ? 'bg-brand-copper hover:bg-brand-copper' : ''}`}>
+                                        {member.role === 'owner' ? t('roleLabels.owner') : member.role === 'admin' ? t('roleLabels.admin') : t('roleLabels.staff')}
                                     </Badge>
                                 </div>
                                 <div className="text-sm text-muted-foreground">{member.profiles?.email}</div>
                             </div>
                         </div>
 
-                        {isAdmin && (
+                        {isAdmin && member.role !== 'owner' && (
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                     <Button

@@ -67,7 +67,7 @@ export function AccountSwitcher({
                 isCollapsed && "gap-0"
             )}>
                 <div className={cn(
-                    "flex shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white transition-all shadow-md group-hover:shadow-blue-600/20",
+                    "flex shrink-0 items-center justify-center rounded-lg bg-brand-copper text-white transition-all shadow-md group-hover:shadow-brand-copper/20",
                     isCollapsed ? "h-8 w-8" : "h-9 w-9"
                 )}>
                     <Building2 className={cn("transition-all", isCollapsed ? "h-4 w-4" : "h-5 w-5")} />
@@ -109,7 +109,7 @@ export function AccountSwitcher({
                         <div className="flex items-center gap-2 overflow-hidden">
                             <div className={cn(
                                 "flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-white shadow-sm",
-                                account.id === activeAccountId ? "bg-blue-600" : "bg-muted text-muted-foreground"
+                                account.id === activeAccountId ? "bg-brand-copper" : "bg-muted text-muted-foreground"
                             )}>
                                 <Building2 className="h-4 w-4" />
                             </div>
@@ -117,7 +117,7 @@ export function AccountSwitcher({
                                 {account.name}
                             </span>
                         </div>
-                        {account.id === activeAccountId && <Check className="h-4 w-4 text-blue-600" />}
+                        {account.id === activeAccountId && <Check className="h-4 w-4 text-brand-copper" />}
                     </DropdownMenuItem>
                 ))}
                 <DropdownMenuSeparator />

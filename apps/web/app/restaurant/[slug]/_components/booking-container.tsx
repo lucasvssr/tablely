@@ -70,7 +70,6 @@ export function BookingContainer({
     }, [user, name, email, phone]);
 
     const handleConfirm = useCallback(async (manualPayload?: unknown) => {
-        console.log('handleConfirm called with manualPayload:', manualPayload);
 
         // If it's a click event or non-payload object, manualPayload will be something else
         const isManual = !!(manualPayload && typeof manualPayload === 'object' && 'restaurant_id' in manualPayload);
@@ -88,19 +87,11 @@ export function BookingContainer({
             user_id: user?.id,
         };
 
-        console.log('Final payload before validation:', payload);
-
         if (!payload.date || !payload.start_time || !payload.service_id) {
-            console.log('Validation failed: missing required fields', {
-                date: !!payload.date,
-                start_time: !!payload.start_time,
-                service_id: !!payload.service_id
-            });
             return;
         }
 
         if (!user && !isManual) {
-            console.log('User not logged in, saving to localStorage and redirecting to /home...');
             const bookingData = {
                 ...payload,
                 date: payload.date,
@@ -113,11 +104,9 @@ export function BookingContainer({
             return;
         }
 
-        console.log('Proceeding with createReservationAction call...');
         setSubmitting(true);
         try {
-            const result = await createReservationAction(payload);
-            console.log('createReservationAction result:', result);
+            await createReservationAction(payload);
             setStep('success');
             toast.success(t('public:booking.successTitle'));
         } catch (error: unknown) {
@@ -197,10 +186,8 @@ export function BookingContainer({
                         handleConfirm(payload);
                     }, 800);
                 } catch (e) {
-                    console.error('DEBUG [useEffect]: Error restoring pending booking', e);
+                    console.error('Error restoring pending booking', e);
                 }
-            } else {
-                console.log('DEBUG [useEffect]: No pending_booking in localStorage');
             }
         }
     }, [user, searchParams, restaurantId, router, handleConfirm]);

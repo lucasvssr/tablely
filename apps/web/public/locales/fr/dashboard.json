@@ -1,0 +1,64 @@
+{
+    "welcome": {
+        "title": "Bienvenue sur Tablely",
+        "description": "Trouvez et réservez les meilleures tables près de chez vous.",
+        "readyTitle": "Prêt pour une expérience culinaire ?",
+        "readyDescription": "Explorez nos restaurants partenaires et réservez votre table en quelques clics.",
+        "browseButton": "Parcourir les restaurants"
+    },
+    "setup": {
+        "title": "Configuration de votre restaurant",
+        "description": "Commençons par créer votre premier établissement.",
+        "createTitle": "Créer votre restaurant",
+        "createDescription": "Vous n'avez pas encore de restaurant configuré. Créez votre établissement pour commencer à gérer vos services et réservations.",
+        "createButton": "Créer mon établissement"
+    },
+    "main": {
+        "title": "Tableau de bord",
+        "description": "Gérez votre restaurant et vos réservations en un coup d'œil."
+    },
+    "reservations": {
+        "title": "Réservations du jour",
+        "today": "Aujourd'hui",
+        "noReservations": "Aucune réservation",
+        "noReservationsDesc": "Il n'y a pas encore de réservation pour cette date.",
+        "table": {
+            "time": "Heure",
+            "client": "Client",
+            "guests": "Couverts",
+            "status": "Statut",
+            "actions": "Actions"
+        },
+        "status": {
+            "confirmed": "Confirmé",
+            "cancelled": "Annulé",
+            "arrived": "Arrivé",
+            "noshow": "No-show"
+        },
+        "actions": {
+            "markArrived": "Marquer Arrivé",
+            "markNoShow": "Marquer No-show",
+            "confirmReset": "Confirmer (Reset)",
+            "cancel": "Annuler",
+            "edit": "Modifier",
+            "arrivedRestriction": "Possible 30 min avant l'heure",
+            "noshowRestriction": "Possible 15 min après l'heure"
+        },
+        "notes": {
+            "allergyAlert": "Alerte Allergie",
+            "clientNote": "Note client"
+        },
+        "toasts": {
+            "statusUpdated": "Statut mis à jour",
+            "updateError": "Erreur lors de la mise à jour",
+            "refreshError": "Erreur lors de la mise à jour des réservations"
+        }
+    },
+    "publicPageCard": {
+        "title": "Votre page de réservation",
+        "description": "Partagez ce lien avec vos clients sur les réseaux sociaux ou votre site web pour recevoir des réservations.",
+        "copyButton": "Copier le lien",
+        "copySuccess": "Lien copié dans le presse-papier",
+        "viewPage": "Voir ma page publique"
+    }
+}

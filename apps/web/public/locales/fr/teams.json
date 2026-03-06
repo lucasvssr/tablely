@@ -92,5 +92,34 @@
     "leaveTeam": "Quitter l'équipe",
     "active": "Actif",
     "expired": "Expiré",
-    "inviteStatus": "Statut"
+    "inviteStatus": "Statut",
+    "roleLabels": {
+        "owner": "Propriétaire",
+        "admin": "Admin",
+        "staff": "Staff"
+    },
+    "errors": {
+        "unknownError": "Une erreur est survenue",
+        "invalidEmail": "Email invalide",
+        "accountNotFound": "Compte non trouvé",
+        "invalidInvitationData": "Données d'invitation invalides",
+        "duplicateInvitation": "Une invitation est déjà en cours pour cet email",
+        "cannotRemoveSelf": "Vous ne pouvez pas vous retirer vous-même",
+        "invitationNotFound": "Invitation non trouvée ou expirée",
+        "emailMismatch": "Cette invitation ne vous est pas destinée"
+    },
+    "join": {
+        "title": "Rejoindre l'équipe",
+        "description": "Vous avez été invité à rejoindre un établissement sur Tablely.",
+        "successTitle": "Bienvenue dans l'équipe !",
+        "successDescription": "Vous avez rejoint l'organisation avec succès. Redirection en cours...",
+        "errorTitle": "Oups !",
+        "info": "En acceptant cette invitation, vous aurez accès aux outils de gestion du restaurant selon votre rôle.",
+        "acceptButton": "Accepter l'invitation",
+        "accepting": "Acceptation...",
+        "connectedAs": "Connecté en tant qu'utilisateur actuel.",
+        "goHome": "Retour à l'accueil",
+        "toastSuccess": "Invitation acceptée !",
+        "unknownError": "Erreur inconnue"
+    }
 }

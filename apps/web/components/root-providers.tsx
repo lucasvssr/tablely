@@ -1,8 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
-
-import dynamic from 'next/dynamic';
+import { Suspense, useMemo, useState, useEffect } from 'react';
 
 import { ThemeProvider } from 'next-themes';
 
@@ -22,17 +20,7 @@ import { ReactQueryProvider } from './react-query-provider';
 
 const captchaSiteKey = authConfig.captchaTokenSiteKey;
 
-const CaptchaTokenSetter = dynamic(async () => {
-  if (!captchaSiteKey) {
-    return Promise.resolve(() => null);
-  }
-
-  const { CaptchaTokenSetter } = await import('@kit/auth/captcha/client');
-
-  return {
-    default: CaptchaTokenSetter,
-  };
-});
+import { CaptchaTokenSetter } from '@kit/auth/captcha/client';
 
 export function RootProviders({
   lang,
@@ -43,12 +31,21 @@ export function RootProviders({
   theme?: string;
 }>) {
   const i18nSettings = useMemo(() => getI18nSettings(lang), [lang]);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <ReactQueryProvider>
       <I18nProvider settings={i18nSettings} resolver={i18nResolver}>
         <CaptchaProvider>
-          <CaptchaTokenSetter siteKey={captchaSiteKey} />
+          <If condition={isMounted && !!captchaSiteKey}>
+            <Suspense fallback={null}>
+              <CaptchaTokenSetter siteKey={captchaSiteKey} />
+            </Suspense>
+          </If>
 
           <AuthProvider>
             <ThemeProvider

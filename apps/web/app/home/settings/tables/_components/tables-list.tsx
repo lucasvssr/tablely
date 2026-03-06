@@ -8,6 +8,8 @@ import { useTransition } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
+import { useTranslation } from 'react-i18next';
+
 interface Table {
     id: string;
     name: string;
@@ -24,19 +26,20 @@ export function TablesList({
     onEdit?: (table: Table) => void,
     isAdmin: boolean
 }) {
+    const { t } = useTranslation('restaurant');
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
 
     const onDelete = (id: string) => {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer cette table ?')) return;
+        if (!confirm(t('tables.list.deleteConfirm'))) return;
 
         startTransition(async () => {
             try {
                 await deleteTableAction({ id });
-                toast.success('Table supprimée');
+                toast.success(t('tables.list.deleteSuccess'));
                 router.refresh();
             } catch {
-                toast.error('Erreur lors de la suppression');
+                toast.error(t('tables.list.deleteError'));
             }
         });
     };
@@ -47,8 +50,8 @@ export function TablesList({
                 <div className="mb-4 rounded-full bg-muted p-4">
                     <Users className="h-8 w-8 opacity-20" />
                 </div>
-                <p>Aucune table configurée pour le moment.</p>
-                <p className="text-sm">Utilisez le formulaire pour ajouter votre première table.</p>
+                <p>{t('tables.list.noTables')}</p>
+                <p className="text-sm">{t('tables.list.noTablesDesc')}</p>
             </div>
         );
     }
@@ -68,16 +71,16 @@ export function TablesList({
                             <h4 className="font-semibold">{table.name}</h4>
                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                 <Users className="h-3 w-3" />
-                                {table.capacity} couverts
+                                {t('tables.list.capacity', { count: table.capacity })}
                             </div>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-2">
                         {table.is_active ? (
-                            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">Active</Badge>
+                            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">{t('tables.list.active')}</Badge>
                         ) : (
-                            <Badge variant="secondary">Inactive</Badge>
+                            <Badge variant="secondary">{t('tables.list.inactive')}</Badge>
                         )}
                         {isAdmin && (
                             <div className="flex items-center">

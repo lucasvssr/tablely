@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@kit/
 import { TablesList } from './tables-list';
 import { TableForm } from './table-form';
 
+import { useTranslation } from 'react-i18next';
+
 interface Table {
     id: string;
     name: string;
@@ -19,6 +21,7 @@ export function TablesContainer({
     initialTables: Table[];
     isAdmin: boolean;
 }) {
+    const { t } = useTranslation('restaurant');
     const [editingTable, setEditingTable] = useState<Table | null>(null);
 
     return (
@@ -26,8 +29,8 @@ export function TablesContainer({
             <div className="flex-1">
                 <Card className="border-none bg-gradient-to-br from-background to-muted/50 shadow-xl">
                     <CardHeader>
-                        <CardTitle>Tables en service</CardTitle>
-                        <CardDescription>Liste des tables configurées pour votre établissement.</CardDescription>
+                        <CardTitle>{t('tables.container.title')}</CardTitle>
+                        <CardDescription>{t('tables.container.description')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <TablesList
@@ -42,12 +45,12 @@ export function TablesContainer({
             {isAdmin && (
                 <div className="w-full lg:w-96">
                     <Card className="sticky top-4 overflow-hidden border-primary/10 shadow-lg">
-                        <div className="h-1.5 w-full bg-primary" />
+                        <div className="h-1.5 w-full bg-secondary" />
                         <CardHeader className="flex flex-row items-center justify-between space-y-0">
                             <div className="space-y-1">
-                                <CardTitle>{editingTable ? 'Modifier la table' : 'Ajouter une table'}</CardTitle>
+                                <CardTitle>{editingTable ? t('tables.container.editTable') : t('tables.container.newTable')}</CardTitle>
                                 <CardDescription>
-                                    {editingTable ? 'Mettez à jour les informations' : 'Définissez une nouvelle table'}
+                                    {editingTable ? t('tables.container.editTableDescription') : t('tables.container.newTableDescription')}
                                 </CardDescription>
                             </div>
                             {editingTable && (
@@ -55,7 +58,7 @@ export function TablesContainer({
                                     onClick={() => setEditingTable(null)}
                                     className="text-xs text-primary hover:underline"
                                 >
-                                    Annuler
+                                    {t('tables.container.cancel')}
                                 </button>
                             )}
                         </CardHeader>

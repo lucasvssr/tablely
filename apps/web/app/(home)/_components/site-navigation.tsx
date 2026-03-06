@@ -1,8 +1,8 @@
 'use client';
 
-import { Suspense } from 'react';
-import dynamic from 'next/dynamic';
+import { Suspense, useState, useEffect } from 'react';
 import Link from 'next/link';
+import { ModeToggle } from '@kit/ui/mode-toggle';
 
 import { Menu } from 'lucide-react';
 
@@ -16,15 +16,7 @@ import { NavigationMenu, NavigationMenuList } from '@kit/ui/navigation-menu';
 import { Trans } from '@kit/ui/trans';
 import { DropdownMenuSeparator } from '@kit/ui/dropdown-menu';
 
-const ModeToggle = dynamic(
-  () =>
-    import('@kit/ui/mode-toggle').then((mod) => ({
-      default: mod.ModeToggle,
-    })),
-  {
-    ssr: false,
-  },
-);
+
 
 import { SiteNavigationItem } from './site-navigation-item';
 
@@ -80,6 +72,11 @@ export function SiteNavigation() {
 }
 
 function MobileDropdown() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -105,9 +102,11 @@ function MobileDropdown() {
 
         <div className="p-2 flex items-center justify-between">
           <span className="text-sm font-medium px-2">Theme</span>
-          <Suspense fallback={null}>
-            <ModeToggle />
-          </Suspense>
+          {isMounted && (
+            <Suspense fallback={null}>
+              <ModeToggle />
+            </Suspense>
+          )}
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

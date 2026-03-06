@@ -44,8 +44,8 @@
     "Automatic Confirmation: Tablely allows a reservation to be made in real-time based on the inventory declared by the Restaurateur. Once the reservation is validated, the Customer receives a confirmation by email.",
     "Customer Engagement: The Customer undertakes to arrive at the scheduled time. In case of an obstacle, the Customer must cancel their reservation via the platform as soon as possible."
   ],
-  "termsOfServiceServiceNoShowPaymentTitle": "4. Service No-Show and Payment",
-  "termsOfServiceServiceNoShowPaymentContent": [
+  "termsOfServiceNoShowPaymentTitle": "4. No-Show and Payment",
+  "termsOfServiceNoShowPaymentContent": [
     "Banking Fingerprint: For certain establishments or groups, Tablely may require a banking fingerprint via its partner Stripe.",
     "Cancellation Fees: The Restaurateur reserves the right to charge cancellation fees for no-shows if the specific cancellation conditions of the establishment are not met."
   ],
@@ -210,5 +210,15 @@
   "restaurantPreviewHeading": "Our partner establishments",
   "restaurantPreviewSubtitle": "Discover a selection of restaurants that trust us for their daily management.",
   "viewAllRestaurants": "View all restaurants",
-  "bookNow": "Book now"
+  "bookNow": "Book now",
+  "restaurantsFound_one": "{{count}} restaurant found",
+  "restaurantsFound_other": "{{count}} restaurants found",
+  "resultsFor": "for \"{{query}}\"",
+  "noResultsFor": "No results for \"{{query}}\"",
+  "noRestaurantsAvailable": "No restaurants available at the moment.",
+  "noMatchingRestaurant": "No matching restaurant",
+  "tryAnotherName": "Try another name or city.",
+  "restaurantType": "Restaurant",
+  "searchPlaceholder": "Search for a restaurant, a city…",
+  "searchClear": "Clear search"
 }

@@ -12,7 +12,9 @@ const defaultLanguage = process.env.NEXT_PUBLIC_DEFAULT_LOCALE ?? 'en';
  * By default, only the default language is supported.
  * Add more languages here if needed.
  */
-export const languages: string[] = Array.from(new Set([defaultLanguage, 'fr']));
+export const languages: string[] = Array.from(
+  new Set([defaultLanguage, 'en', 'fr']),
+);
 
 /**
  * The name of the cookie that stores the selected language.
@@ -33,6 +35,9 @@ export const defaultI18nNamespaces = [
   'billing',
   'home',
   'public',
+  'restaurant',
+  'dashboard',
+  'onboarding',
 ];
 
 /**

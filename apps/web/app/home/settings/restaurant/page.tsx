@@ -6,16 +6,20 @@ import { RestaurantSettingsForm } from './_components/restaurant-settings-form';
 import { notFound } from 'next/navigation';
 import { Database } from '~/lib/database.types';
 import { getUserRoleAction, getActiveMembership } from '~/lib/server/restaurant/restaurant-actions';
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 
-export const metadata = {
-    title: 'Paramètres du Restaurant',
-};
+export async function generateMetadata() {
+    const i18n = await createI18nServerInstance();
 
-// Helper getUserAccount removed in favor of restaurant-actions
+    return {
+        title: i18n.t('restaurant:settings.pageTitle'),
+    };
+}
 
 export default async function RestaurantSettingsPage() {
     const user = await requireUserInServerComponent();
     const supabase = getSupabaseServerClient<Database>();
+    const i18n = await createI18nServerInstance();
 
     const [activeMembership, role] = await Promise.all([
         getActiveMembership(supabase, user.id),
@@ -45,21 +49,21 @@ export default async function RestaurantSettingsPage() {
     return (
         <>
             <PageHeader
-                title="Paramètres du Restaurant"
-                description="Gérez les informations générales de votre établissement."
+                title={i18n.t('restaurant:settings.pageTitle')}
+                description={i18n.t('restaurant:settings.pageDescription')}
                 displaySidebarTrigger={false}
             />
 
             <PageBody>
                 <div className="max-w-4xl mx-auto">
                     <Card className="border-none shadow-xl bg-gradient-to-br from-background to-muted/20 overflow-hidden">
-                        <div className="h-2 w-full bg-blue-600" />
+                        <div className="h-2 w-full bg-brand-copper" />
                         <CardHeader>
-                            <CardTitle>Informations de l&apos;établissement</CardTitle>
+                            <CardTitle>{i18n.t('restaurant:settings.cardTitle')}</CardTitle>
                             <CardDescription>
                                 {isAdmin
-                                    ? "Ces informations seront visibles par vos clients sur la page de réservation."
-                                    : "Consultez les informations générales de votre établissement."}
+                                    ? i18n.t('restaurant:settings.cardDescriptionAdmin')
+                                    : i18n.t('restaurant:settings.cardDescriptionStaff')}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="pt-6">

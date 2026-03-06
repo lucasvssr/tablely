@@ -18,12 +18,15 @@ import { Button } from '@kit/ui/button';
 import { RestaurantSchema, RestaurantSchemaType } from '~/lib/server/restaurant/restaurant.schema';
 import { updateRestaurantAction } from '~/lib/server/restaurant/restaurant-actions';
 
+import { useTranslation } from 'react-i18next';
+
 interface RestaurantSettingsFormProps {
     initialData: RestaurantSchemaType;
     readOnly?: boolean;
 }
 
 export function RestaurantSettingsForm({ initialData, readOnly }: RestaurantSettingsFormProps) {
+    const { t } = useTranslation('restaurant');
     const [isPending, startTransition] = useTransition();
 
     const form = useForm<RestaurantSchemaType>({
@@ -43,9 +46,9 @@ export function RestaurantSettingsForm({ initialData, readOnly }: RestaurantSett
                 });
 
                 await updateRestaurantAction(formData);
-                toast.success('Paramètres du restaurant mis à jour');
+                toast.success(t('settings.form.success'));
             } catch (error: unknown) {
-                toast.error(error instanceof Error ? error.message : 'Erreur inconnue');
+                toast.error(error instanceof Error ? error.message : t('settings.form.errorUnknown'));
             }
         });
     };
@@ -58,14 +61,16 @@ export function RestaurantSettingsForm({ initialData, readOnly }: RestaurantSett
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Nom du restaurant</FormLabel>
+                            <FormLabel>{t('settings.form.nameLabel')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder="Le Petit Bistro" disabled={readOnly} />
+                                <Input {...field} placeholder={t('settings.form.namePlaceholder')} disabled={readOnly} />
                             </FormControl>
                             <FormDescription>
-                                Le nom affiché sur votre page publique et vos reçus.
+                                {t('settings.form.nameDescription')}
                             </FormDescription>
-                            <FormMessage />
+                            {form.formState.errors.name && (
+                                <p className="text-xs text-destructive">{t(form.formState.errors.name.message as string)}</p>
+                            )}
                         </FormItem>
                     )}
                 />
@@ -75,11 +80,13 @@ export function RestaurantSettingsForm({ initialData, readOnly }: RestaurantSett
                     name="location"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Localisation / Adresse</FormLabel>
+                            <FormLabel>{t('settings.form.locationLabel')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder="123 Rue de la Paix, Paris" disabled={readOnly} />
+                                <Input {...field} placeholder={t('settings.form.locationPlaceholder')} disabled={readOnly} />
                             </FormControl>
-                            <FormMessage />
+                            {form.formState.errors.location && (
+                                <p className="text-xs text-destructive">{t(form.formState.errors.location.message as string)}</p>
+                            )}
                         </FormItem>
                     )}
                 />
@@ -89,9 +96,9 @@ export function RestaurantSettingsForm({ initialData, readOnly }: RestaurantSett
                     name="phone"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Numéro de téléphone</FormLabel>
+                            <FormLabel>{t('settings.form.phoneLabel')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder="01 23 45 67 89" disabled={readOnly} />
+                                <Input {...field} placeholder={t('settings.form.phonePlaceholder')} disabled={readOnly} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -100,8 +107,8 @@ export function RestaurantSettingsForm({ initialData, readOnly }: RestaurantSett
 
                 {!readOnly && (
                     <div className="flex justify-end pt-4">
-                        <Button type="submit" disabled={isPending} className="px-8 bg-blue-600 hover:bg-blue-700">
-                            {isPending ? 'Enregistrement...' : 'Enregistrer les modifications'}
+                        <Button type="submit" disabled={isPending} className="px-8 bg-brand-copper hover:bg-brand-copper/90">
+                            {isPending ? t('settings.form.submitting') : t('settings.form.submit')}
                         </Button>
                     </div>
                 )}

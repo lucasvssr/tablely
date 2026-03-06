@@ -13,19 +13,21 @@ const InviteSchema = z.object({
 });
 
 import { getUserAccount } from '~/lib/server/restaurant/restaurant-actions';
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 
 /**
  * @name inviteMemberAction
  */
 export const inviteMemberAction = enhanceAction(
     async (formData: FormData) => {
+        const { t } = await createI18nServerInstance();
         const user = await requireUserInServerComponent();
         const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
-        if (!accountId) throw new Error('Compte non trouvé');
+        if (!accountId) throw new Error(t('teams:errors.accountNotFound'));
 
         const result = InviteSchema.safeParse(Object.fromEntries(formData.entries()));
-        if (!result.success) throw new Error('Données d\'invitation invalides');
+        if (!result.success) throw new Error(t('teams:errors.invalidInvitationData'));
 
         const { email, role } = result.data;
 
@@ -37,7 +39,7 @@ export const inviteMemberAction = enhanceAction(
         });
 
         if (error) {
-            if (error.code === '23505') throw new Error('Une invitation est déjà en cours pour cet email');
+            if (error.code === '23505') throw new Error(t('teams:errors.duplicateInvitation'));
             throw new Error(error.message);
         }
     },
@@ -66,11 +68,12 @@ export const deleteInvitationAction = enhanceAction(
  */
 export const removeMemberAction = enhanceAction(
     async ({ userId, accountId }: { userId: string, accountId: string }) => {
+        const { t } = await createI18nServerInstance();
         const user = await requireUserInServerComponent();
         const supabase = getSupabaseServerClient<Database>();
 
         // Cannot remove oneself
-        if (userId === user.id) throw new Error('Vous ne pouvez pas vous retirer vous-même');
+        if (userId === user.id) throw new Error(t('teams:errors.cannotRemoveSelf'));
 
         const { error } = await supabase
             .from('memberships')
@@ -88,6 +91,7 @@ export const removeMemberAction = enhanceAction(
  */
 export const acceptInvitationAction = enhanceAction(
     async ({ invitationId }: { invitationId: string }) => {
+        const { t } = await createI18nServerInstance();
         const user = await requireUserInServerComponent();
         const supabase = getSupabaseServerClient<Database>();
 
@@ -98,10 +102,10 @@ export const acceptInvitationAction = enhanceAction(
             .eq('id', invitationId)
             .single();
 
-        if (fetchError || !invitation) throw new Error('Invitation non trouvée ou expirée');
+        if (fetchError || !invitation) throw new Error(t('teams:errors.invitationNotFound'));
 
         if (invitation.email.toLowerCase() !== user.email?.toLowerCase()) {
-            throw new Error(`Cette invitation ne vous est pas destinée.`);
+            throw new Error(t('teams:errors.emailMismatch'));
         }
 
         // 2. Create membership
@@ -175,6 +179,7 @@ export const getInvitationsAction = enhanceAction(
  */
 export const signUpViaInvitationAction = enhanceAction(
     async (credentials: { email: string; password: string; invitationId: string }) => {
+        const { t } = await createI18nServerInstance();
         const adminClient = getSupabaseServerAdminClient<Database>();
 
         // 1. Get invitation
@@ -184,10 +189,10 @@ export const signUpViaInvitationAction = enhanceAction(
             .eq('id', credentials.invitationId)
             .single();
 
-        if (fetchError || !invitation) throw new Error('Invitation non trouvée ou expirée');
+        if (fetchError || !invitation) throw new Error(t('teams:errors.invitationNotFound'));
 
         if (invitation.email.toLowerCase() !== credentials.email.toLowerCase()) {
-            throw new Error(`L'email ne correspond pas à l'invitation.`);
+            throw new Error(t('teams:errors.emailMismatch'));
         }
 
         // 2. Create user with admin client (automatically confirmed)

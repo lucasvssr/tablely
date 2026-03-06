@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@kit/
 import { ServicesList } from './services-list';
 import { ServiceForm } from './service-form';
 
+import { useTranslation } from 'react-i18next';
+
 interface ExistingService {
     id: string;
     name: string;
@@ -22,6 +24,7 @@ export function ServicesContainer({
     initialServices: ExistingService[];
     isAdmin: boolean;
 }) {
+    const { t } = useTranslation('restaurant');
     const [editingService, setEditingService] = useState<ExistingService | null>(null);
 
     return (
@@ -29,8 +32,8 @@ export function ServicesContainer({
             <div className="flex-1">
                 <Card className="border-none bg-gradient-to-br from-background to-muted/50 shadow-xl">
                     <CardHeader>
-                        <CardTitle>Services configurés</CardTitle>
-                        <CardDescription>Les périodes durant lesquelles les clients peuvent réserver une table.</CardDescription>
+                        <CardTitle>{t('services.container.title')}</CardTitle>
+                        <CardDescription>{t('services.container.description')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <ServicesList
@@ -48,9 +51,9 @@ export function ServicesContainer({
                         <div className="h-1.5 w-full bg-secondary" />
                         <CardHeader className="flex flex-row items-center justify-between space-y-0">
                             <div className="space-y-1">
-                                <CardTitle>{editingService ? 'Modifier le service' : 'Nouveau Service'}</CardTitle>
+                                <CardTitle>{editingService ? t('services.container.editService') : t('services.container.newService')}</CardTitle>
                                 <CardDescription>
-                                    {editingService ? 'Mettez à jour les horaires' : 'Ajoutez une plage horaire de service.'}
+                                    {editingService ? t('services.container.editServiceDescription') : t('services.container.newServiceDescription')}
                                 </CardDescription>
                             </div>
                             {editingService && (
@@ -58,7 +61,7 @@ export function ServicesContainer({
                                     onClick={() => setEditingService(null)}
                                     className="text-xs text-primary hover:underline"
                                 >
-                                    Annuler
+                                    {t('services.container.cancel')}
                                 </button>
                             )}
                         </CardHeader>

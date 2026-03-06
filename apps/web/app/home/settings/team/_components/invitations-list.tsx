@@ -46,7 +46,7 @@ export function InvitationsList({
                 toast.success(t('deleteInvitationSuccessMessage'));
                 router.refresh();
             } catch (error: unknown) {
-                toast.error(error instanceof Error ? error.message : 'Erreur inconnue');
+                toast.error(error instanceof Error ? error.message : t('errors.unknownError'));
             }
         });
     };
@@ -70,7 +70,7 @@ export function InvitationsList({
                                 <div className="font-medium flex items-center gap-2">
                                     {invitation.email}
                                     <Badge variant="outline" className="text-[10px] h-4 px-1 capitalize">
-                                        {invitation.role}
+                                        {invitation.role === 'owner' ? t('roleLabels.owner') : invitation.role === 'admin' ? t('roleLabels.admin') : t('roleLabels.staff')}
                                     </Badge>
                                 </div>
                                 <div className="text-xs text-muted-foreground">

@@ -12,7 +12,7 @@ const MAX_AGE = 60;
 const S_MAX_AGE = 3600;
 
 export async function GET() {
-  const paths = getPaths();
+  const paths = await getPaths();
 
   const headers = {
     'Cache-Control': `public, max-age=${MAX_AGE}, s-maxage=${S_MAX_AGE}`,
@@ -21,17 +21,29 @@ export async function GET() {
   return getServerSideSitemap([...paths], headers);
 }
 
-function getPaths() {
+async function getPaths() {
+  const { getRestaurantsAction } = await import(
+    '~/lib/server/restaurant/restaurant-actions'
+  );
+
+  const restaurants = await getRestaurantsAction();
+
   const paths = [
     '/',
+    '/restaurants',
     '/faq',
     '/cookie-policy',
     '/terms-of-service',
     '/privacy-policy',
-    // add more paths here
   ];
 
-  return paths.map((path) => {
+  const restaurantPaths = restaurants.map((restaurant) => {
+    return `/restaurant/${restaurant.slug}`;
+  });
+
+  const allPaths = [...paths, ...restaurantPaths];
+
+  return allPaths.map((path) => {
     return {
       loc: new URL(path, appConfig.url).href,
       lastmod: new Date().toISOString(),

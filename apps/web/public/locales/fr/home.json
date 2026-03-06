@@ -202,7 +202,7 @@
     "step1Description": "Importez votre plan de salle et définissez vos horaires de service en quelques clics.",
     "step2Title": "Synchronisez vos outils",
     "step2Description": "Intégrez le module de réservation sur votre site et vos réseaux sociaux.",
-    "step3Title": "Pilotez avec aisée",
+    "step3Title": "Pilotez avec aisance",
     "step3Description": "Recevez vos réservations et coordonnez votre équipe en temps réel pendant le service.",
     "copyright": "© Copyright {{year}} {{product}}. Tous droits réservés.",
     "browseRestaurants": "Découvrez nos restaurants",
@@ -210,5 +210,15 @@
     "restaurantPreviewHeading": "Nos établissements partenaires",
     "restaurantPreviewSubtitle": "Découvrez une sélection de restaurants qui nous font confiance pour leur gestion quotidienne.",
     "viewAllRestaurants": "Voir tous les restaurants",
-    "bookNow": "Réserver maintenant"
+    "bookNow": "Réserver maintenant",
+    "restaurantsFound_one": "{{count}} restaurant trouvé",
+    "restaurantsFound_other": "{{count}} restaurants trouvés",
+    "resultsFor": "pour \"{{query}}\"",
+    "noResultsFor": "Aucun résultat pour \"{{query}}\"",
+    "noRestaurantsAvailable": "Aucun restaurant n'est disponible pour le moment.",
+    "noMatchingRestaurant": "Aucun restaurant ne correspond",
+    "tryAnotherName": "Essayez avec un autre nom ou une autre ville.",
+    "restaurantType": "Restaurant",
+    "searchPlaceholder": "Rechercher un restaurant, une ville…",
+    "searchClear": "Effacer la recherche"
 }

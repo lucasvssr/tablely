@@ -7,41 +7,52 @@ import { Label } from '@kit/ui/label';
 import { createRestaurantAction } from '~/lib/server/restaurant/restaurant-actions';
 import { withI18n } from '~/lib/i18n/with-i18n';
 
-function OnboardingPage() {
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
+
+export async function generateMetadata() {
+    const i18n = await createI18nServerInstance();
+    return {
+        title: i18n.t('onboarding:title'),
+    };
+}
+
+async function OnboardingPage() {
+    const i18n = await createI18nServerInstance();
+
     return (
         <PageBody className={'flex flex-col items-center justify-center min-h-[80vh]'}>
             <Card className={'w-full max-w-md border-primary/10 shadow-xl'}>
                 <CardHeader className={'text-center'}>
-                    <CardTitle className={'text-2xl font-bold'}>Bienvenue sur Bmad</CardTitle>
+                    <CardTitle className={'text-2xl font-bold'}>{i18n.t('onboarding:title')}</CardTitle>
                     <CardDescription>
-                        Configurons votre établissement pour commencer.
+                        {i18n.t('onboarding:description')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form action={createRestaurantAction} className={'grid gap-6'}>
                         <div className={'grid gap-2'}>
-                            <Label htmlFor="name">Nom du Restaurant</Label>
+                            <Label htmlFor="name">{i18n.t('onboarding:form.restaurantName')}</Label>
                             <Input
                                 id="name"
                                 name="name"
-                                placeholder="Ex: Le Petit Bistro"
+                                placeholder={i18n.t('onboarding:form.restaurantNamePlaceholder')}
                                 required
                             />
                         </div>
 
                         <div className={'grid gap-2'}>
-                            <Label htmlFor="location">Localisation / Ville</Label>
+                            <Label htmlFor="location">{i18n.t('onboarding:form.location')}</Label>
                             <Input
                                 id="location"
                                 name="location"
-                                placeholder="Ex: Paris, 11ème"
+                                placeholder={i18n.t('onboarding:form.locationPlaceholder')}
                                 required
                             />
                         </div>
 
 
                         <Button type="submit" className={'w-full'}>
-                            Créer mon établissement
+                            {i18n.t('onboarding:form.submit')}
                         </Button>
                     </form>
                 </CardContent>

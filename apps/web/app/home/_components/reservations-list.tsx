@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useTransition } from 'react';
 import { format, addDays, subDays, isAfter, subMinutes, addMinutes, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS } from 'date-fns/locale';
+import { useTranslation } from 'react-i18next';
 import {
     Tooltip,
     TooltipContent,
@@ -60,6 +61,8 @@ export function ReservationsList({
     initialReservations: Reservation[];
     accountId: string;
 }) {
+    const { t, i18n } = useTranslation('dashboard');
+    const dateLocale = i18n.language.startsWith('fr') ? fr : enUS;
     const [reservations, setReservations] = useState<Reservation[]>(initialReservations);
     const [currentDate, setCurrentDate] = useState(new Date());
     const [now, setNow] = useState(new Date());
@@ -88,8 +91,7 @@ export function ReservationsList({
                     table: 'reservations',
                     filter: `account_id=eq.${accountId}`,
                 },
-                (payload) => {
-                    console.log('Real-time payload:', payload);
+                () => {
                     // If the change is on the current date, we should refresh
                     // For simplicity, we trigger a refresh of the list
                     refreshReservations();
@@ -110,7 +112,7 @@ export function ReservationsList({
                 setReservations(data as Reservation[]);
             } catch (error) {
                 console.error('Error refreshing reservations:', error);
-                toast.error('Erreur lors de la mise à jour des réservations');
+                toast.error(t('reservations.toasts.refreshError'));
             }
         });
     };
@@ -137,11 +139,11 @@ export function ReservationsList({
         startTransition(async () => {
             try {
                 await updateReservationStatusAction({ reservationId, status });
-                toast.success('Statut mis à jour');
+                toast.success(t('reservations.toasts.statusUpdated'));
                 refreshReservations();
             } catch (error) {
                 console.error('Error updating status:', error);
-                toast.error('Erreur lors de la mise à jour du statut');
+                toast.error(t('reservations.toasts.updateError'));
             }
         });
     };
@@ -156,13 +158,13 @@ export function ReservationsList({
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'confirmed':
-                return <Badge variant="default" className="bg-green-100 text-green-700 hover:bg-green-100 border-none px-2 py-0.5"><CheckCircle2 className="w-3 h-3 mr-1" /> Confirmé</Badge>;
+                return <Badge variant="default" className="bg-green-100 text-green-700 hover:bg-green-100 border-none px-2 py-0.5"><CheckCircle2 className="w-3 h-3 mr-1" /> {t('reservations.status.confirmed')}</Badge>;
             case 'cancelled':
-                return <Badge variant="destructive" className="bg-red-100 text-red-700 hover:bg-red-100 border-none px-2 py-0.5"><XCircle className="w-3 h-3 mr-1" /> Annulé</Badge>;
+                return <Badge variant="destructive" className="bg-red-100 text-red-700 hover:bg-red-100 border-none px-2 py-0.5"><XCircle className="w-3 h-3 mr-1" /> {t('reservations.status.cancelled')}</Badge>;
             case 'arrived':
-                return <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-none px-2 py-0.5"><UserCheck className="w-3 h-3 mr-1" /> Arrivé</Badge>;
+                return <Badge variant="secondary" className="bg-brand-copper/10 text-brand-copper hover:bg-brand-copper/20 border-none px-2 py-0.5"><UserCheck className="w-3 h-3 mr-1" /> {t('reservations.status.arrived')}</Badge>;
             case 'no-show':
-                return <Badge variant="outline" className="bg-zinc-100 text-zinc-700 border-none px-2 py-0.5"><HelpCircle className="w-3 h-3 mr-1" /> No-show</Badge>;
+                return <Badge variant="outline" className="bg-zinc-100 text-zinc-700 border-none px-2 py-0.5"><HelpCircle className="w-3 h-3 mr-1" /> {t('reservations.status.noshow')}</Badge>;
             default:
                 return <Badge variant="outline">{status}</Badge>;
         }
@@ -175,10 +177,10 @@ export function ReservationsList({
                     <div>
                         <CardTitle className="text-2xl font-bold flex items-center gap-2 font-heading">
                             <CalendarIcon className="w-6 h-6 text-brand-copper" />
-                            Réservations du jour
+                            {t('reservations.title')}
                         </CardTitle>
                         <CardDescription className="text-base">
-                            {format(currentDate, 'EEEE d MMMM yyyy', { locale: fr })}
+                            {format(currentDate, 'EEEE d MMMM yyyy', { locale: dateLocale })}
                         </CardDescription>
                     </div>
                     <div className="flex items-center gap-2">
@@ -197,7 +199,7 @@ export function ReservationsList({
                                 className="h-9 px-4 rounded-lg hover:bg-white dark:hover:bg-zinc-800 shadow-none font-bold transition-all"
                                 onClick={handleToday}
                             >
-                                Aujourd&apos;hui
+                                {t('reservations.today')}
                             </Button>
                             <Button
                                 variant="ghost"
@@ -227,8 +229,8 @@ export function ReservationsList({
                             <CalendarIcon className="w-10 h-10 text-zinc-300" />
                         </div>
                         <div>
-                            <p className="font-bold text-lg text-zinc-900 dark:text-white">Aucune réservation</p>
-                            <p className="text-zinc-500">Il n&apos;y a pas encore de réservation pour cette date.</p>
+                            <p className="font-bold text-lg text-zinc-900 dark:text-white">{t('reservations.noReservations')}</p>
+                            <p className="text-zinc-500">{t('reservations.noReservationsDesc')}</p>
                         </div>
                     </div>
                 ) : (
@@ -236,11 +238,11 @@ export function ReservationsList({
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-zinc-50/50 dark:bg-black/20 text-xs font-bold text-zinc-500 uppercase tracking-widest border-b border-zinc-100 dark:border-white/5">
-                                    <th className="px-6 py-4">Heure</th>
-                                    <th className="px-6 py-4">Client</th>
-                                    <th className="px-6 py-4">Couverts</th>
-                                    <th className="px-6 py-4">Statut</th>
-                                    <th className="px-6 py-4 text-right">Actions</th>
+                                    <th className="px-6 py-4">{t('reservations.table.time')}</th>
+                                    <th className="px-6 py-4">{t('reservations.table.client')}</th>
+                                    <th className="px-6 py-4">{t('reservations.table.guests')}</th>
+                                    <th className="px-6 py-4">{t('reservations.table.status')}</th>
+                                    <th className="px-6 py-4 text-right">{t('reservations.table.actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-zinc-100 dark:divide-white/5">
@@ -266,7 +268,7 @@ export function ReservationsList({
                                                             <TooltipContent side="top" className="bg-red-600 text-white border-none p-3 max-w-xs rounded-xl shadow-xl">
                                                                 <p className="font-bold mb-1 flex items-center gap-2 text-xs uppercase tracking-wider">
                                                                     <AlertTriangle className="w-3 h-3" />
-                                                                    Alerte Allergie
+                                                                    {t('reservations.notes.allergyAlert')}
                                                                 </p>
                                                                 <p className="text-sm font-medium leading-relaxed">
                                                                     {res.notes}
@@ -285,7 +287,7 @@ export function ReservationsList({
                                                             </TooltipTrigger>
                                                             <TooltipContent side="top" className="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white border-zinc-200 dark:border-white/10 p-3 max-w-xs rounded-xl shadow-xl">
                                                                 <p className="font-bold mb-1 text-xs uppercase tracking-wider text-zinc-500">
-                                                                    Note client
+                                                                    {t('reservations.notes.clientNote')}
                                                                 </p>
                                                                 <p className="text-sm font-medium">
                                                                     {res.notes}
@@ -314,7 +316,7 @@ export function ReservationsList({
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="w-56 rounded-xl shadow-xl border-zinc-200 dark:border-white/10">
-                                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                    <DropdownMenuLabel>{t('reservations.table.actions')}</DropdownMenuLabel>
                                                     <DropdownMenuSeparator />
 
                                                     <EditReservationDialog reservation={res} />
@@ -337,14 +339,14 @@ export function ReservationsList({
                                                                                     onClick={() => handleStatusChange(res.id, 'arrived')}
                                                                                     disabled={res.status === 'arrived' || !canMarkArrived}
                                                                                 >
-                                                                                    <UserCheck className={cn("w-4 h-4", canMarkArrived ? "text-blue-500" : "text-zinc-300")} />
-                                                                                    Marquer Arrivé
+                                                                                    <UserCheck className={cn("w-4 h-4", canMarkArrived ? "text-brand-copper" : "text-zinc-300")} />
+                                                                                    {t('reservations.actions.markArrived')}
                                                                                 </DropdownMenuItem>
                                                                             </div>
                                                                         </TooltipTrigger>
                                                                         {!canMarkArrived && (
                                                                             <TooltipContent side="left">
-                                                                                <p>Possible 30 min avant l&apos;heure</p>
+                                                                                <p>{t('reservations.actions.arrivedRestriction')}</p>
                                                                             </TooltipContent>
                                                                         )}
                                                                     </Tooltip>
@@ -358,13 +360,13 @@ export function ReservationsList({
                                                                                     disabled={res.status === 'no-show' || !canMarkNoShow}
                                                                                 >
                                                                                     <HelpCircle className={cn("w-4 h-4", canMarkNoShow ? "text-zinc-500" : "text-zinc-300")} />
-                                                                                    Marquer No-show
+                                                                                    {t('reservations.actions.markNoShow')}
                                                                                 </DropdownMenuItem>
                                                                             </div>
                                                                         </TooltipTrigger>
                                                                         {!canMarkNoShow && (
                                                                             <TooltipContent side="left">
-                                                                                <p>Possible 15 min après l&apos;heure</p>
+                                                                                <p>{t('reservations.actions.noshowRestriction')}</p>
                                                                             </TooltipContent>
                                                                         )}
                                                                     </Tooltip>
@@ -379,7 +381,7 @@ export function ReservationsList({
                                                         disabled={res.status === 'confirmed'}
                                                     >
                                                         <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                                        Confirmer (Reset)
+                                                        {t('reservations.actions.confirmReset')}
                                                     </DropdownMenuItem>
                                                     <DropdownMenuSeparator />
                                                     <DropdownMenuItem
@@ -388,7 +390,7 @@ export function ReservationsList({
                                                         disabled={res.status === 'cancelled'}
                                                     >
                                                         <XCircle className="w-4 h-4" />
-                                                        Annuler
+                                                        {t('reservations.actions.cancel')}
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
@@ -400,6 +402,6 @@ export function ReservationsList({
                     </div>
                 )}
             </CardContent>
-        </Card>
+        </Card >
     );
 }

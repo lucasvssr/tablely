@@ -17,16 +17,28 @@ Tablely is a modern, high-performance SaaS platform designed to empower restaura
 
 ---
 
+## 📚 Documentation
+
+Detailed technical documentation is available in the `docs/` directory:
+
+- [**Documentation Index**](./docs/index.md) : The main entry point for all technical guides.
+- [**Architecture & Design**](./docs/architecture.md) : Technical design, SSR patterns, and data flow.
+- [**Data Models**](./docs/data-models.md) : Database schema, RLS policies, and SQL functions.
+- [**API Contracts**](./docs/api-contracts.md) : Catalog of Server Actions and HTTP routes.
+- [**Development Guide**](./docs/development-guide.md) : Setup instructions and coding standards.
+
+---
+
 ## 🛠️ Technology Stack
 
-Tablely is built using the latest modern web technologies:
+Tablely is built using the latest modern web technologies for maximum performance and scalability:
 
-- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Framework**: [Next.js 15](https://nextjs.org/) (React 19, App Router)
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) & [Shadcn UI](https://shadcn.com/)
-- **Backend / Database**: [Supabase](https://supabase.com/)
-- **State Management**: [TanStack Query](https://tanstack.com/query)
-- **Validation**: [Zod](https://github.com/colinhacks/zod)
-- **Monorepo Management**: [Turborepo](https://turborepo.org/)
+- **Backend / Database**: [Supabase](https://supabase.com/) (PostgreSQL 17)
+- **State Management**: [TanStack Query v5](https://tanstack.com/query)
+- **Validation**: [Zod](https://github.com/colinhacks/zod) & [React Hook Form](https://react-hook-form.com/)
+- **Monorepo Management**: [Turborepo](https://turborepo.org/) & [PNPM](https://pnpm.io/)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 
 ---
@@ -72,18 +84,17 @@ Tablely is built using the latest modern web technologies:
 
 ```text
 apps/
-└── web/                  # Next.js Application
-    ├── app/              # App Router Pages
-    │   ├── (marketing)/  # Landing pages
-    │   ├── auth/         # Authentication flows
-    │   ├── home/         # Dashboard & Restaurant Admin
-    │   └── restaurant/   # Public restaurant profiles
-    └── supabase/         # Migrations & Seed data
+├── web/                  # Core Next.js Application
+└── e2e/                  # End-to-end playtesting (Playwright)
 
 packages/
-├── ui/                   # Shared UI Component Library
-├── supabase/             # Shared Supabase Clients & Utils
-└── next/                 # Next.js specific utilities
+├── ui/                   # Design System (Tailwind v4 + Shadcn UI)
+├── supabase/             # Shared Database Clients & Logic
+├── features/             # Shared Business Features (RBAC/Auth)
+├── i18n/                 # Internationalization Framework (FR/EN)
+├── next/                 # Next.js & Middleware Utilities
+├── shared/               # Common TypeScript Types & Utilities
+└── tsconfig/             # Shared build configurations
 ```
 
 ---

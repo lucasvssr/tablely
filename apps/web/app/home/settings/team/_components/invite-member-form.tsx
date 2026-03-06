@@ -12,21 +12,24 @@ import { useTransition } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 
-const InviteSchema = z.object({
-    email: z.string().email('Email invalide'),
-    role: z.enum(['admin', 'member']),
-});
 
-type InviteSchemaType = z.infer<typeof InviteSchema>;
 
 export function InviteMemberForm() {
     const { t } = useTranslation('teams');
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
 
+    const inviteSchema = useMemo(() => z.object({
+        email: z.string().email(t('errors.invalidEmail')),
+        role: z.enum(['admin', 'member']),
+    }), [t]);
+
+    type InviteSchemaType = z.infer<typeof inviteSchema>;
+
     const form = useForm<InviteSchemaType>({
-        resolver: zodResolver(InviteSchema),
+        resolver: zodResolver(inviteSchema),
         defaultValues: {
             email: '',
             role: 'member',
@@ -81,7 +84,7 @@ export function InviteMemberForm() {
                 </Select>
             </div>
 
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={isPending}>
+            <Button type="submit" className="w-full bg-brand-copper hover:bg-brand-copper/90" disabled={isPending}>
                 {isPending ? t('invitingMembers') : t('inviteMembersButton')}
             </Button>
         </form>

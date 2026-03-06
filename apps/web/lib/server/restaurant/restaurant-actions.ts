@@ -13,6 +13,7 @@ import { Database } from '~/lib/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
 import { encrypt, decrypt } from '~/lib/security/encryption';
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 
 export async function getUserAccount(supabase: SupabaseClient<Database>, userId: string) {
     // 1. Check for active account cookie
@@ -70,10 +71,13 @@ export async function getActiveMembership(supabase: SupabaseClient<Database>, us
  */
 export const upsertServiceAction = enhanceAction(
     async (formData: FormData) => {
+        const i18n = await createI18nServerInstance();
+        const t = i18n.getFixedT(null, 'restaurant');
+
         const user = await requireUserInServerComponent();
         const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
-        if (!accountId) throw new Error('Restaurant non trouvé');
+        if (!accountId) throw new Error(t('actions.accountNotFound'));
 
         const rawData = Object.fromEntries(formData.entries());
         const validatedData = {
@@ -85,7 +89,7 @@ export const upsertServiceAction = enhanceAction(
 
         const result = ServiceSchema.safeParse(validatedData);
 
-        if (!result.success) throw new Error('Données du service invalides');
+        if (!result.success) throw new Error(t('actions.invalidServiceData'));
 
         const { id, days_of_week, ...data } = result.data;
 
@@ -128,12 +132,15 @@ export const upsertServiceAction = enhanceAction(
  */
 export const upsertTableAction = enhanceAction(
     async (formData: FormData) => {
+        const i18n = await createI18nServerInstance();
+        const t = i18n.getFixedT(null, 'restaurant');
+
         const user = await requireUserInServerComponent();
         const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
 
         if (!accountId) {
-            throw new Error('Aucun compte restaurant trouvé pour cet utilisateur');
+            throw new Error(t('actions.accountNotFound'));
         }
 
         const rawData = Object.fromEntries(formData.entries());
@@ -144,7 +151,7 @@ export const upsertTableAction = enhanceAction(
 
         const result = TableSchema.safeParse(validatedData);
 
-        if (!result.success) throw new Error('Données de la table invalides');
+        if (!result.success) throw new Error(t('actions.invalidTableData'));
 
         const { id, ...data } = result.data;
 
@@ -181,6 +188,9 @@ function slugify(text: string) {
  */
 export const createRestaurantAction = enhanceAction(
     async (formData: FormData) => {
+        const i18n = await createI18nServerInstance();
+        const t = i18n.getFixedT(null, 'restaurant');
+
         const user = await requireUserInServerComponent();
         const supabase = getSupabaseServerClient<Database>();
 
@@ -189,7 +199,7 @@ export const createRestaurantAction = enhanceAction(
         );
 
         if (!result.success) {
-            throw new Error('Données du restaurant invalides');
+            throw new Error(t('actions.invalidRestaurantData'));
         }
 
         const { name, location, phone } = result.data;
@@ -207,7 +217,7 @@ export const createRestaurantAction = enhanceAction(
             .single();
 
         if (accountError || !account) {
-            throw new Error(`Erreur lors de la création de l'organisation: ${accountError?.message}`);
+            throw new Error(`${t('actions.orgCreationError')}: ${accountError?.message}`);
         }
 
         // 2. Create Membership (Owner)
@@ -220,7 +230,7 @@ export const createRestaurantAction = enhanceAction(
             });
 
         if (memberError) {
-            throw new Error(`Erreur lors de la création de l'appartenance: ${memberError.message}`);
+            throw new Error(`${t('actions.membershipCreationError')}: ${memberError.message}`);
         }
 
         // 3. Create Restaurant
@@ -234,7 +244,7 @@ export const createRestaurantAction = enhanceAction(
             });
 
         if (restError) {
-            throw new Error(`Erreur lors de la création du restaurant: ${restError.message}`);
+            throw new Error(`${t('actions.restaurantCreationError')}: ${restError.message}`);
         }
 
         // Successfully created, redirect to home
@@ -250,10 +260,13 @@ export const createRestaurantAction = enhanceAction(
  */
 export const deleteServiceAction = enhanceAction(
     async ({ id }: { id: string }) => {
+        const i18n = await createI18nServerInstance();
+        const t = i18n.getFixedT(null, 'restaurant');
+
         const user = await requireUserInServerComponent();
         const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
-        if (!accountId) throw new Error('Compte non trouvé');
+        if (!accountId) throw new Error(t('actions.accountNotFound'));
 
         const { error } = await supabase
             .from('services')
@@ -271,10 +284,13 @@ export const deleteServiceAction = enhanceAction(
  */
 export const deleteTableAction = enhanceAction(
     async ({ id }: { id: string }) => {
+        const i18n = await createI18nServerInstance();
+        const t = i18n.getFixedT(null, 'restaurant');
+
         const user = await requireUserInServerComponent();
         const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
-        if (!accountId) throw new Error('Compte non trouvé');
+        if (!accountId) throw new Error(t('actions.accountNotFound'));
 
         const { error } = await supabase
             .from('dining_tables')
@@ -291,17 +307,20 @@ export const deleteTableAction = enhanceAction(
  */
 export const updateRestaurantAction = enhanceAction(
     async (formData: FormData) => {
+        const i18n = await createI18nServerInstance();
+        const t = i18n.getFixedT(null, 'restaurant');
+
         const user = await requireUserInServerComponent();
         const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
-        if (!accountId) throw new Error('Compte non trouvé');
+        if (!accountId) throw new Error(t('actions.accountNotFound'));
 
         const result = RestaurantSchema.safeParse(
             Object.fromEntries(formData.entries()),
         );
 
         if (!result.success) {
-            throw new Error('Données du restaurant invalides');
+            throw new Error(t('actions.invalidRestaurantData'));
         }
 
         const { name, location, phone } = result.data;
@@ -335,7 +354,7 @@ export const updateRestaurantAction = enhanceAction(
 
         revalidatePath('/home', 'layout');
         if (account?.slug) {
-            revalidatePath(`/r/${account.slug}`);
+            revalidatePath(`/restaurant/${account.slug}`);
         }
     },
     { auth: true }
@@ -394,6 +413,9 @@ export const getTablesAction = enhanceAction(
  */
 export const getDashboardStatsAction = enhanceAction(
     async (_: unknown) => {
+        const i18n = await createI18nServerInstance();
+        const t = i18n.getFixedT(null, 'restaurant');
+
         const user = await requireUserInServerComponent();
         const supabase = getSupabaseServerClient<Database>();
         const accountId = await getUserAccount(supabase, user.id);
@@ -407,14 +429,19 @@ export const getDashboardStatsAction = enhanceAction(
         }
 
         const [
-            { count: servicesCount },
-            { count: tablesCount },
-            { data: tablesData }
+            { count: servicesCount, error: servicesError },
+            { count: tablesCount, error: tablesError },
+            { data: tablesData, error: tablesDataError }
         ] = await Promise.all([
             supabase.from('services').select('*', { count: 'exact', head: true }).eq('account_id', accountId),
             supabase.from('dining_tables').select('*', { count: 'exact', head: true }).eq('account_id', accountId),
             supabase.from('dining_tables').select('capacity').eq('account_id', accountId).eq('is_active', true)
         ]);
+
+        if (servicesError || tablesError || tablesDataError) {
+            console.error('Error fetching dashboard stats:', servicesError || tablesError || tablesDataError);
+            throw new Error(t('actions.fetchStatsError'));
+        }
 
         const totalCapacity = tablesData?.reduce((acc, table) => acc + (table.capacity || 0), 0) || 0;
 
@@ -454,8 +481,10 @@ export async function getAvailableSlotsAction({
     });
 
     if (error) {
+        const i18n = await createI18nServerInstance();
+        const t = i18n.getFixedT(null, 'restaurant');
         console.error('Error fetching available slots:', JSON.stringify(error, null, 2));
-        throw new Error('Erreur lors de la récupération des créneaux');
+        throw new Error(t('actions.fetchSlotsError'));
     }
 
     return (data || []) as {
@@ -472,7 +501,9 @@ export async function getAvailableSlotsAction({
  */
 export const createReservationAction = enhanceAction(
     async (payload) => {
-        console.log('createReservationAction called with payload:', payload);
+        const i18n = await createI18nServerInstance();
+        const t = i18n.getFixedT(null, 'restaurant');
+
         const supabase = getSupabaseServerClient<Database>();
 
         // 1. Get account_id from restaurant
@@ -482,10 +513,8 @@ export const createReservationAction = enhanceAction(
             .eq('id', payload.restaurant_id)
             .single();
 
-        console.log('Restaurant lookup result:', { restaurant, restaurantError });
-
         if (restaurantError || !restaurant) {
-            throw new Error('Restaurant non trouvé');
+            throw new Error(t('actions.restaurantNotFound'));
         }
 
         const { data: { user } } = await supabase.auth.getUser();
@@ -508,7 +537,7 @@ export const createReservationAction = enhanceAction(
         const { data: userExisting } = await userQuery;
 
         if (userExisting && userExisting.length > 0) {
-            throw new Error('Vous avez déjà une réservation confirmée pour ce service ce jour-là');
+            throw new Error(t('actions.existingReservation'));
         }
 
         // 2. Find an available table for this slot
@@ -521,7 +550,7 @@ export const createReservationAction = enhanceAction(
             .order('capacity', { ascending: true });
 
         if (tablesError || !tables || tables.length === 0) {
-            throw new Error('Aucune table disponible pour ce nombre de couverts');
+            throw new Error(t('actions.noTableAvailable'));
         }
 
         // 3. Get the service details and existing reservations to check for overlaps
@@ -582,7 +611,7 @@ export const createReservationAction = enhanceAction(
         const availableTable = tables.find(t => !occupiedIds.has(t.id));
 
         if (!availableTable) {
-            throw new Error('Toutes nos tables sont complètes à cette heure-là (compte tenu de la durée du repas)');
+            throw new Error(t('actions.tablesFull'));
         }
 
         // 4. Create the reservation
@@ -598,13 +627,10 @@ export const createReservationAction = enhanceAction(
             start_time: payload.start_time,
             duration_minutes: duration,
             guest_count: payload.guest_count,
-            notes: payload.notes, // Keep as is for now or set to null
-            sensitive_notes: payload.notes ? encrypt(payload.notes) : null,
+            notes: payload.notes ? encrypt(payload.notes) : null,
             status: 'confirmed',
             user_id: user?.id ?? payload.user_id
         };
-
-
 
         const adminSupabase = getSupabaseServerAdminClient<Database>();
         const { error: insertError } = await adminSupabase
@@ -615,10 +641,8 @@ export const createReservationAction = enhanceAction(
 
         if (insertError) {
             console.error('Insert error details:', insertError);
-            throw new Error(`Erreur lors de la validation de la réservation: ${insertError.message}`);
+            throw new Error(`${t('actions.validationError')}: ${insertError.message}`);
         }
-
-
 
         return { success: true };
     },
@@ -726,8 +750,10 @@ export async function getUserReservationsAction({
         .order('start_time', { ascending: true });
 
     if (error) {
+        const i18n = await createI18nServerInstance();
+        const t = i18n.getFixedT(null, 'restaurant');
         console.error('Error fetching reservations:', error);
-        throw new Error('Erreur lors de la récupération de vos réservations');
+        throw new Error(t('actions.fetchReservationsError'));
     }
 
     return data || [];
@@ -764,6 +790,9 @@ export const getUserRoleAction = enhanceAction(
  */
 export const getDailyReservationsAction = enhanceAction(
     async ({ date }: { date: string }) => {
+        const i18n = await createI18nServerInstance();
+        const t = i18n.getFixedT(null, 'restaurant');
+
         const user = await requireUserInServerComponent();
         const supabase = getSupabaseServerClient<Database>();
 
@@ -782,13 +811,13 @@ export const getDailyReservationsAction = enhanceAction(
 
         if (error) {
             console.error('Error fetching daily reservations:', error);
-            throw new Error('Erreur lors de la récupération des réservations');
+            throw new Error(t('actions.fetchReservationsError'));
         }
 
-        // Decrypt notes if sensitive_notes is present
+        // Decrypt notes
         return (data || []).map(res => ({
             ...res,
-            notes: res.sensitive_notes ? decrypt(res.sensitive_notes) : res.notes
+            notes: res.notes ? decrypt(res.notes) : null
         }));
     },
     { auth: true }
@@ -806,6 +835,9 @@ export const updateReservationStatusAction = enhanceAction(
         reservationId: string;
         status: 'confirmed' | 'cancelled' | 'arrived' | 'no-show';
     }) => {
+        const i18n = await createI18nServerInstance();
+        const t = i18n.getFixedT(null, 'restaurant');
+
         const user = await requireUserInServerComponent();
         const supabase = getSupabaseServerClient<Database>();
 
@@ -817,7 +849,7 @@ export const updateReservationStatusAction = enhanceAction(
             .single();
 
         if (rError || !reservation) {
-            throw new Error('Réservation non trouvée');
+            throw new Error(t('actions.reservationNotFound'));
         }
 
         // 2. Check if the current user is a member of that account
@@ -829,7 +861,7 @@ export const updateReservationStatusAction = enhanceAction(
             .maybeSingle();
 
         if (mError || !membership) {
-            throw new Error('Permission refusée');
+            throw new Error(t('actions.permissionDenied'));
         }
 
         // 3. Time-based validation
@@ -839,14 +871,14 @@ export const updateReservationStatusAction = enhanceAction(
         if (status === 'arrived') {
             const canMarkArrived = isAfter(now, subMinutes(reservationTime, 30));
             if (!canMarkArrived) {
-                throw new Error("Impossible de marquer comme arrivé plus de 30 min à l'avance");
+                throw new Error(t('actions.arrivedTooEarly'));
             }
         }
 
         if (status === 'no-show') {
             const canMarkNoShow = isAfter(now, addMinutes(reservationTime, 15));
             if (!canMarkNoShow) {
-                throw new Error("Impossible de marquer comme No-show avant 15 min après l'heure");
+                throw new Error(t('actions.noShowTooEarly'));
             }
         }
 
@@ -858,7 +890,7 @@ export const updateReservationStatusAction = enhanceAction(
 
         if (updateError) {
             console.error('Error updating reservation status:', updateError);
-            throw new Error('Erreur lors de la mise à jour du statut');
+            throw new Error(t('actions.updateStatusError'));
         }
 
         revalidatePath('/home', 'page');
@@ -980,7 +1012,9 @@ export const updateReservationDetailsAction = enhanceAction(
             const bestTable = tables.find(t => !occupiedIds.has(t.id));
 
             if (!bestTable) {
-                throw new Error('Désolé, plus de disponibilité pour ce changement (tables complètes)');
+                const i18n = await createI18nServerInstance();
+                const t = i18n.getFixedT(null, 'restaurant');
+                throw new Error(t('actions.availabilityChangeError'));
             }
 
             tableId = bestTable.id;
@@ -990,8 +1024,7 @@ export const updateReservationDetailsAction = enhanceAction(
         const updateData = {
             guest_count: payload.guest_count,
             start_time: payload.start_time,
-            notes: payload.notes,
-            sensitive_notes: payload.notes ? encrypt(payload.notes) : null,
+            notes: payload.notes ? encrypt(payload.notes) : null,
             table_id: tableId,
             updated_at: new Date().toISOString(),
         };
@@ -1002,8 +1035,10 @@ export const updateReservationDetailsAction = enhanceAction(
             .eq('id', payload.id);
 
         if (updateError) {
+            const i18n = await createI18nServerInstance();
+            const t = i18n.getFixedT(null, 'restaurant');
             console.error('Update error:', updateError);
-            throw new Error('Erreur lors de la mise à jour');
+            throw new Error(t('actions.updateError'));
         }
 
         revalidatePath('/home');
@@ -1062,7 +1097,9 @@ export const switchToAccountAction = enhanceAction(
             .maybeSingle();
 
         if (!membership) {
-            throw new Error('Vous n\'avez pas accès à ce compte');
+            const i18n = await createI18nServerInstance();
+            const t = i18n.getFixedT(null, 'restaurant');
+            throw new Error(t('actions.accountAccessDenied'));
         }
 
         const cookieStore = await cookies();

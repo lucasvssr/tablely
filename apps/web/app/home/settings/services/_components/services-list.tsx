@@ -7,6 +7,8 @@ import { useTransition } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
+import { useTranslation } from 'react-i18next';
+
 interface Service {
     id: string;
     name: string;
@@ -14,16 +16,6 @@ interface Service {
     end_time: string;
     days_of_week: number[];
 }
-
-const DAY_LABELS: Record<number, string> = {
-    1: 'Lun',
-    2: 'Mar',
-    3: 'Mer',
-    4: 'Jeu',
-    5: 'Ven',
-    6: 'Sam',
-    7: 'Dim',
-};
 
 export function ServicesList({
     initialServices,
@@ -34,26 +26,27 @@ export function ServicesList({
     onEdit?: (service: Service) => void,
     isAdmin: boolean
 }) {
+    const { t } = useTranslation('restaurant');
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
 
     const onDelete = (id: string) => {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer ce service ?')) return;
+        if (!confirm(t('services.list.deleteConfirm'))) return;
 
         startTransition(async () => {
             try {
                 await deleteServiceAction({ id });
-                toast.success('Service supprimé');
+                toast.success(t('services.list.deleteSuccess'));
                 router.refresh();
             } catch {
-                toast.error('Erreur lors de la suppression');
+                toast.error(t('services.list.deleteError'));
             }
         });
     };
 
     const formatDays = (days: number[]) => {
-        if (!days || days.length === 0) return 'Aucun jour';
-        if (days.length === 7) return 'Tous les jours';
+        if (!days || days.length === 0) return t('services.list.noDays');
+        if (days.length === 7) return t('services.list.allDays');
 
         // Sort days numerically
         const sortedDays = [...days].sort((a, b) => a - b);
@@ -63,10 +56,10 @@ export function ServicesList({
         const last = sortedDays[sortedDays.length - 1];
 
         if (first !== undefined && last !== undefined && sortedDays.length > 2 && last - first === sortedDays.length - 1) {
-            return `${DAY_LABELS[first]} - ${DAY_LABELS[last]}`;
+            return `${t(`services.days.${first}`)} - ${t(`services.days.${last}`)}`;
         }
 
-        return sortedDays.map(d => DAY_LABELS[d]).join(', ');
+        return sortedDays.map(d => t(`services.days.${d}`)).join(', ');
     };
 
     if (initialServices.length === 0) {
@@ -75,8 +68,8 @@ export function ServicesList({
                 <div className="mb-4 rounded-full bg-muted p-4">
                     <Clock className="h-8 w-8 opacity-20" />
                 </div>
-                <p>Aucun service configuré.</p>
-                <p className="text-sm">Définissez vos horaires d&apos;ouverture (ex: Midi 12:00-14:30).</p>
+                <p>{t('services.list.noServices')}</p>
+                <p className="text-sm">{t('services.list.noServicesDesc')}</p>
             </div>
         );
     }

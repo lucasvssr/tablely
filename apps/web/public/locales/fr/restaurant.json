@@ -1,0 +1,141 @@
+{
+    "settings": {
+        "pageTitle": "Paramètres du Restaurant",
+        "pageDescription": "Gérez les informations générales de votre établissement.",
+        "cardTitle": "Informations de l'établissement",
+        "cardDescriptionAdmin": "Ces informations seront visibles par vos clients sur la page de réservation.",
+        "cardDescriptionStaff": "Consultez les informations générales de votre établissement.",
+        "form": {
+            "nameLabel": "Nom du restaurant",
+            "namePlaceholder": "Le Petit Bistro",
+            "nameDescription": "Le nom affiché sur votre page publique et vos reçus.",
+            "locationLabel": "Localisation / Adresse",
+            "locationPlaceholder": "123 Rue de la Paix, Paris",
+            "phoneLabel": "Numéro de téléphone",
+            "phonePlaceholder": "01 23 45 67 89",
+            "submit": "Enregistrer les modifications",
+            "submitting": "Enregistrement...",
+            "success": "Paramètres du restaurant mis à jour",
+            "errorUnknown": "Erreur inconnue"
+        }
+    },
+    "services": {
+        "pageTitle": "Services & Horaires",
+        "pageDescription": "Configurez vos périodes de service (Midi, Soir) pour ouvrir vos créneaux de réservation.",
+        "container": {
+            "title": "Services configurés",
+            "description": "Les périodes durant lesquelles les clients peuvent réserver une table.",
+            "newService": "Nouveau Service",
+            "editService": "Modifier le service",
+            "newServiceDescription": "Ajoutez une plage horaire de service.",
+            "editServiceDescription": "Mettez à jour les horaires",
+            "cancel": "Annuler"
+        },
+        "list": {
+            "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce service ?",
+            "deleteSuccess": "Service supprimé",
+            "deleteError": "Erreur lors de la suppression",
+            "noDays": "Aucun jour",
+            "allDays": "Tous les jours",
+            "noServices": "Aucun service configuré.",
+            "noServicesDesc": "Définissez vos horaires d'ouverture (ex: Midi 12:00-14:30)."
+        },
+        "form": {
+            "nameLabel": "Nom du service",
+            "namePlaceholder": "ex: Midi, Soir, Brunch",
+            "startTimeLabel": "Début",
+            "endTimeLabel": "Fin",
+            "durationLabel": "Durée d'un repas (min)",
+            "bufferLabel": "Marge de rotation (min)",
+            "daysLabel": "Jours d'ouverture",
+            "submitCreate": "Ajouter le service",
+            "submitUpdate": "Enregistrer les modifications",
+            "submitting": "Enregistrement...",
+            "successCreate": "Service enregistré !",
+            "successUpdate": "Service mis à jour !",
+            "error": "Erreur lors de l'enregistrement"
+        },
+        "days": {
+            "1": "Lun",
+            "2": "Mar",
+            "3": "Mer",
+            "4": "Jeu",
+            "5": "Ven",
+            "6": "Sam",
+            "7": "Dim"
+        }
+    },
+    "tables": {
+        "pageTitle": "Plan de Salle",
+        "pageDescription": "Gérez les tables de votre restaurant pour calculer précisément vos disponibilités.",
+        "container": {
+            "title": "Vos tables",
+            "description": "La liste des tables disponibles dans votre établissement.",
+            "newTable": "Nouvelle Table",
+            "editTable": "Modifier la table",
+            "newTableDescription": "Ajoutez une table à votre plan de salle.",
+            "editTableDescription": "Mettez à jour les détails de la table.",
+            "cancel": "Annuler"
+        },
+        "list": {
+            "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette table ?",
+            "deleteSuccess": "Table supprimée",
+            "deleteError": "Erreur lors de la suppression",
+            "noTables": "Aucune table configurée pour le moment.",
+            "noTablesDesc": "Utilisez le formulaire pour ajouter votre première table.",
+            "capacity": "{{count}} couverts",
+            "active": "Active",
+            "inactive": "Inactive"
+        },
+        "form": {
+            "nameLabel": "Nom ou Numéro",
+            "namePlaceholder": "ex: Table 4, Carré A1",
+            "capacityLabel": "Capacité (personnes)",
+            "submitCreate": "Ajouter la table",
+            "submitUpdate": "Enregistrer les modifications",
+            "submitting": "Enregistrement...",
+            "successCreate": "Table ajoutée !",
+            "successUpdate": "Table mise à jour !",
+            "error": "Erreur lors de l'enregistrement"
+        }
+    },
+    "validation": {
+        "nameMin2": "Le nom doit faire au moins 2 caractères",
+        "locationMin5": "La localisation doit faire au moins 5 caractères",
+        "serviceNameRequired": "Le nom du service est requis",
+        "formatHHMM": "Format HH:MM requis",
+        "durationMin15": "Durée minimum de 15 min",
+        "bufferNonNegative": "La marge ne peut pas être négative",
+        "tableNameRequired": "Le nom de la table est requis",
+        "capacityMin1": "Capacité minimum de 1",
+        "nameRequired": "Le nom est requis",
+        "emailInvalid": "Email invalide"
+    },
+    "actions": {
+        "restaurantNotFound": "Restaurant non trouvé",
+        "invalidServiceData": "Données du service invalides",
+        "invalidTableData": "Données de la table invalides",
+        "accountNotFound": "Compte non trouvé",
+        "invalidRestaurantData": "Données du restaurant invalides",
+        "orgCreationError": "Erreur lors de la création de l'organisation",
+        "membershipCreationError": "Erreur lors de la création de l'appartenance",
+        "restaurantCreationError": "Erreur lors de la création du restaurant",
+        "fetchSlotsError": "Erreur lors de la récupération des créneaux",
+        "existingReservation": "Vous avez déjà une réservation confirmée pour ce service ce jour-là",
+        "noTableAvailable": "Aucune table disponible pour ce nombre de couverts",
+        "tablesFull": "Toutes nos tables sont complètes à cette heure-là (compte tenu de la durée du repas)",
+        "validationError": "Erreur lors de la validation de la réservation",
+        "fetchReservationsError": "Erreur lors de la récupération des réservations",
+        "reservationNotFound": "Réservation non trouvée",
+        "permissionDenied": "Permission refusée",
+        "arrivedTooEarly": "Impossible de marquer comme arrivé plus de 30 min à l'avance",
+        "noShowTooEarly": "Impossible de marquer comme No-show avant 15 min après l'heure",
+        "updateStatusError": "Erreur lors de la mise à jour du statut",
+        "updatePermissionDenied": "Vous n'avez pas la permission de modifier cette réservation",
+        "availabilityChangeError": "Désolé, plus de disponibilité pour ce changement (tables complètes)",
+        "updateError": "Erreur lors de la mise à jour",
+        "accountAccessDenied": "Vous n'avez pas accès à ce compte",
+        "fetchStatsError": "Erreur lors de la récupération des statistiques",
+        "invalidReservationData": "Données de la réservation invalides"
+    }
+}

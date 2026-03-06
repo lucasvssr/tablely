@@ -12,10 +12,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@kit/
 import { Utensils, Search } from 'lucide-react';
 import { BookingFinalizer } from './_components/booking-finalizer';
 import { Suspense } from 'react';
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 
 export default async function HomePage() {
   const user = await requireUserInServerComponent();
   const supabase = getSupabaseServerClient();
+  const i18n = await createI18nServerInstance();
 
   // Get user profile for role
   const { data: profile } = await supabase
@@ -35,8 +37,8 @@ export default async function HomePage() {
     return (
       <>
         <PageHeader
-          title="Bienvenue sur Tablely"
-          description="Trouvez et réservez les meilleures tables près de chez vous."
+          title={i18n.t('dashboard:welcome.title')}
+          description={i18n.t('dashboard:welcome.description')}
         />
         <Suspense fallback={null}>
           <BookingFinalizer />
@@ -44,16 +46,16 @@ export default async function HomePage() {
         <PageBody>
           <Card className="max-w-2xl border-none shadow-xl bg-gradient-to-br from-background to-muted/20">
             <CardHeader>
-              <CardTitle>Prêt pour une expérience culinaire ?</CardTitle>
+              <CardTitle>{i18n.t('dashboard:welcome.readyTitle')}</CardTitle>
               <CardDescription>
-                Explorez nos restaurants partenaires et réservez votre table en quelques clics.
+                {i18n.t('dashboard:welcome.readyDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button asChild size="lg" className="w-full sm:w-auto">
                 <Link href="/restaurants">
                   <Search className="mr-2 h-4 w-4" />
-                  Parcourir les restaurants
+                  {i18n.t('dashboard:welcome.browseButton')}
                 </Link>
               </Button>
             </CardContent>
@@ -68,24 +70,24 @@ export default async function HomePage() {
     return (
       <>
         <PageHeader
-          title="Configuration de votre restaurant"
-          description="Commençons par créer votre premier établissement."
+          title={i18n.t('dashboard:setup.title')}
+          description={i18n.t('dashboard:setup.description')}
         />
         <PageBody>
-          <Card className="max-w-2xl border-none shadow-xl bg-gradient-to-br from-background to-muted/20 border-l-4 border-l-blue-600">
+          <Card className="max-w-2xl shadow-xl bg-gradient-to-br from-background to-muted/20 border-0 border-l-4 border-l-brand-copper">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Utensils className="h-5 w-5 text-blue-600" />
-                Créer votre restaurant
+                <Utensils className="h-5 w-5 text-brand-copper" />
+                {i18n.t('dashboard:setup.createTitle')}
               </CardTitle>
               <CardDescription>
-                Vous n&apos;avez pas encore de restaurant configuré. Créez votre établissement pour commencer à gérer vos services et réservations.
+                {i18n.t('dashboard:setup.createDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
+              <Button asChild size="lg" className="bg-brand-copper hover:bg-brand-copper/90">
                 <Link href="/home/settings/restaurant/new">
-                  Créer mon établissement
+                  {i18n.t('dashboard:setup.createButton')}
                 </Link>
               </Button>
             </CardContent>
@@ -104,8 +106,8 @@ export default async function HomePage() {
   return (
     <>
       <PageHeader
-        title="Tableau de bord"
-        description="Gérez votre restaurant et vos réservations en un coup d'œil."
+        title={i18n.t('dashboard:main.title')}
+        description={i18n.t('dashboard:main.description')}
       />
       <Suspense fallback={null}>
         <BookingFinalizer />

@@ -11,6 +11,8 @@ import { useTransition, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
+import { useTranslation } from 'react-i18next';
+
 export function TableForm({
     initialData,
     onSuccess
@@ -18,6 +20,7 @@ export function TableForm({
     initialData?: TableSchemaType & { id?: string },
     onSuccess?: () => void
 }) {
+    const { t } = useTranslation('restaurant');
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
 
@@ -54,12 +57,12 @@ export function TableForm({
 
                 await upsertTableAction(formData);
 
-                toast.success(data.id ? 'Table mise à jour !' : 'Table ajoutée !');
+                toast.success(data.id ? t('tables.form.successUpdate') : t('tables.form.successCreate'));
                 form.reset();
                 router.refresh();
                 if (onSuccess) onSuccess();
             } catch {
-                toast.error('Erreur lors de l\'enregistrement');
+                toast.error(t('tables.form.error'));
             }
         });
     };
@@ -67,31 +70,31 @@ export function TableForm({
     return (
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-                <Label htmlFor="name">Nom ou Numéro</Label>
+                <Label htmlFor="name">{t('tables.form.nameLabel')}</Label>
                 <Input
                     id="name"
-                    placeholder="ex: Table 4, Carré A1"
+                    placeholder={t('tables.form.namePlaceholder')}
                     {...form.register('name')}
                 />
                 {form.formState.errors.name && (
-                    <p className="text-xs text-destructive">{form.formState.errors.name.message}</p>
+                    <p className="text-xs text-destructive">{t(form.formState.errors.name.message as string)}</p>
                 )}
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="capacity">Capacité (personnes)</Label>
+                <Label htmlFor="capacity">{t('tables.form.capacityLabel')}</Label>
                 <Input
                     id="capacity"
                     type="number"
                     {...form.register('capacity')}
                 />
                 {form.formState.errors.capacity && (
-                    <p className="text-xs text-destructive">{form.formState.errors.capacity.message}</p>
+                    <p className="text-xs text-destructive">{t(form.formState.errors.capacity.message as string)}</p>
                 )}
             </div>
 
             <Button type="submit" className="w-full" disabled={isPending}>
-                {isPending ? 'Enregistrement...' : initialData?.id ? 'Enregistrer les modifications' : 'Ajouter la table'}
+                {isPending ? t('tables.form.submitting') : initialData?.id ? t('tables.form.submitUpdate') : t('tables.form.submitCreate')}
             </Button>
         </form>
     );

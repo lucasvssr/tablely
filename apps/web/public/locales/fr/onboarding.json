@@ -1,0 +1,12 @@
+{
+    "title": "Bienvenue sur Tablely",
+    "description": "Configurons votre établissement pour commencer.",
+    "form": {
+        "restaurantName": "Nom du Restaurant",
+        "restaurantNamePlaceholder": "Ex: Le Petit Bistro",
+        "location": "Localisation / Ville",
+        "locationPlaceholder": "Ex: Paris, 11ème",
+        "submit": "Créer mon établissement",
+        "creating": "Création en cours..."
+    }
+}
