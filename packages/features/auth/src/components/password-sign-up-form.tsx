@@ -39,6 +39,8 @@ export function PasswordSignUpForm({
     email: string;
     password: string;
     repeatPassword: string;
+    firstName: string;
+    lastName: string;
   }) => unknown;
   loading: boolean;
   readOnlyEmail?: boolean;
@@ -51,6 +53,8 @@ export function PasswordSignUpForm({
       email: defaultValues?.email ?? '',
       password: '',
       repeatPassword: '',
+      firstName: '',
+      lastName: '',
     },
   });
 
@@ -60,6 +64,52 @@ export function PasswordSignUpForm({
         className={'w-full space-y-2.5'}
         onSubmit={form.handleSubmit(onSubmit)}
       >
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name={'firstName'}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                   Prénom
+                </FormLabel>
+
+                <FormControl>
+                  <Input
+                    required
+                    placeholder="Jean"
+                    {...field}
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name={'lastName'}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                   Nom
+                </FormLabel>
+
+                <FormControl>
+                  <Input
+                    required
+                    placeholder="Dupont"
+                    {...field}
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
         <FormField
           control={form.control}
           name={'email'}

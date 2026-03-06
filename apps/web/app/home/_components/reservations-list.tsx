@@ -52,6 +52,7 @@ export interface Reservation {
     status: string;
     notes: string | null;
     account_id: string;
+    restaurant_id: string;
 }
 
 export function ReservationsList({
@@ -150,8 +151,9 @@ export function ReservationsList({
 
     const hasAllergy = (notes: string | null) => {
         if (!notes) return false;
+        if (notes.includes('[Allergies:')) return true;
         const normalized = notes.toLowerCase();
-        const keywords = ['allergie', 'allergique', 'intolérance', 'gluten', 'arachide', 'coque', 'lactose', 'oeuf', 'fruit à coque', 'crustacé', 'poisson', 'soja', 'céleri', 'moutarde', 'sésame', 'sulfite', 'lupin', 'mollusque'];
+        const keywords = ['allergy', 'allergie', 'allergique', 'intolérance', 'gluten', 'arachide', 'coque', 'lactose', 'oeuf', 'fruit à coque', 'crustacé', 'poisson', 'soja', 'céleri', 'moutarde', 'sésame', 'sulfite', 'lupin', 'mollusque'];
         return keywords.some(keyword => normalized.includes(keyword));
     };
 
@@ -319,7 +321,9 @@ export function ReservationsList({
                                                     <DropdownMenuLabel>{t('reservations.table.actions')}</DropdownMenuLabel>
                                                     <DropdownMenuSeparator />
 
-                                                    <EditReservationDialog reservation={res} />
+                                                     {res.status !== 'cancelled' && (
+                                                        <EditReservationDialog reservation={res} />
+                                                     )}
 
                                                     <DropdownMenuSeparator />
 

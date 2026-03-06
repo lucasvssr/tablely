@@ -14,11 +14,15 @@ export const signUpWithRoleAction = enhanceAction(
         email: string;
         password: string;
         role: 'client' | 'restaurateur';
+        firstName: string;
+        lastName: string;
         invitationId?: string;
         redirectTo?: string;
     }) => {
         const adminClient = getSupabaseServerAdminClient<Database>();
         const userClient = getSupabaseServerClient<Database>();
+
+        const displayName = `${credentials.firstName} ${credentials.lastName}`;
 
         // 1. If there's an invitation, handle it first
         if (credentials.invitationId) {
@@ -40,10 +44,20 @@ export const signUpWithRoleAction = enhanceAction(
                 email_confirm: true,
                 user_metadata: {
                     role: credentials.role,
+                    display_name: displayName,
+                    full_name: displayName,
                 }
             });
 
             if (signUpError) throw new Error(signUpError.message);
+
+            // Update profile with names
+            await adminClient
+                .from('profiles')
+                .update({ 
+                    display_name: displayName,
+                })
+                .eq('id', userData.user.id);
 
             // Create membership from invitation
             const { error: memberError } = await adminClient.from('memberships').insert({
@@ -64,6 +78,8 @@ export const signUpWithRoleAction = enhanceAction(
                 options: {
                     data: {
                         role: credentials.role,
+                        display_name: displayName,
+                        full_name: displayName,
                     },
                     emailRedirectTo: credentials.redirectTo,
                 }

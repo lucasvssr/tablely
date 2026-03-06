@@ -76,6 +76,7 @@ function SuspendedPersonalAccountDropdown(props: { user: JwtPayload | null }) {
         account={{
           id: userData.id,
           name:
+            (userData as JwtPayload & { profile?: { display_name?: string } }).profile?.display_name ??
             (userData.user_metadata?.full_name as string) ??
             (userData.user_metadata?.name as string) ??
             null,

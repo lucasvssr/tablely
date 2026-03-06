@@ -13,6 +13,9 @@ import { Utensils, Search } from 'lucide-react';
 import { BookingFinalizer } from './_components/booking-finalizer';
 import { Suspense } from 'react';
 import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
+import { getClientReservationsAction, getRestaurantsAction } from '~/lib/server/restaurant/restaurant-actions';
+import { ClientReservationsList } from './_components/client-reservations-list';
+import { RestaurantCard } from './_components/restaurant-card';
 
 export default async function HomePage() {
   const user = await requireUserInServerComponent();
@@ -34,6 +37,13 @@ export default async function HomePage() {
   const slug = (membership?.accounts as Record<string, string> | null)?.slug;
 
   if (role === 'client') {
+    const [clientReservations, allRestaurants] = await Promise.all([
+      getClientReservationsAction(user.id),
+      getRestaurantsAction()
+    ]);
+
+    // Set page headers
+
     return (
       <>
         <PageHeader
@@ -44,22 +54,29 @@ export default async function HomePage() {
           <BookingFinalizer />
         </Suspense>
         <PageBody>
-          <Card className="max-w-2xl border-none shadow-xl bg-gradient-to-br from-background to-muted/20">
-            <CardHeader>
-              <CardTitle>{i18n.t('dashboard:welcome.readyTitle')}</CardTitle>
-              <CardDescription>
-                {i18n.t('dashboard:welcome.readyDescription')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button asChild size="lg" className="w-full sm:w-auto">
-                <Link href="/restaurants">
-                  <Search className="mr-2 h-4 w-4" />
-                  {i18n.t('dashboard:welcome.browseButton')}
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="flex flex-col gap-10 w-full">
+            <div className="w-full">
+               <ClientReservationsList reservations={clientReservations} />
+            </div>
+            
+            <div className="w-full">
+              <div className="flex items-center justify-between mb-4 px-1">
+                <h3 className="text-xl font-bold font-heading">{i18n.t('dashboard:welcome.readyTitle')}</h3>
+                <Button asChild variant="link" size="sm" className="text-brand-copper h-auto p-0 text-sm">
+                  <Link href="/restaurants" className="flex items-center gap-1.5 font-semibold">
+                    {i18n.t('dashboard:welcome.browseButton')}
+                    <Search className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {allRestaurants.slice(0, 6).map((restaurant) => (
+                  <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+                ))}
+              </div>
+            </div>
+          </div>
         </PageBody>
       </>
     );
@@ -67,6 +84,8 @@ export default async function HomePage() {
 
   // If restaurateur but no organization yet
   if (!membership || !slug) {
+    const isMember = role === 'member';
+
     return (
       <>
         <PageHeader
@@ -78,19 +97,25 @@ export default async function HomePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Utensils className="h-5 w-5 text-brand-copper" />
-                {i18n.t('dashboard:setup.createTitle')}
+                {isMember 
+                  ? i18n.t('dashboard:setup.noAccessTitle') 
+                  : i18n.t('dashboard:setup.createTitle')}
               </CardTitle>
               <CardDescription>
-                {i18n.t('dashboard:setup.createDescription')}
+                {isMember 
+                  ? i18n.t('dashboard:setup.noAccessDescription') 
+                  : i18n.t('dashboard:setup.createDescription')}
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button asChild size="lg" className="bg-brand-copper hover:bg-brand-copper/90">
-                <Link href="/home/settings/restaurant/new">
-                  {i18n.t('dashboard:setup.createButton')}
-                </Link>
-              </Button>
-            </CardContent>
+            {!isMember && (
+              <CardContent>
+                <Button asChild size="lg" className="bg-brand-copper hover:bg-brand-copper/90">
+                  <Link href="/home/settings/restaurant/new">
+                    {i18n.t('dashboard:setup.createButton')}
+                  </Link>
+                </Button>
+              </CardContent>
+            )}
           </Card>
         </PageBody>
       </>
@@ -121,7 +146,7 @@ export default async function HomePage() {
             </div>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start" id="reservations-section">
             <div className="lg:col-span-8 flex flex-col gap-10">
               <ReservationsList
                 initialReservations={reservations as Reservation[]}

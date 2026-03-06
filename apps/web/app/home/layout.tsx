@@ -23,6 +23,7 @@ import { getPersonalAccount } from '~/lib/server/accounts/queries';
 import { HomeMenuNavigation } from './_components/home-menu-navigation';
 import { HomeMobileNavigation } from './_components/home-mobile-navigation';
 import { HomeSidebar } from './_components/home-sidebar';
+import { AccountSwitcher } from './_components/account-switcher';
 import { getActiveMembership, getMembershipsAction } from '~/lib/server/restaurant/restaurant-actions';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 
@@ -56,11 +57,25 @@ function MobileNavigation(props: {
   accounts?: Account[];
   activeAccountId?: string;
 }) {
-  return (
-    <div className={'flex items-center space-x-4'}>
-      <AppLogo />
+  const isRestaurateur = props.account?.role === 'restaurateur';
+  const accounts = props.accounts ?? [];
+  const activeAccountId = props.activeAccountId ?? accounts[0]?.id;
 
-      <div className={'flex items-center space-x-2'}>
+  return (
+    <div className={'flex w-full items-center justify-between gap-4'}>
+      {isRestaurateur && accounts.length > 0 && activeAccountId ? (
+        <div className="flex-1 min-w-0">
+          <AccountSwitcher
+            accounts={accounts}
+            activeAccountId={activeAccountId as string}
+            collapsed={false}
+          />
+        </div>
+      ) : (
+        <AppLogo />
+      )}
+
+      <div className={'flex items-center justify-end space-x-2'}>
         <ModeToggle />
         <HomeMobileNavigation
           user={props.user}

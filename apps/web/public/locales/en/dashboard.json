@@ -11,7 +11,9 @@
         "description": "Let's start by creating your first establishment.",
         "createTitle": "Create your restaurant",
         "createDescription": "You don't have a restaurant configured yet. Create your establishment to start managing your services and bookings.",
-        "createButton": "Create my establishment"
+        "createButton": "Create my establishment",
+        "noAccessTitle": "Limited Access",
+        "noAccessDescription": "You are not currently linked to any establishment. Please contact your administrator to receive an invitation."
     },
     "main": {
         "title": "Dashboard",
@@ -22,6 +24,11 @@
         "today": "Today",
         "noReservations": "No bookings",
         "noReservationsDesc": "There are no bookings for this date yet.",
+        "clientSubtitle": "Your upcoming bookings",
+        "noUpcoming": "You have no upcoming bookings.",
+        "upcoming": "Upcoming",
+        "history": "History",
+        "noPast": "No past bookings.",
         "table": {
             "time": "Time",
             "client": "Client",
@@ -60,5 +67,23 @@
         "copyButton": "Copy link",
         "copySuccess": "Link copied to clipboard",
         "viewPage": "View my public page"
+    },
+    "editReservation": {
+        "title": "Edit Reservation",
+        "description": "Adjust the number of guests, time, or notes for {{name}}.",
+        "guests": "Guests",
+        "time": "Booking Time",
+        "noSlots": "No slots available for this number of guests",
+        "allergies": "Allergies",
+        "notesLabel": "Notes",
+        "notesPlaceholder": "Allergies, preferred table, etc.",
+        "cancelMyBooking": "Cancel this booking",
+        "cancelConfirm": "Are you sure you want to cancel this booking?",
+        "save": "Save Changes",
+        "saving": "Saving...",
+        "cancel": "Cancel",
+        "successUpdate": "Reservation updated",
+        "successCancel": "Reservation cancelled",
+        "error": "An error occurred"
     }
 }

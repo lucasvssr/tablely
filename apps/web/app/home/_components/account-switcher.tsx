@@ -30,14 +30,16 @@ interface Account {
 export function AccountSwitcher({
     accounts,
     activeAccountId,
+    collapsed,
 }: {
     accounts: Account[];
     activeAccountId: string;
+    collapsed?: boolean;
 }) {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const sidebar = React.useContext(SidebarContext);
-    const isCollapsed = sidebar?.state === 'collapsed';
+    const isCollapsed = collapsed !== undefined ? collapsed : sidebar?.state === 'collapsed';
 
     const activeAccount = accounts.find((a) => a.id === activeAccountId) || accounts[0];
 
@@ -50,6 +52,10 @@ export function AccountSwitcher({
         });
     };
 
+    const canAdd = activeAccount.role !== 'member';
+    const hasMultipleAccounts = accounts.length > 1;
+    const shouldShowDropdown = hasMultipleAccounts || canAdd;
+
     if (!activeAccount) return null;
 
     const trigger = (
@@ -57,33 +63,38 @@ export function AccountSwitcher({
             variant="ghost"
             title={isCollapsed ? activeAccount.name : undefined}
             className={cn(
-                "w-full justify-start px-2 text-left font-normal hover:bg-muted/50",
-                isCollapsed ? "h-12 w-12 p-0 justify-center" : "h-12",
-                isPending && "opacity-50"
+                "w-full justify-start px-3 text-left font-normal transition-all",
+                isCollapsed ? "h-12 w-12 p-0 justify-center" : "h-14",
+                isPending && "opacity-50",
+                shouldShowDropdown ? "hover:bg-muted/50" : "cursor-default"
             )}
         >
             <div className={cn(
-                "flex items-center gap-3 overflow-hidden text-sm uppercase",
+                "flex items-center gap-2 overflow-hidden text-sm uppercase",
                 isCollapsed && "gap-0"
             )}>
                 <div className={cn(
-                    "flex shrink-0 items-center justify-center rounded-lg bg-brand-copper text-white transition-all shadow-md group-hover:shadow-brand-copper/20",
+                    "flex shrink-0 items-center justify-center rounded-lg bg-brand-copper text-white transition-all shadow-md",
                     isCollapsed ? "h-8 w-8" : "h-9 w-9"
                 )}>
                     <Building2 className={cn("transition-all", isCollapsed ? "h-4 w-4" : "h-5 w-5")} />
                 </div>
                 {!isCollapsed && (
                     <div className="flex flex-col items-start overflow-hidden leading-tight">
-                        <span className="truncate font-bold text-zinc-900 dark:text-zinc-100">{activeAccount.name}</span>
+                        <span className="truncate font-semibold text-foreground dark:text-zinc-100">{activeAccount.name}</span>
                         <span className="text-[10px] text-muted-foreground font-medium">Établissement</span>
                     </div>
                 )}
             </div>
-            {!isCollapsed && (
+            {!isCollapsed && shouldShowDropdown && (
                 <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-40" />
             )}
         </Button>
     );
+
+    if (!shouldShowDropdown) {
+        return trigger;
+    }
 
     const switcher = (
         <DropdownMenu>
@@ -120,15 +131,19 @@ export function AccountSwitcher({
                         {account.id === activeAccountId && <Check className="h-4 w-4 text-brand-copper" />}
                     </DropdownMenuItem>
                 ))}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                    <Link href="/home/settings/restaurant/new" className="flex items-center gap-2 cursor-pointer w-full py-2.5">
-                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-dashed text-muted-foreground">
-                            <Plus className="h-4 w-4" />
-                        </div>
-                        <span className="text-muted-foreground">Ajouter un établissement</span>
-                    </Link>
-                </DropdownMenuItem>
+                {canAdd && (
+                    <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                            <Link href="/home/settings/restaurant/new" className="flex items-center gap-2 cursor-pointer w-full py-2.5">
+                                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-dashed text-muted-foreground">
+                                    <Plus className="h-4 w-4" />
+                                </div>
+                                <span className="text-muted-foreground font-medium">Ajouter un établissement</span>
+                            </Link>
+                        </DropdownMenuItem>
+                    </>
+                )}
             </DropdownMenuContent>
         </DropdownMenu>
     );

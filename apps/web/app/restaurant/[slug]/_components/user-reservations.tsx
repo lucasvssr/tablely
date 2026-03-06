@@ -36,7 +36,11 @@ export function UserReservations({
     }, []);
 
     useEffect(() => {
-        if (initialReservations) return;
+        if (initialReservations) {
+            setReservations(initialReservations);
+            setLoading(false);
+            return;
+        }
 
         async function fetchReservations() {
             setLoading(true);

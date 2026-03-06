@@ -35,6 +35,7 @@ export const ReservationSchema = z.object({
     client_email: z.string().email('validation.emailInvalid'),
     client_phone: z.string().optional(),
     notes: z.string().optional(),
+    allergies: z.array(z.string()).optional(),
     user_id: z.string().uuid().optional(),
 });
 
@@ -43,6 +44,7 @@ export const UpdateReservationSchema = z.object({
     guest_count: z.coerce.number().min(1),
     start_time: z.string().regex(/^([01]\d|2[0-3]):?([0-5]\d)$/, 'validation.formatHHMM'),
     notes: z.string().optional(),
+    allergies: z.array(z.string()).optional(),
 });
 
 export type RestaurantSchemaType = z.infer<typeof RestaurantSchema>;

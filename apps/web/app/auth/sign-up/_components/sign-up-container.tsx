@@ -33,7 +33,13 @@ export function SignUpContainer({
 }: SignUpContainerProps) {
     const [role, setRole] = useState<'client' | 'restaurateur'>('client');
 
-    const handleSignUp = async (credentials: { email: string; password: string; invitationId: string }) => {
+    const handleSignUp = async (credentials: { 
+        email: string; 
+        password: string; 
+        invitationId: string;
+        firstName: string;
+        lastName: string;
+    }) => {
         const result = await signUpWithRoleAction({
             ...credentials,
             role,

@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
 import type { ReservationSchemaType } from '~/lib/server/restaurant/restaurant.schema';
-import type { JwtPayload } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 interface Slot {
@@ -28,12 +28,20 @@ interface Slot {
 
 type Step = 'selection' | 'details' | 'success';
 
+export interface UserWithProfile extends User {
+    profile?: {
+        display_name?: string;
+        email?: string;
+        phone?: string;
+    } | null;
+}
+
 export function BookingContainer({
     restaurantId,
     user
 }: {
     restaurantId: string;
-    user: (JwtPayload & { id: string }) | null;
+    user: UserWithProfile | null;
 }) {
     const [step, setStep] = useState<Step>('selection');
     const [date, setDate] = useState<Date | undefined>(new Date());
@@ -43,12 +51,14 @@ export function BookingContainer({
     const [loading, setLoading] = useState(false);
     const [isRefetching, setIsRefetching] = useState(false);
     const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
     // Form states
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [notes, setNotes] = useState('');
+    const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
     const [submitting, setSubmitting] = useState(false);
     const lastRequestedKeyRef = useRef<string>('');
 
@@ -63,9 +73,17 @@ export function BookingContainer({
 
     useEffect(() => {
         if (user) {
-            if (!name) setName(user.user_metadata?.full_name || user.user_metadata?.name || '');
-            if (!email) setEmail(user.email || '');
-            if (!phone) setPhone(user.phone || user.user_metadata?.phone || '');
+            // Priority: profile.display_name -> user_metadata.full_name -> user_metadata.display_name -> user_metadata.name -> name (claim) -> full_name (claim)
+            const metadata = user.user_metadata || {};
+            const profile = user.profile || {};
+            
+            const displayName = profile.display_name || (metadata.full_name as string) || (metadata.display_name as string) || (metadata.name as string) || '';
+            const displayEmail = user.email || (metadata.email as string) || profile.email || '';
+            const displayPhone = user.phone || (metadata.phone as string) || profile.phone || '';
+
+            if (!name && displayName) setName(displayName);
+            if (!email && displayEmail) setEmail(displayEmail);
+            if (!phone && displayPhone) setPhone(displayPhone);
         }
     }, [user, name, email, phone]);
 
@@ -84,6 +102,7 @@ export function BookingContainer({
             client_email: email,
             client_phone: phone || '',
             notes: notes,
+            allergies: selectedAllergies,
             user_id: user?.id,
         };
 
@@ -106,21 +125,22 @@ export function BookingContainer({
 
         setSubmitting(true);
         try {
-            const result = await createReservationAction(payload) as { success?: boolean; error?: string };
-            
+            const result = (await createReservationAction(payload)) as unknown as { success?: boolean; error?: string };
+
             if (result?.error) {
                 throw new Error(result.error);
             }
-            
+
             setStep('success');
             toast.success(t('public:booking.successTitle'));
+            router.refresh();
         } catch (error: unknown) {
             console.error('createReservationAction error:', error);
             toast.error(error instanceof Error ? error.message : t('public:booking.errorGeneric'));
         } finally {
             setSubmitting(false);
         }
-    }, [restaurantId, date, selectedSlot, guests, name, email, phone, notes, user, router, t]);
+    }, [restaurantId, date, selectedSlot, guests, name, email, phone, notes, selectedAllergies, user, router, t]);
 
 
 
@@ -308,19 +328,19 @@ export function BookingContainer({
                             <p className="text-zinc-900 dark:text-white font-bold text-xl capitalize">
                                 {format(date!, 'EEEE d MMMM', { locale: dateLocale })}
                             </p>
-                            <div className="flex items-center gap-6">
+                            <div className="flex items-center gap-6 flex-wrap justify-center">
                                 <span className="flex items-center gap-2 font-bold text-brand-copper bg-brand-copper/10 px-4 py-2 rounded-xl">
                                     <Clock className="h-5 w-5" /> {selectedSlot?.slot_time.substring(0, 5)}
                                 </span>
                                 <span className="flex items-center gap-2 font-bold text-zinc-700 dark:text-zinc-300 bg-zinc-200/50 dark:bg-zinc-800/50 px-4 py-2 rounded-xl">
-                                    <Users className="h-5 w-5" /> {guests} couverts
+                                    <Users className="h-5 w-5" /> {t('public:booking.guestsCount', { count: guests })}
                                 </span>
                             </div>
                         </div>
                     </div>
                     <Button
                         size="lg"
-                        className="rounded-2xl h-14 px-8 font-bold bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:scale-105 transition-all"
+                        className="rounded-2xl h-16 px-10 font-bold bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:scale-105 transition-all shadow-xl"
                         onClick={() => window.location.reload()}
                     >
                         {t('public:booking.ctaHome')}
@@ -347,7 +367,7 @@ export function BookingContainer({
                                     <CalendarIcon className="w-3.5 h-3.5" />
                                     {t('public:booking.dateLabel')}
                                 </label>
-                                <Popover>
+                                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                                     <PopoverTrigger asChild>
                                         <Button
                                             variant="outline"
@@ -364,7 +384,10 @@ export function BookingContainer({
                                         <Calendar
                                             mode="single"
                                             selected={date}
-                                            onSelect={setDate}
+                                            onSelect={(d) => {
+                                                setDate(d);
+                                                setIsCalendarOpen(false);
+                                            }}
                                             initialFocus
                                             disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                                             locale={dateLocale}
@@ -493,7 +516,7 @@ export function BookingContainer({
                             </div>
                             <Button
                                 size="lg"
-                                className="w-full md:w-auto h-12 md:h-16 px-8 md:px-12 text-base md:text-xl font-bold rounded-2xl bg-brand-copper hover:bg-brand-copper/90 shadow-2xl shadow-brand-copper/30 disabled:opacity-50 transition-all hover:scale-105 active:scale-95 text-white active:bg-brand-copper/80 border-none relative z-10"
+                                className="w-full md:w-auto h-16 px-8 md:px-12 text-base md:text-xl font-bold rounded-2xl bg-brand-copper hover:bg-brand-copper/90 shadow-2xl shadow-brand-copper/30 disabled:opacity-50 transition-all hover:scale-105 active:scale-95 text-white active:bg-brand-copper/80 border-none relative z-10"
                                 disabled={!selectedSlot || loading}
                                 onClick={() => setStep('details')}
                             >
@@ -549,6 +572,44 @@ export function BookingContainer({
                             </div>
                             <div className="space-y-3 md:col-span-2">
                                 <label className="text-xs font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest px-1">
+                                    {t('public:booking.allergiesLabel')}
+                                </label>
+                                <div className="flex flex-wrap gap-3">
+                                    {[
+                                        { id: 'allergyGluten', label: t('public:booking.allergyGluten') },
+                                        { id: 'allergyLactose', label: t('public:booking.allergyLactose') },
+                                        { id: 'allergyPeanuts', label: t('public:booking.allergyPeanuts') },
+                                        { id: 'allergyShellfish', label: t('public:booking.allergyShellfish') },
+                                        { id: 'allergyEggs', label: t('public:booking.allergyEggs') },
+                                        { id: 'allergyFish', label: t('public:booking.allergyFish') },
+                                        { id: 'allergySoy', label: t('public:booking.allergySoy') },
+                                        { id: 'allergyNuts', label: t('public:booking.allergyNuts') },
+                                    ].map((allergy) => (
+                                        <Button
+                                            key={allergy.id}
+                                            type="button"
+                                            variant={selectedAllergies.includes(allergy.label) ? "default" : "outline"}
+                                            className={cn(
+                                                "rounded-xl h-11 px-6 font-bold transition-all border-2",
+                                                selectedAllergies.includes(allergy.label)
+                                                    ? "bg-brand-copper text-white hover:bg-brand-copper/90 border-transparent shadow-lg shadow-brand-copper/20 scale-105"
+                                                    : "border-zinc-100 dark:border-white/5 text-zinc-600 dark:text-zinc-400 hover:border-brand-copper/50"
+                                            )}
+                                            onClick={() => {
+                                                setSelectedAllergies(prev =>
+                                                    prev.includes(allergy.label)
+                                                        ? prev.filter(a => a !== allergy.label)
+                                                        : [...prev, allergy.label]
+                                                )
+                                            }}
+                                        >
+                                            {allergy.label}
+                                        </Button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="space-y-3 md:col-span-2">
+                                <label className="text-xs font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest px-1">
                                     {t('public:booking.notesLabel')}
                                 </label>
                                 <Textarea
@@ -560,11 +621,11 @@ export function BookingContainer({
                             </div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row gap-6">
+                        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-8">
                             <Button
                                 variant="outline"
                                 size="lg"
-                                className="h-16 flex-1 rounded-2xl font-bold border-zinc-200 dark:border-white/10 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-zinc-600 dark:text-zinc-300"
+                                className="h-16 flex-1 rounded-2xl font-bold border-zinc-200 dark:border-white/10 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-zinc-600 dark:text-zinc-300 text-sm sm:text-lg py-4"
                                 onClick={() => setStep('selection')}
                                 disabled={submitting}
                             >
@@ -573,7 +634,7 @@ export function BookingContainer({
                             </Button>
                             <Button
                                 size="lg"
-                                className="h-16 flex-[2] rounded-2xl font-bold bg-brand-copper hover:bg-brand-copper/90 shadow-2xl shadow-brand-copper/30 transition-all hover:scale-[1.02] active:scale-[0.98] text-white border-none"
+                                className="h-16 flex-[2] rounded-2xl font-bold bg-brand-copper hover:bg-brand-copper/90 shadow-2xl shadow-brand-copper/30 transition-all hover:scale-[1.02] active:scale-[0.98] text-white border-none text-sm sm:text-lg py-4 px-16"
                                 onClick={handleConfirm}
                                 disabled={submitting || !name || !email}
                             >

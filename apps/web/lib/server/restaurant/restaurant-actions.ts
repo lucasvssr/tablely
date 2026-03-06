@@ -559,8 +559,9 @@ export const createReservationAction = enhanceAction(
                 .eq('id', payload.service_id)
                 .single();
 
-            const duration = payload.duration_minutes ?? (service as unknown as Record<string, number>)?.duration_minutes ?? 90;
-            const buffer = (service as unknown as Record<string, number>)?.buffer_minutes ?? 15;
+            const serviceData = service as { duration_minutes: number | null; buffer_minutes: number | null } | null;
+            const duration = payload.duration_minutes ?? serviceData?.duration_minutes ?? 90;
+            const buffer = serviceData?.buffer_minutes ?? 15;
 
             const { data: existingReservations } = await supabase
                 .from('reservations')
@@ -611,6 +612,12 @@ export const createReservationAction = enhanceAction(
             }
 
             // 4. Create the reservation
+            const allergyText = payload.allergies && payload.allergies.length > 0 
+                ? `[Allergies: ${payload.allergies.join(', ')}] ` 
+                : '';
+            
+            const combinedNotes = `${allergyText}${payload.notes || ''}`.trim();
+
             const reservationData = {
                 account_id: restaurant.account_id,
                 restaurant_id: payload.restaurant_id,
@@ -621,11 +628,10 @@ export const createReservationAction = enhanceAction(
                 client_phone: payload.client_phone,
                 date: payload.date,
                 start_time: payload.start_time,
-                duration_minutes: duration,
                 guest_count: payload.guest_count,
-                notes: payload.notes ? encrypt(payload.notes) : null,
+                notes: combinedNotes ? encrypt(combinedNotes) : null,
                 status: 'confirmed',
-                user_id: user.id // user is guaranteed to be present by enhanceAction
+                user_id: user.id
             };
 
             const adminSupabase = getSupabaseServerAdminClient<Database>();
@@ -638,6 +644,19 @@ export const createReservationAction = enhanceAction(
             if (insertError) {
                 console.error('Insert error details:', insertError);
                 return { error: `${t('actions.validationError')}: ${insertError.message}` };
+            }
+
+            // Fetch account to get slug for revalidation
+            const { data: account } = await supabase
+                .from('accounts')
+                .select('slug')
+                .eq('id', restaurant.account_id)
+                .single();
+
+            revalidatePath('/home', 'layout');
+            if (account?.slug) {
+                revalidatePath(`/restaurant/${account.slug}`);
+                revalidatePath(`/restaurant/${account.slug}`, 'layout');
             }
 
             return { success: true };
@@ -852,7 +871,7 @@ export const updateReservationStatusAction = enhanceAction(
         // 1. Get the reservation to check its account_id and timing
         const { data: reservation, error: rError } = await supabase
             .from('reservations')
-            .select('account_id, date, start_time')
+            .select('account_id, date, start_time, user_id, client_email')
             .eq('id', reservationId)
             .single();
 
@@ -860,15 +879,22 @@ export const updateReservationStatusAction = enhanceAction(
             throw new Error(t('actions.reservationNotFound'));
         }
 
-        // 2. Check if the current user is a member of that account
-        const { data: membership, error: mError } = await supabase
+        // 2. Check permissions: must be account member OR the owner (only for cancellation)
+        const { data: membership } = await supabase
             .from('memberships')
             .select('role')
             .eq('user_id', user.id)
             .eq('account_id', reservation.account_id)
             .maybeSingle();
 
-        if (mError || !membership) {
+        const isOwner = reservation.user_id === user.id || (user.email && reservation.client_email === user.email);
+
+        if (!membership && !isOwner) {
+            throw new Error(t('actions.permissionDenied'));
+        }
+
+        // Owners can only cancel their own reservations
+        if (isOwner && !membership && status !== 'cancelled') {
             throw new Error(t('actions.permissionDenied'));
         }
 
@@ -890,8 +916,9 @@ export const updateReservationStatusAction = enhanceAction(
             }
         }
 
-        // 4. Update the status
-        const { error: updateError } = await supabase
+        // 4. Update the status using admin client (to bypass RLS for clients/owners)
+        const adminClient = getSupabaseServerAdminClient<Database>();
+        const { error: updateError } = await adminClient
             .from('reservations')
             .update({ status, updated_at: new Date().toISOString() })
             .eq('id', reservationId);
@@ -934,7 +961,9 @@ export const updateReservationDetailsAction = enhanceAction(
             throw new Error('Réservation non trouvée');
         }
 
-        // 2. Check permission (must belong to user's account)
+        // 2. Check permission (must belong to user's account OR be the user who made the reservation)
+        const isOwnerOfReservation = currentRes.user_id === user.id;
+        
         const { data: membership } = await supabase
             .from('memberships')
             .select('account_id')
@@ -942,7 +971,7 @@ export const updateReservationDetailsAction = enhanceAction(
             .eq('account_id', currentRes.account_id)
             .maybeSingle();
 
-        if (!membership) {
+        if (!membership && !isOwnerOfReservation) {
             throw new Error('Vous n\'avez pas la permission de modifier cette réservation');
         }
 
@@ -978,7 +1007,6 @@ export const updateReservationDetailsAction = enhanceAction(
                 .select(`
                     table_id, 
                     start_time, 
-                    duration_minutes,
                     services (
                         duration_minutes,
                         buffer_minutes
@@ -1005,10 +1033,18 @@ export const updateReservationDetailsAction = enhanceAction(
             const requestedEnd = requestedStart + duration;
 
             const occupiedIds = new Set();
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (otherReservations as any[] || []).forEach((r) => {
-                const rStart = timeToMin(r.start_time as string);
-                const rBaseDuration = r.duration_minutes ?? r.services?.duration_minutes ?? 90;
+            const reservationsList = (otherReservations as unknown as {
+                table_id: string;
+                start_time: string;
+                services: {
+                    duration_minutes: number | null;
+                    buffer_minutes: number | null;
+                } | null;
+            }[] ?? []);
+
+            reservationsList.forEach((r) => {
+                const rStart = timeToMin(r.start_time);
+                const rBaseDuration = r.services?.duration_minutes ?? 90;
                 const rBuffer = r.services?.buffer_minutes ?? 15;
                 const rEnd = rStart + rBaseDuration;
 
@@ -1029,23 +1065,30 @@ export const updateReservationDetailsAction = enhanceAction(
         }
 
         // 4. Perform update
+        const allergyText = payload.allergies && payload.allergies.length > 0 
+            ? `[Allergies: ${payload.allergies.join(', ')}] ` 
+            : '';
+        
+        const combinedNotes = `${allergyText}${payload.notes || ''}`.trim();
+
         const updateData = {
             guest_count: payload.guest_count,
             start_time: payload.start_time,
-            notes: payload.notes ? encrypt(payload.notes) : null,
+            notes: combinedNotes ? encrypt(combinedNotes) : null,
             table_id: tableId,
             updated_at: new Date().toISOString(),
         };
 
-        const { error: updateError } = await supabase
+        const adminSupabase = getSupabaseServerAdminClient();
+        const { error: finalUpdateError } = await adminSupabase
             .from('reservations')
             .update(updateData)
             .eq('id', payload.id);
 
-        if (updateError) {
+        if (finalUpdateError) {
+            console.error('Final update error (Admin):', finalUpdateError);
             const i18n = await createI18nServerInstance();
             const t = i18n.getFixedT(null, 'restaurant');
-            console.error('Update error:', updateError);
             throw new Error(t('actions.updateError'));
         }
 
@@ -1126,3 +1169,110 @@ export const switchToAccountAction = enhanceAction(
     { auth: true }
 );
 
+
+/**
+ * @name getClientReservationsAction
+ * @description Fetches all reservations for a client across all restaurants.
+ * Uses the standard server client - RLS policies allow users to read their own reservations.
+ */
+export async function getClientReservationsAction(userId: string) {
+    const supabase = getSupabaseServerClient<Database>();
+
+    // Get user email for fallback matching (reservations made before login)
+    const { data: { user } } = await supabase.auth.getUser();
+    const userEmail = user?.email;
+
+    // Primary query: match by user_id (RLS allows this via auth.uid() = user_id)
+    const { data: byUserId, error: error1 } = await supabase
+        .from('reservations')
+        .select(`
+            id,
+            restaurant_id,
+            date,
+            start_time,
+            guest_count,
+            status,
+            notes,
+            client_name,
+            restaurants (
+                name,
+                location,
+                accounts (
+                    slug
+                )
+            )
+        `)
+        .eq('user_id', userId)
+        .order('date', { ascending: false });
+
+    if (error1) {
+        console.error('Error fetching client reservations by user_id:', error1);
+    }
+
+    // Secondary query: match by client_email (for reservations made before login)
+    // RLS allows this via client_email = auth.users.email
+    let byEmail: typeof byUserId = [];
+    if (userEmail) {
+        const { data: emailData, error: error2 } = await supabase
+            .from('reservations')
+            .select(`
+                id,
+                restaurant_id,
+                date,
+                start_time,
+                guest_count,
+                status,
+                notes,
+                client_name,
+                restaurants (
+                    name,
+                    location,
+                    accounts (
+                        slug
+                    )
+                )
+            `)
+            .eq('client_email', userEmail)
+            .is('user_id', null)
+            .order('date', { ascending: false });
+
+        if (error2) {
+            console.error('Error fetching client reservations by email:', error2);
+        } else {
+            byEmail = emailData || [];
+        }
+    }
+
+    // Merge and deduplicate
+    const all = [...(byUserId || []), ...byEmail];
+    const seen = new Set<string>();
+    const deduplicated = all.filter(r => {
+        if (seen.has(r.id)) return false;
+        seen.add(r.id);
+        return true;
+    });
+
+    return deduplicated.map((res) => {
+        const restaurantRec = res.restaurants as unknown as {
+            name: string;
+            location: string;
+            accounts: {
+                slug: string;
+            } | null;
+        } | null;
+
+        return {
+            id: res.id,
+            restaurant_id: res.restaurant_id,
+            date: res.date,
+            start_time: res.start_time,
+            guest_count: res.guest_count,
+            status: res.status,
+            notes: res.notes ? decrypt(res.notes) : null,
+            client_name: res.client_name || '',
+            restaurant_name: restaurantRec?.name || '',
+            restaurant_location: restaurantRec?.location || '',
+            restaurant_slug: restaurantRec?.accounts?.slug || ''
+        };
+    });
+}

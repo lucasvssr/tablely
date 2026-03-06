@@ -11,7 +11,9 @@
         "description": "Commençons par créer votre premier établissement.",
         "createTitle": "Créer votre restaurant",
         "createDescription": "Vous n'avez pas encore de restaurant configuré. Créez votre établissement pour commencer à gérer vos services et réservations.",
-        "createButton": "Créer mon établissement"
+        "createButton": "Créer mon établissement",
+        "noAccessTitle": "Accès limité",
+        "noAccessDescription": "Vous n'êtes actuellement rattaché à aucun établissement. Veuillez contacter votre administrateur pour recevoir une invitation."
     },
     "main": {
         "title": "Tableau de bord",
@@ -22,6 +24,11 @@
         "today": "Aujourd'hui",
         "noReservations": "Aucune réservation",
         "noReservationsDesc": "Il n'y a pas encore de réservation pour cette date.",
+        "clientSubtitle": "Vos prochaines réservations",
+        "noUpcoming": "Vous n'avez pas de réservations à venir.",
+        "upcoming": "À venir",
+        "history": "Historique",
+        "noPast": "Aucune réservation passée.",
         "table": {
             "time": "Heure",
             "client": "Client",
@@ -59,6 +66,25 @@
         "description": "Partagez ce lien avec vos clients sur les réseaux sociaux ou votre site web pour recevoir des réservations.",
         "copyButton": "Copier le lien",
         "copySuccess": "Lien copié dans le presse-papier",
-        "viewPage": "Voir ma page publique"
+        "viewPage": "Voir ma page publique",
+        "manageReservations": "Gérer les réservations"
+    },
+    "editReservation": {
+        "title": "Modifier la réservation",
+        "description": "Ajustez le nombre de couverts, l'heure ou les notes pour {{name}}.",
+        "guests": "Couverts",
+        "time": "Heure de la réservation",
+        "noSlots": "Aucun créneau disponible pour ce nombre de couverts",
+        "allergies": "Allergies",
+        "notesLabel": "Notes",
+        "notesPlaceholder": "Allergies, table préférée, etc.",
+        "cancelMyBooking": "Annuler la réservation",
+        "cancelConfirm": "Êtes-vous sûr de vouloir annuler cette réservation ?",
+        "save": "Enregistrer",
+        "saving": "Mise à jour...",
+        "cancel": "Annuler",
+        "successUpdate": "Réservation mise à jour",
+        "successCancel": "Réservation annulée",
+        "error": "Une erreur est survenue"
     }
 }

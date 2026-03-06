@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@kit/ui/card';
 import { Button } from '@kit/ui/button';
-import { Globe, Copy, ExternalLink, Check } from 'lucide-react';
+import { Globe, Copy, Check, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -60,16 +60,16 @@ export function PublicPageLinkCard({ slug }: { slug: string }) {
                         {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4 text-brand-copper" />}
                     </Button>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-wrap">
                     <Button
                         variant="default"
                         className="flex-1 bg-brand-copper hover:bg-brand-copper/90 text-white font-semibold h-11 rounded-xl shadow-lg shadow-brand-copper/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                        asChild
+                        onClick={() => {
+                            document.getElementById('reservations-section')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
                     >
-                        <a href={`${pathsConfig.app.restaurant}/${slug}`} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="mr-2 h-4 w-4" />
-                            {t('dashboard:publicPageCard.viewPage')}
-                        </a>
+                        <Calendar className="mr-2 h-4 w-4" />
+                        {t('dashboard:publicPageCard.manageReservations')}
                     </Button>
 
                     <Button

@@ -1,11 +1,12 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import type { JwtPayload } from '@supabase/supabase-js';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { Database } from '~/lib/database.types';
 import { MapPin, Phone, Users, ChevronRight, Star } from 'lucide-react';
 import { Metadata } from 'next';
 import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
-import { BookingContainer } from './_components/booking-container';
+import { BookingContainer, type UserWithProfile } from './_components/booking-container';
 import { getRestaurantBySlugAction, getUserReservationsAction } from '~/lib/server/restaurant/restaurant-actions';
 import { UserReservations } from './_components/user-reservations';
 import { SiteHeader } from '~/(home)/_components/site-header';
@@ -56,8 +57,13 @@ export default async function RestaurantPublicPage({ params }: RestaurantPagePro
 
     const { account, restaurant, totalCapacity } = restaurantData;
 
-    const { data: claimsData } = await supabase.auth.getClaims();
-    const userId = claimsData?.claims?.sub;
+    const { data: { user } } = await supabase.auth.getUser();
+    const userId = user?.id;
+
+    // Fetch profile if user is logged in
+    const { data: profile } = userId 
+        ? await supabase.from('profiles').select('*').eq('id', userId).single()
+        : { data: null };
 
     const reservations = userId
         ? await getUserReservationsAction({
@@ -68,32 +74,35 @@ export default async function RestaurantPublicPage({ params }: RestaurantPagePro
 
     return (
         <div className="min-h-screen bg-white dark:bg-zinc-950 flex flex-col font-sans selection:bg-brand-copper/30 overflow-x-hidden">
-            <SiteHeader user={claimsData?.claims ? {
-                ...claimsData.claims,
-                id: claimsData.claims.sub as string
-            } : null} />
+            <SiteHeader user={user ? ({
+                ...user,
+                profile: profile,
+                id: user.id
+            } as unknown as JwtPayload) : null} />
 
             <main className="flex-1 pt-20">
-                {/* Hero Section */}
-                <section className="relative">
-                    <div className="container mx-auto px-4 py-6 md:py-12">
-                        <div className="relative overflow-hidden rounded-[2rem] md:rounded-[3.5rem] bg-zinc-900 border border-white/10 shadow-3xl flex items-center py-12 md:py-0 md:aspect-[21/9] min-h-[320px] md:min-h-[500px] group/hero">
-                            {/* Background Image with overlay */}
-                            <div className="absolute inset-0 z-0">
+                <section className="container">
+                    <div className="w-full max-w-full mx-auto px-4 sm:px-6 py-4 lg:py-10">
+                        <div
+                            className="rounded-[2rem] lg:rounded-[3rem] bg-zinc-900 border border-white/10 shadow-2xl flex items-center py-10 group/hero"
+                            style={{ contain: 'paint' }}
+                        >
+                            {/* Background Image with overlay - forced clipping */}
+                            <div className="absolute inset-0 -z-10 overflow-hidden rounded-[inherit] pointer-events-none">
                                 <Image
                                     src="/images/restaurant-hero.png"
                                     alt={account.name}
                                     fill
-                                    className="object-cover opacity-60 scale-105 group-hover/hero:scale-110 transition-transform duration-[10s] ease-out"
+                                    className="object-cover opacity-60 group-hover/hero:scale-105 transition-transform duration-[10s] ease-out select-none"
                                     priority
                                     fetchPriority="high"
-                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1500px"
+                                    sizes="100vw"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/95 via-zinc-950/40 to-transparent" />
+                                <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/95 via-zinc-950/50 to-transparent" />
                                 <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-zinc-950/80 to-transparent" />
                             </div>
 
-                            <div className="relative z-10 w-full px-6 md:px-20 max-w-4xl">
+                            <div className="relative z-10 w-full px-6 md:px-16 max-w-4xl">
                                 <div className="space-y-5 md:space-y-8 animate-in fade-in slide-in-from-left-12 duration-1000">
                                     <Pill label={t('public:landing.exclusiveExperience')} className="dark:bg-zinc-900/70 bg-zinc-400/70 text-brand-copper">
                                         <span className="flex items-center gap-2">
@@ -102,7 +111,7 @@ export default async function RestaurantPublicPage({ params }: RestaurantPagePro
                                         </span>
                                     </Pill>
 
-                                    <h1 className="font-heading text-4xl sm:text-5xl md:text-8xl font-bold text-white tracking-tighter leading-[0.95]">
+                                    <h1 className="font-heading text-4xl sm:text-5xl md:text-7xl lg:text-7xl xl:text-8xl font-bold text-white tracking-tighter leading-[0.95] max-w-[15ch] break-words">
                                         {account.name}
                                     </h1>
 
@@ -120,21 +129,16 @@ export default async function RestaurantPublicPage({ params }: RestaurantPagePro
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Decorative blur circle */}
-                            <div className="absolute -right-20 top-20 w-80 h-80 rounded-full bg-[radial-gradient(circle,rgba(var(--brand-copper-rgb),0.15)_0%,transparent_70%)] pointer-events-none animate-pulse" />
                         </div>
                     </div>
                 </section>
 
+
                 {/* Info & Booking */}
                 <section className="container mx-auto px-4 py-8 relative overflow-hidden md:overflow-visible">
-                    {/* Background decoration */}
-                    <div className="absolute left-1/2 -translate-x-1/2 top-0 w-full h-[1000px] bg-zinc-50 dark:bg-zinc-900/20 -z-10 rounded-[5rem] border border-zinc-100 dark:border-white/5" />
-
-                    <div className="flex flex-col gap-24">
+                    <div className="flex flex-col gap-24 relative">
                         {/* Info Cards */}
-                        <FeatureGrid className="grid-cols-1 md:grid-cols-3 gap-8 !mt-0">
+                        <FeatureGrid className="grid-cols-1 lg:grid-cols-3 gap-8 !mt-0">
                             <FeatureCard
                                 className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-white/10 shadow-2xl shadow-zinc-200/50 dark:shadow-none p-10 rounded-[2.5rem] hover:border-brand-copper/30 transition-all duration-500 group"
                                 label={
@@ -204,8 +208,8 @@ export default async function RestaurantPublicPage({ params }: RestaurantPagePro
                                             initialReservations={reservations}
                                         />
                                     </div>
-                                    <div className="absolute right-[-5%] top-[-5%] w-96 h-96 rounded-full bg-[radial-gradient(circle,rgba(var(--brand-copper-rgb),0.1)_0%,transparent_70%)] animate-pulse" />
-                                    <div className="absolute left-[-5%] bottom-[-5%] w-64 h-64 rounded-full bg-[radial-gradient(circle,rgba(113,113,122,0.05)_0%,transparent_70%)]" />
+                                    <div className="absolute right-0 top-0 w-80 h-80 rounded-full bg-[radial-gradient(circle,rgba(var(--brand-copper-rgb),0.05)_0%,transparent_70%)] animate-pulse -z-10 pointer-events-none" />
+                                    <div className="absolute left-0 bottom-0 w-64 h-64 rounded-full bg-[radial-gradient(circle,rgba(113,113,122,0.03)_0%,transparent_70%)] -z-10 pointer-events-none" />
                                 </div>
                             </div>
                         )}
@@ -225,14 +229,15 @@ export default async function RestaurantPublicPage({ params }: RestaurantPagePro
                             </div>
 
                             <div className="relative group max-w-5xl mx-auto">
-                                <div className="absolute -inset-8 bg-gradient-to-tr from-brand-copper/20 via-zinc-500/5 to-transparent blur-3xl opacity-50 transition-opacity group-hover:opacity-75 duration-1000" />
+                                <div className="absolute inset-0 bg-gradient-to-tr from-brand-copper/20 via-zinc-500/5 to-transparent blur-3xl opacity-50 transition-opacity group-hover:opacity-75 duration-1000" />
                                 <div className="relative">
                                     <BookingContainer
                                         restaurantId={restaurant.id}
-                                        user={claimsData?.claims ? {
-                                            ...claimsData.claims,
-                                            id: claimsData.claims.sub as string
-                                        } : null}
+                                        user={user ? ({
+                                            ...user,
+                                            profile: profile,
+                                            id: user.id
+                                        } as UserWithProfile) : null}
                                     />
                                 </div>
                             </div>

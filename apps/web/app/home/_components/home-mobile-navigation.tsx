@@ -70,29 +70,34 @@ export function HomeMobileNavigation(props: {
     }
   });
 
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger>
-        <MenuIcon className={'h-9'} />
-      </DropdownMenuTrigger>
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger className="focus:outline-none">
+                <MenuIcon className="h-8 w-8 text-zinc-900 dark:text-zinc-100" />
+            </DropdownMenuTrigger>
 
-      <DropdownMenuContent sideOffset={10} className={'w-screen rounded-none p-4'}>
-        {isRestaurateur && accounts.length > 0 && activeAccountId && (
-          <div className="mb-4 px-2">
-            <AccountSwitcher
-              accounts={accounts}
-              activeAccountId={activeAccountId as string}
-            />
-          </div>
-        )}
-        <DropdownMenuGroup>{Links}</DropdownMenuGroup>
+            <DropdownMenuContent 
+                sideOffset={10} 
+                align="end"
+                className="w-screen max-w-none rounded-none p-6 shadow-2xl border-x-0 bg-white dark:bg-zinc-950 transition-all"
+            >
+                {isRestaurateur && accounts.length > 0 && activeAccountId && (
+                    <div className="mb-6 px-1">
+                        <AccountSwitcher
+                            accounts={accounts}
+                            activeAccountId={activeAccountId as string}
+                            collapsed={false}
+                        />
+                    </div>
+                )}
+                <DropdownMenuGroup className="space-y-1">{Links}</DropdownMenuGroup>
 
-        <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="my-6" />
 
-        <SignOutDropdownItem onSignOut={() => signOut.mutateAsync()} />
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+                <SignOutDropdownItem onSignOut={() => signOut.mutateAsync()} />
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
 }
 
 function DropdownLink(

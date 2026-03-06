@@ -10,7 +10,7 @@ export function PublicFooter() {
     return (
         <footer className="pt-32 pb-16 bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-white relative overflow-hidden transition-colors duration-500">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-zinc-200 dark:via-white/10 to-transparent" />
-            <div className="absolute top-0 right-0 w-96 h-96 bg-brand-copper/5 dark:bg-brand-copper/10 rounded-full blur-[150px]" />
+            <div className="absolute -top-24 -right-24 w-96 h-96 bg-brand-copper/10 dark:bg-brand-copper/20 rounded-full blur-[120px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-6 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-24">

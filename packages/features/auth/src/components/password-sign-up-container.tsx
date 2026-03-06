@@ -24,7 +24,13 @@ interface EmailPasswordSignUpContainerProps {
 
   onSignUp?: (userId?: string) => unknown;
   emailRedirectTo: string;
-  customSignUpAction?: (credentials: { email: string; password: string; invitationId: string }) => Promise<unknown>;
+  customSignUpAction?: (credentials: { 
+    email: string; 
+    password: string; 
+    invitationId: string;
+    firstName: string;
+    lastName: string;
+  }) => Promise<unknown>;
 }
 
 export function EmailPasswordSignUpContainer({
@@ -48,7 +54,13 @@ export function EmailPasswordSignUpContainer({
   const loading = signUpMutation.isPending || redirecting.current || isPending;
 
   const onSignupRequested = useCallback(
-    async (credentials: { email: string; password: string; repeatPassword: string }) => {
+    async (credentials: { 
+        email: string; 
+        password: string; 
+        repeatPassword: string;
+        firstName: string;
+        lastName: string;
+    }) => {
       if (loading) {
         return;
       }
