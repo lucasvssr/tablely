@@ -11,23 +11,32 @@ import appConfig from '~/config/app.config';
 const MAX_AGE = 60;
 const S_MAX_AGE = 3600;
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // Revalidate every hour
+
 export async function GET() {
-  const paths = await getPaths();
+  try {
+    const paths = await getPaths();
 
-  const headers = {
-    'Cache-Control': `public, max-age=${MAX_AGE}, s-maxage=${S_MAX_AGE}`,
-  };
+    const headers = {
+      'Cache-Control': `public, max-age=${MAX_AGE}, s-maxage=${S_MAX_AGE}`,
+    };
 
-  return getServerSideSitemap([...paths], headers);
+    return getServerSideSitemap([...paths], headers);
+  } catch (error) {
+    console.error('Sitemap generation failed:', error);
+    
+    // Return a basic sitemap if the dynamic one fails
+    return getServerSideSitemap([
+      { loc: new URL('/', appConfig.url).href, lastmod: new Date().toISOString() },
+      { loc: new URL('/restaurants', appConfig.url).href, lastmod: new Date().toISOString() },
+    ], {
+      'Cache-Control': 'no-store, no-cache, must-revalidate'
+    });
+  }
 }
 
 async function getPaths() {
-  const { getRestaurantsAction } = await import(
-    '~/lib/server/restaurant/restaurant-actions'
-  );
-
-  const restaurants = await getRestaurantsAction();
-
   const paths = [
     '/',
     '/restaurants',
@@ -37,9 +46,21 @@ async function getPaths() {
     '/privacy-policy',
   ];
 
-  const restaurantPaths = restaurants.map((restaurant) => {
-    return `/restaurant/${restaurant.slug}`;
-  });
+  let restaurantPaths: string[] = [];
+
+  try {
+    const { getRestaurantsAction } = await import(
+      '~/lib/server/restaurant/restaurant-actions'
+    );
+
+    const restaurants = await getRestaurantsAction();
+
+    restaurantPaths = restaurants.map((restaurant) => {
+      return `/restaurant/${restaurant.slug}`;
+    });
+  } catch (error) {
+    console.warn('Failed to fetch restaurant paths for sitemap:', error);
+  }
 
   const allPaths = [...paths, ...restaurantPaths];
 
