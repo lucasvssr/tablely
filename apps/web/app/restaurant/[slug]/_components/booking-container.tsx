@@ -106,7 +106,12 @@ export function BookingContainer({
 
         setSubmitting(true);
         try {
-            await createReservationAction(payload);
+            const result = await createReservationAction(payload) as { success?: boolean; error?: string };
+            
+            if (result?.error) {
+                throw new Error(result.error);
+            }
+            
             setStep('success');
             toast.success(t('public:booking.successTitle'));
         } catch (error: unknown) {

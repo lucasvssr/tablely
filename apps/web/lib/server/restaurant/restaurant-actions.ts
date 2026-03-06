@@ -500,155 +500,163 @@ export async function getAvailableSlotsAction({
  * @description Creates a new reservation for a restaurant.
  */
 export const createReservationAction = enhanceAction(
-    async (payload) => {
-        const i18n = await createI18nServerInstance();
-        const t = i18n.getFixedT(null, 'restaurant');
+    async (payload, user) => {
+        try {
+            const i18n = await createI18nServerInstance();
+            const t = i18n.getFixedT(null, 'restaurant');
 
-        const supabase = getSupabaseServerClient<Database>();
+            const supabase = getSupabaseServerClient<Database>();
 
-        // 1. Get account_id from restaurant
-        const { data: restaurant, error: restaurantError } = await supabase
-            .from('restaurants')
-            .select('account_id, id')
-            .eq('id', payload.restaurant_id)
-            .single();
+            // 1. Get account_id from restaurant
+            const { data: restaurant, error: restaurantError } = await supabase
+                .from('restaurants')
+                .select('account_id, id')
+                .eq('id', payload.restaurant_id)
+                .single();
 
-        if (restaurantError || !restaurant) {
-            throw new Error(t('actions.restaurantNotFound'));
-        }
-
-        const { data: { user } } = await supabase.auth.getUser();
-
-        // 1b. Check if user already has a reservation for this service on this date
-        const userQuery = supabase
-            .from('reservations')
-            .select('id')
-            .eq('restaurant_id', payload.restaurant_id)
-            .eq('date', payload.date)
-            .eq('service_id', payload.service_id)
-            .eq('status', 'confirmed');
-
-        if (user?.id) {
-            userQuery.or(`user_id.eq.${user.id},client_email.eq.${payload.client_email}`);
-        } else {
-            userQuery.eq('client_email', payload.client_email);
-        }
-
-        const { data: userExisting } = await userQuery;
-
-        if (userExisting && userExisting.length > 0) {
-            throw new Error(t('actions.existingReservation'));
-        }
-
-        // 2. Find an available table for this slot
-        const { data: tables, error: tablesError } = await supabase
-            .from('dining_tables')
-            .select('id')
-            .eq('account_id', restaurant.account_id)
-            .eq('is_active', true)
-            .gte('capacity', payload.guest_count)
-            .order('capacity', { ascending: true });
-
-        if (tablesError || !tables || tables.length === 0) {
-            throw new Error(t('actions.noTableAvailable'));
-        }
-
-        // 3. Get the service details and existing reservations to check for overlaps
-        const { data: service } = await supabase
-            .from('services')
-            .select('duration_minutes, buffer_minutes')
-            .eq('id', payload.service_id)
-            .single();
-
-        const duration = payload.duration_minutes ?? (service as unknown as Record<string, number>)?.duration_minutes ?? 90;
-        const buffer = (service as unknown as Record<string, number>)?.buffer_minutes ?? 15;
-
-        const { data: existingReservations } = await supabase
-            .from('reservations')
-            .select(`
-                table_id, 
-                start_time, 
-                duration_minutes,
-                services (
-                    duration_minutes,
-                    buffer_minutes
-                )
-            `)
-            .eq('restaurant_id', payload.restaurant_id)
-            .eq('date', payload.date)
-            .eq('status', 'confirmed');
-
-        const timeToMin = (t: string | null | undefined) => {
-            if (!t) return 0;
-            const parts = t.split(':');
-            const h = parseInt(parts[0] || '0', 10);
-            const m = parseInt(parts[1] || '0', 10);
-            return h * 60 + m;
-        };
-
-        const isOverlapping = (s1: number, e1: number, s2: number, e2: number) => {
-            return s1 < e2 && s2 < e1;
-        };
-
-        const requestedStart = timeToMin(payload.start_time);
-        const requestedEnd = requestedStart + duration;
-
-        const occupiedIds = new Set();
-        (existingReservations as unknown as Record<string, unknown>[] || []).forEach((r) => {
-            const rStart = timeToMin(r.start_time as string);
-            const rBaseDuration = (r.duration_minutes as number) ?? (r.services as Record<string, number>)?.duration_minutes ?? 90;
-            const rBuffer = (r.services as Record<string, number>)?.buffer_minutes ?? 15;
-            const rEnd = rStart + rBaseDuration;
-
-            // Current requested slot overlaps with existing reservation PLUS its buffer
-            // OR existing reservation overlaps with current requested slot PLUS its buffer
-            // Simple logic: isOverlapping(reqStart, reqEnd + buffer, rStart, rEnd + rBuffer)
-            if (isOverlapping(requestedStart, requestedEnd + buffer, rStart, rEnd + rBuffer)) {
-                occupiedIds.add(r.table_id);
+            if (restaurantError || !restaurant) {
+                return { error: t('actions.restaurantNotFound') };
             }
-        });
 
-        const availableTable = tables.find(t => !occupiedIds.has(t.id));
+            // 1b. Check if user already has a reservation for this service on this date
+            const userQuery = supabase
+                .from('reservations')
+                .select('id')
+                .eq('restaurant_id', payload.restaurant_id)
+                .eq('date', payload.date)
+                .eq('service_id', payload.service_id)
+                .eq('status', 'confirmed');
 
-        if (!availableTable) {
-            throw new Error(t('actions.tablesFull'));
+            if (user?.id) {
+                userQuery.or(`user_id.eq.${user.id},client_email.eq.${payload.client_email}`);
+            } else {
+                userQuery.eq('client_email', payload.client_email);
+            }
+
+            const { data: userExisting } = await userQuery;
+
+            if (userExisting && userExisting.length > 0) {
+                return { error: t('actions.existingReservation') };
+            }
+
+            // 2. Find an available table for this slot
+            const { data: tables, error: tablesError } = await supabase
+                .from('dining_tables')
+                .select('id')
+                .eq('account_id', restaurant.account_id)
+                .eq('is_active', true)
+                .gte('capacity', payload.guest_count)
+                .order('capacity', { ascending: true });
+
+            if (tablesError || !tables || tables.length === 0) {
+                return { error: t('actions.noTableAvailable') };
+            }
+
+            // 3. Get the service details and existing reservations to check for overlaps
+            const { data: service } = await supabase
+                .from('services')
+                .select('duration_minutes, buffer_minutes')
+                .eq('id', payload.service_id)
+                .single();
+
+            const duration = payload.duration_minutes ?? (service as unknown as Record<string, number>)?.duration_minutes ?? 90;
+            const buffer = (service as unknown as Record<string, number>)?.buffer_minutes ?? 15;
+
+            const { data: existingReservations } = await supabase
+                .from('reservations')
+                .select(`
+                    table_id, 
+                    start_time, 
+                    duration_minutes,
+                    services (
+                        duration_minutes,
+                        buffer_minutes
+                    )
+                `)
+                .eq('restaurant_id', payload.restaurant_id)
+                .eq('date', payload.date)
+                .eq('status', 'confirmed');
+
+            const timeToMin = (t: string | null | undefined) => {
+                if (!t) return 0;
+                const parts = t.split(':');
+                const h = parseInt(parts[0] || '0', 10);
+                const m = parseInt(parts[1] || '0', 10);
+                return h * 60 + m;
+            };
+
+            const isOverlapping = (s1: number, e1: number, s2: number, e2: number) => {
+                return s1 < e2 && s2 < e1;
+            };
+
+            const requestedStart = timeToMin(payload.start_time);
+            const requestedEnd = requestedStart + duration;
+
+            const occupiedIds = new Set();
+            (existingReservations as unknown as Record<string, unknown>[] || []).forEach((r) => {
+                const rStart = timeToMin(r.start_time as string);
+                const rBaseDuration = (r.duration_minutes as number) ?? (r.services as Record<string, number>)?.duration_minutes ?? 90;
+                const rBuffer = (r.services as Record<string, number>)?.buffer_minutes ?? 15;
+                const rEnd = rStart + rBaseDuration;
+
+                if (isOverlapping(requestedStart, requestedEnd + buffer, rStart, rEnd + rBuffer)) {
+                    occupiedIds.add(r.table_id);
+                }
+            });
+
+            const availableTable = tables.find(t => !occupiedIds.has(t.id));
+
+            if (!availableTable) {
+                return { error: t('actions.tablesFull') };
+            }
+
+            // 4. Create the reservation
+            const reservationData = {
+                account_id: restaurant.account_id,
+                restaurant_id: payload.restaurant_id,
+                service_id: payload.service_id,
+                table_id: availableTable.id,
+                client_name: payload.client_name,
+                client_email: payload.client_email,
+                client_phone: payload.client_phone,
+                date: payload.date,
+                start_time: payload.start_time,
+                duration_minutes: duration,
+                guest_count: payload.guest_count,
+                notes: payload.notes ? encrypt(payload.notes) : null,
+                status: 'confirmed',
+                user_id: user.id // user is guaranteed to be present by enhanceAction
+            };
+
+            const adminSupabase = getSupabaseServerAdminClient<Database>();
+            const { error: insertError } = await adminSupabase
+                .from('reservations')
+                .insert(reservationData)
+                .select()
+                .single();
+
+            if (insertError) {
+                console.error('Insert error details:', insertError);
+                return { error: `${t('actions.validationError')}: ${insertError.message}` };
+            }
+
+            return { success: true };
+        } catch (error) {
+            console.error('createReservationAction unhandled error:', error);
+            const i18n = await createI18nServerInstance();
+            const t = i18n.getFixedT(null, 'restaurant');
+            
+            // Return a more descriptive error if it's an instance of Error
+            if (error instanceof Error) {
+                return { error: error.message };
+            }
+            
+            return { error: t('actions.fetchSlotsError') }; // Generic error fallback
         }
-
-        // 4. Create the reservation
-        const reservationData = {
-            account_id: restaurant.account_id,
-            restaurant_id: payload.restaurant_id,
-            service_id: payload.service_id,
-            table_id: availableTable.id,
-            client_name: payload.client_name,
-            client_email: payload.client_email,
-            client_phone: payload.client_phone,
-            date: payload.date,
-            start_time: payload.start_time,
-            duration_minutes: duration,
-            guest_count: payload.guest_count,
-            notes: payload.notes ? encrypt(payload.notes) : null,
-            status: 'confirmed',
-            user_id: user?.id ?? payload.user_id
-        };
-
-        const adminSupabase = getSupabaseServerAdminClient<Database>();
-        const { error: insertError } = await adminSupabase
-            .from('reservations')
-            .insert(reservationData)
-            .select()
-            .single();
-
-        if (insertError) {
-            console.error('Insert error details:', insertError);
-            throw new Error(`${t('actions.validationError')}: ${insertError.message}`);
-        }
-
-        return { success: true };
     },
     {
         schema: ReservationSchema,
-        auth: false,
+        auth: true,
     }
 );
 

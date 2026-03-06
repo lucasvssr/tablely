@@ -28,7 +28,11 @@ export function BookingFinalizer() {
                     // Finalize the booking
                     const finalize = async () => {
                         try {
-                            await createReservationAction(data);
+                            const result = await createReservationAction(data) as { success?: boolean; error?: string };
+                            
+                            if (result?.error) {
+                                throw new Error(result.error);
+                            }
 
 
                             toast.success(t('public:booking.successTitle'));
