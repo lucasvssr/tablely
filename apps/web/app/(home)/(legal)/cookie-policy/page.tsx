@@ -38,14 +38,18 @@ async function CookiePolicyPage() {
             <h2 className="text-2xl font-bold tracking-tight">
               {t('home:cookiePolicyWhatIsACookieTitle')}
             </h2>
-            <p>{t('home:cookiePolicyWhatIsACookieContent')}</p>
+            <p>
+              <span dangerouslySetInnerHTML={{ __html: t('home:cookiePolicyWhatIsACookieContent') }} />
+            </p>
           </section>
 
           <section className="space-y-4">
             <h2 className="text-2xl font-bold tracking-tight">
               {t('home:cookiePolicyWhyDoWeUseCookiesTitle')}
             </h2>
-            <p>{t('home:cookiePolicyWhyDoWeUseCookiesContent')}</p>
+            <p>
+              <span dangerouslySetInnerHTML={{ __html: t('home:cookiePolicyWhyDoWeUseCookiesContent') }} />
+            </p>
 
             <div className="space-y-8 mt-6">
               {[
@@ -64,14 +68,16 @@ async function CookiePolicyPage() {
                         return (
                           <ul key={i} className="list-disc pl-6 space-y-2">
                             {item.map((li, j) => (
-                              <li key={j}>{li}</li>
+                              <li key={j}>
+                                <span dangerouslySetInnerHTML={{ __html: li }} />
+                              </li>
                             ))}
                           </ul>
                         );
                       }
                       return (
                         <h3 key={i} className="text-lg font-semibold">
-                          {item}
+                          <span dangerouslySetInnerHTML={{ __html: item }} />
                         </h3>
                       );
                     })}
@@ -94,12 +100,18 @@ async function CookiePolicyPage() {
                 return (
                   <ul key={i} className="list-disc pl-6 space-y-2">
                     {content.map((item, j) => (
-                      <li key={j}>{item}</li>
+                      <li key={j}>
+                        <span dangerouslySetInnerHTML={{ __html: item }} />
+                      </li>
                     ))}
                   </ul>
                 );
               }
-              return <p key={i}>{content}</p>;
+              return (
+                <p key={i}>
+                  <span dangerouslySetInnerHTML={{ __html: content }} />
+                </p>
+              );
             })}
           </section>
 
@@ -116,12 +128,18 @@ async function CookiePolicyPage() {
                 return (
                   <ul key={i} className="list-disc pl-6 space-y-2">
                     {content.map((item, j) => (
-                      <li key={j}>{item}</li>
+                      <li key={j}>
+                        <span dangerouslySetInnerHTML={{ __html: item }} />
+                      </li>
                     ))}
                   </ul>
                 );
               }
-              return <p key={i}>{content}</p>;
+              return (
+                <p key={i}>
+                  <span dangerouslySetInnerHTML={{ __html: content }} />
+                </p>
+              );
             })}
           </section>
 
@@ -130,9 +148,7 @@ async function CookiePolicyPage() {
               {t('home:cookiePolicyContactTitle')}
             </h2>
             <p>
-              {t('home:cookiePolicyContactContent', {
-                email: process.env.NEXT_PUBLIC_CONTACT_EMAIL,
-              })}
+              <span dangerouslySetInnerHTML={{ __html: t('home:cookiePolicyContactContent', { email: process.env.NEXT_PUBLIC_CONTACT_EMAIL }) }} />
             </p>
           </section>
         </div>

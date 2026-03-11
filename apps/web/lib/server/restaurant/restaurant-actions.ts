@@ -863,11 +863,19 @@ export const getRestaurantsAction = unstable_cache(
             return [];
         }
 
-        return (data as any[] || []).map((r) => ({
+        type RestaurantResult = {
+            id: string;
+            name: string;
+            location: string | null;
+            phone: string | null;
+            accounts: { slug: string } | { slug: string }[] | null;
+        };
+
+        return (data as unknown as RestaurantResult[] || []).map((r) => ({
             id: r.id,
             name: r.name,
-            location: r.location,
-            phone: r.phone,
+            location: r.location || '',
+            phone: r.phone || '',
             slug: (Array.isArray(r.accounts) ? r.accounts[0]?.slug : r.accounts?.slug) || ''
         }));
     },

@@ -48,18 +48,18 @@
   "termsOfServiceLastUpdated": "Last updated: {{date}}",
   "termsOfServiceContent": "Our terms and conditions. By using our platform, you agree to be bound by these terms. These terms govern your access to and use of our services. Please read them carefully.",
   "termsOfServicePresentationTitle": "1. Presentation of the Platform",
-  "termsOfServicePresentationContent": "The Tablely platform (hereinafter referred to as 'the Platform') is a service for connecting customers wishing to book a table (hereinafter referred to as 'the Customers') and restaurant establishments (hereinafter referred to as 'the Restaurateurs').",
+  "termsOfServicePresentationContent": "The <strong>Tablely</strong> platform (hereinafter referred to as 'the Platform') is a service for connecting customers wishing to book a table (hereinafter referred to as 'the <strong>Customers</strong>') and restaurant establishments (hereinafter referred to as 'the <strong>Restaurateurs</strong>').",
   "termsOfServiceAccessInscriptionTitle": "2. Access and Registration",
   "termsOfServiceAccessInscriptionContent": "Access to the Platform is free for Customers. Registration requires the creation of an account via an email and password (managed via Supabase Auth). The user undertakes to provide accurate information and to maintain the confidentiality of their credentials.",
   "termsOfServiceReservationServiceTitle": "3. Reservation Service",
   "termsOfServiceReservationServiceContent": [
-    "Automatic Confirmation: Tablely allows a reservation to be made in real-time based on the inventory declared by the Restaurateur. Once the reservation is validated, the Customer receives a confirmation by email.",
+    "<strong>Automatic Confirmation</strong>: Tablely allows a reservation to be made in real-time based on the inventory declared by the Restaurateur. Once the reservation is validated, the Customer receives a confirmation by email.",
     "Customer Engagement: The Customer undertakes to arrive at the scheduled time. In case of an obstacle, the Customer must cancel their reservation via the platform as soon as possible."
   ],
   "termsOfServiceNoShowPaymentTitle": "4. No-Show and Payment",
   "termsOfServiceNoShowPaymentContent": [
-    "Banking Fingerprint: For certain establishments or groups, Tablely may require a banking fingerprint via its partner Stripe.",
-    "Cancellation Fees: The Restaurateur reserves the right to charge cancellation fees for no-shows if the specific cancellation conditions of the establishment are not met."
+    "Banking Fingerprint: For certain establishments or groups, Tablely may require a banking fingerprint via its partner <strong>Stripe</strong>.",
+    "Cancellation Fees: The Restaurateur reserves the right to charge <strong>cancellation fees for no-shows</strong> if the specific cancellation conditions of the establishment are not met."
   ],
   "termsOfServiceResponsibilitiesTitle": "5. Responsibilities",
   "termsOfServiceResponsibilitiesContent": [
@@ -70,9 +70,9 @@
   "termsOfServiceRGPDContent": [
     "Compliance with the RGPD: Tablely complies with the RGPD (General Data Protection Regulation) and ensures the protection of your personal data.",
     [
-      "Your data is never resold to third parties.",
+      "Your data is <strong>never resold</strong> to third parties.",
       "The Restaurateur has access only to the data necessary to manage your reservation.",
-      "You have the right to access, rectify and delete your data."
+      "You have the <strong>right to access, rectify and delete</strong> your data."
     ]
   ],
   "termsOfServiceIPTitle": "7. Intellectual Property",
@@ -80,6 +80,7 @@
   "termsOfServiceModificationTitle": "8. Modification of the terms of use",
   "termsOfServiceModificationContent": "Tablely reserves the right to modify the present CGU at any time. Users will be informed of any major modification by email or through a notification on the platform.",
   "cookiePolicy": "Cookie Policy",
+  "cookieSettings": "Cookie Settings",
   "cookiePolicyDescription": "Our cookie policy and how we use them",
   "cookiePolicyLastUpdated": "Last updated: {{date}}",
   "cookiePolicyWhatIsACookieTitle": "1. What is a cookie?",
@@ -87,21 +88,21 @@
   "cookiePolicyWhyDoWeUseCookiesTitle": "2. The cookies we use",
   "cookiePolicyWhyDoWeUseCookiesContent": "We use three categories of cookies on Tablely ",
   "cookiePolicyNecessaryList": [
-    "Essential Cookies (Strictly necessary) :",
+    "<strong>Essential Cookies</strong> (Strictly necessary) :",
     [
-      "Authentication (Supabase) : Allow you to stay logged into your account while browsing",
-      "Security : Allow you to protect your account and our servers against attacks",
-      "Session : Essential for the proper functioning of the reservation tunnel"
+      "<strong>Authentication (Supabase)</strong> : Allow you to stay logged into your account while browsing",
+      "<strong>Security</strong> : Allow you to protect your account and our servers against attacks",
+      "<strong>Session</strong> : Essential for the proper functioning of the reservation tunnel"
     ]
   ],
   "cookiePolicyFunctionalityList": [
-    "Functional Cookies :",
+    "<strong>Functional Cookies</strong> :",
     [
       "Used to secure and process payments or banking fingerprints. They are necessary to ensure the reliability of transactions."
     ]
   ],
   "cookiePolicyAnalyticsList": [
-    "Audience Measurement Cookies (Analytics) :",
+    "<strong>Audience Measurement Cookies</strong> (Analytics) :",
     [
       "Allow us to understand how users navigate the site in order to optimize ergonomics (ex: most visited pages). This data is generally anonymized."
     ]
@@ -110,8 +111,8 @@
   "cookiePolicyChoiceContent": [
     "On your first visit, a banner informs you of the presence of cookies.",
     [
-      "Technical Cookies : They cannot be deactivated because the site could not function without them (ex: staying logged in).",
-      "Third-party cookies : You can configure your browser to block third-party cookies or be alerted when a cookie is sent."
+      "<strong>Technical Cookies</strong> : They cannot be deactivated because the site could not function without them (ex: staying logged in).",
+      "<strong>Third-party cookies</strong> : You can configure your browser to block third-party cookies or be alerted when a cookie is sent."
     ]
   ],
   "cookiePolicyParametrageNavigateurTitle": "4. Browser Settings",
@@ -134,11 +135,11 @@
   "privacyPolicyDataCollectedTitle": "2. Data Collected",
   "privacyPolicyDataCollectedContent": [
     "We only collect the strictly necessary information:",
-    [
-      "For Customers: Name, first name, email address, phone number (for reservation reminders) and reservation history.",
-      "For Restaurateurs: Professional information, establishment address, floor plan and billing data.",
-      "Payment Data: Bank card information is processed exclusively by Stripe. Tablely never has access to your card numbers."
-    ]
+      [
+        "For <strong>Customers</strong>: Name, first name, email address, phone number and reservation history.",
+        "For <strong>Restaurateurs</strong>: Professional information, establishment address, floor plan and billing data.",
+        "Payment Data: Bank card information is processed exclusively by <strong>Stripe</strong>. Tablely never has access to your card numbers."
+      ]
   ],
   "privacyPolicyTreatmentPurposeTitle": "3. Purpose of Processing",
   "privacyPolicyTreatmentPurposeContent": [
@@ -153,25 +154,26 @@
   "privacyPolicyShareDataTitle": "4. Data Sharing",
   "privacyPolicyShareDataContent": [
     "Your personal data is only shared with third parties essential to the service:",
-    [
-      "The Restaurateur: Receives your name/first name/phone number to prepare your welcome.",
-      "Supabase: For secure database hosting and authentication.",
-      "Stripe: For secure transaction and banking fingerprint management.",
-      "No data is sold or shared for commercial purposes.",
-      "Your data is stored securely on Supabase servers (EU)."
-    ]
+      [
+        "The <strong>Restaurateur</strong>: Receives your name/first name/phone number to prepare your welcome.",
+        "<strong>Supabase</strong>: For secure database hosting and authentication.",
+        "<strong>Stripe</strong>: For secure transaction and banking fingerprint management.",
+        "<strong>Vercel</strong>: For audience analysis and site performance monitoring (Vercel Analytics & Speed Insights).",
+        "No data is <strong>sold or shared</strong> for commercial purposes.",
+        "Your data is stored securely on <strong>Supabase servers (EU)</strong>."
+      ]
   ],
   "privacyPolicyDataRetentionTitle": "5. Data Retention",
   "privacyPolicyDataRetentionContent": "Data is kept as long as your account is active. In case of prolonged inactivity (2 years), your personal data is anonymized or deleted, unless there is a legal obligation to retain it.",
   "privacyPolicyUserRightsTitle": "6. Your Rights",
   "privacyPolicyUserRightsContent": [
     "In accordance with the RGPD, you have the following rights:",
-    [
-      "Right of access: Obtain a copy of your data.",
-      "Right of rectification: Correct inaccurate information.",
-      "Right to erasure: Request the deletion of your data. (unless there is a legal obligation to retain it)",
-      "Right to object: Object to the processing of your data for commercial purposes."
-    ],
+      [
+        "<strong>Right of access</strong>: Obtain a copy of your data.",
+        "<strong>Right of rectification</strong>: Correct inaccurate information.",
+        "<strong>Right to erasure</strong>: Request the deletion of your data.",
+        "<strong>Right to object</strong>: Object to the processing of your data."
+      ],
     "To exercise these rights, please contact us at the following address: {{email}}"
   ],
   "privacyPolicySecurityTitle": "7. Security",

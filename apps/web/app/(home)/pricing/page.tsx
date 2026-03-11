@@ -4,7 +4,6 @@ import { Heading } from '@kit/ui/heading';
 import { Button } from '@kit/ui/button';
 import Link from 'next/link';
 import { Check } from 'lucide-react';
-import { SiteHeader } from '~/(home)/_components/site-header';
 
 const plans = [
   {

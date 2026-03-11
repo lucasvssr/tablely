@@ -25,38 +25,48 @@ async function TermsOfServicePage() {
           <section className="space-y-4">
             <p className="text-right text-muted-foreground text-sm">{t('home:termsOfServiceLastUpdated', { date: new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }) })}</p>
             <p className="text-lg leading-relaxed text-muted-foreground">
-              {t('home:termsOfServiceContent')}
+              <span dangerouslySetInnerHTML={{ __html: t('home:termsOfServiceContent') }} />
             </p>
           </section>
 
           <section className="space-y-4">
             <h2 className="text-2xl font-bold tracking-tight">{t('home:termsOfServicePresentationTitle')}</h2>
-            <p>{t('home:termsOfServicePresentationContent')}</p>
+            <p>
+              <span dangerouslySetInnerHTML={{ __html: t('home:termsOfServicePresentationContent') }} />
+            </p>
           </section>
 
           <section className="space-y-4">
             <h2 className="text-2xl font-bold tracking-tight">{t('home:termsOfServiceAccessInscriptionTitle')}</h2>
-            <p>{t('home:termsOfServiceAccessInscriptionContent')}</p>
+            <p>
+              <span dangerouslySetInnerHTML={{ __html: t('home:termsOfServiceAccessInscriptionContent') }} />
+            </p>
           </section>
 
           <section className="space-y-4">
             <h2 className="text-2xl font-bold tracking-tight">{t('home:termsOfServiceReservationServiceTitle')}</h2>
             {(t('home:termsOfServiceReservationServiceContent', { returnObjects: true }) as string[]).map((item, i) => (
-              <p key={i}>{item}</p>
+              <p key={i}>
+                <span dangerouslySetInnerHTML={{ __html: item }} />
+              </p>
             ))}
           </section>
 
           <section className="space-y-4">
             <h2 className="text-2xl font-bold tracking-tight">{t('home:termsOfServiceNoShowPaymentTitle')}</h2>
             {(t('home:termsOfServiceNoShowPaymentContent', { returnObjects: true }) as string[]).map((item, i) => (
-              <p key={i}>{item}</p>
+              <p key={i}>
+                <span dangerouslySetInnerHTML={{ __html: item }} />
+              </p>
             ))}
           </section>
 
           <section className="space-y-4">
             <h2 className="text-2xl font-bold tracking-tight">{t('home:termsOfServiceResponsibilitiesTitle')}</h2>
             {(t('home:termsOfServiceResponsibilitiesContent', { returnObjects: true }) as string[]).map((item, i) => (
-              <p key={i}>{item}</p>
+              <p key={i}>
+                <span dangerouslySetInnerHTML={{ __html: item }} />
+              </p>
             ))}
           </section>
 
@@ -71,23 +81,33 @@ async function TermsOfServicePage() {
                 return (
                   <ul key={i} className="list-disc pl-6 space-y-2">
                     {content.map((item, j) => (
-                      <li key={j}>{item}</li>
+                      <li key={j}>
+                        <span dangerouslySetInnerHTML={{ __html: item }} />
+                      </li>
                     ))}
                   </ul>
                 );
               }
-              return <p key={i}>{content}</p>;
+              return (
+                <p key={i}>
+                  <span dangerouslySetInnerHTML={{ __html: content }} />
+                </p>
+              );
             })}
           </section>
 
           <section className="space-y-4">
             <h2 className="text-2xl font-bold tracking-tight">{t('home:termsOfServiceIPTitle')}</h2>
-            <p>{t('home:termsOfServiceIPContent')}</p>
+            <p>
+              <span dangerouslySetInnerHTML={{ __html: t('home:termsOfServiceIPContent') }} />
+            </p>
           </section>
 
           <section className="space-y-4">
             <h2 className="text-2xl font-bold tracking-tight">{t('home:termsOfServiceModificationTitle')}</h2>
-            <p>{t('home:termsOfServiceModificationContent')}</p>
+            <p>
+              <span dangerouslySetInnerHTML={{ __html: t('home:termsOfServiceModificationContent') }} />
+            </p>
           </section>
         </div>
       </div>

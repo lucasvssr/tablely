@@ -38,7 +38,13 @@ async function PrivacyPolicyPage() {
             <h2 className="text-2xl font-bold tracking-tight">
               {t('home:privacyPolicyResponsibilityDataTreatmentTitle')}
             </h2>
-            <p>{t('home:privacyPolicyResponsibilityDataTreatmentContent')}</p>
+            <p>
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: t('home:privacyPolicyResponsibilityDataTreatmentContent'),
+                }}
+              />
+            </p>
           </section>
 
           <section className="space-y-4">
@@ -54,12 +60,18 @@ async function PrivacyPolicyPage() {
                 return (
                   <ul key={i} className="list-disc pl-6 space-y-2">
                     {content.map((item, j) => (
-                      <li key={j}>{item}</li>
+                      <li key={j}>
+                        <span dangerouslySetInnerHTML={{ __html: item }} />
+                      </li>
                     ))}
                   </ul>
                 );
               }
-              return <p key={i}>{content}</p>;
+              return (
+                <p key={i}>
+                  <span dangerouslySetInnerHTML={{ __html: content }} />
+                </p>
+              );
             })}
           </section>
 
@@ -76,12 +88,18 @@ async function PrivacyPolicyPage() {
                 return (
                   <ul key={i} className="list-disc pl-6 space-y-2">
                     {content.map((item, j) => (
-                      <li key={j}>{item}</li>
+                      <li key={j}>
+                        <span dangerouslySetInnerHTML={{ __html: item }} />
+                      </li>
                     ))}
                   </ul>
                 );
               }
-              return <p key={i}>{content}</p>;
+              return (
+                <p key={i}>
+                  <span dangerouslySetInnerHTML={{ __html: content }} />
+                </p>
+              );
             })}
           </section>
 
@@ -98,12 +116,18 @@ async function PrivacyPolicyPage() {
                 return (
                   <ul key={i} className="list-disc pl-6 space-y-2">
                     {content.map((item, j) => (
-                      <li key={j}>{item}</li>
+                      <li key={j}>
+                        <span dangerouslySetInnerHTML={{ __html: item }} />
+                      </li>
                     ))}
                   </ul>
                 );
               }
-              return <p key={i}>{content}</p>;
+              return (
+                <p key={i}>
+                  <span dangerouslySetInnerHTML={{ __html: content }} />
+                </p>
+              );
             })}
           </section>
 
@@ -111,7 +135,13 @@ async function PrivacyPolicyPage() {
             <h2 className="text-2xl font-bold tracking-tight">
               {t('home:privacyPolicyDataRetentionTitle')}
             </h2>
-            <p>{t('home:privacyPolicyDataRetentionContent')}</p>
+            <p>
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: t('home:privacyPolicyDataRetentionContent'),
+                }}
+              />
+            </p>
           </section>
 
           <section className="space-y-4">
@@ -128,12 +158,18 @@ async function PrivacyPolicyPage() {
                 return (
                   <ul key={i} className="list-disc pl-6 space-y-2">
                     {content.map((item, j) => (
-                      <li key={j}>{item}</li>
+                      <li key={j}>
+                        <span dangerouslySetInnerHTML={{ __html: item }} />
+                      </li>
                     ))}
                   </ul>
                 );
               }
-              return <p key={i}>{content}</p>;
+              return (
+                <p key={i}>
+                  <span dangerouslySetInnerHTML={{ __html: content }} />
+                </p>
+              );
             })}
           </section>
 
@@ -141,7 +177,13 @@ async function PrivacyPolicyPage() {
             <h2 className="text-2xl font-bold tracking-tight">
               {t('home:privacyPolicySecurityTitle')}
             </h2>
-            <p>{t('home:privacyPolicySecurityContent')}</p>
+            <p>
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: t('home:privacyPolicySecurityContent'),
+                }}
+              />
+            </p>
           </section>
         </div>
       </div>

@@ -17,6 +17,10 @@ const FeatureFlagsSchema = z.object({
     description: 'Enable version updater',
     required_error: 'Provide the variable NEXT_PUBLIC_ENABLE_VERSION_UPDATER',
   }),
+  enableCookieBanner: z.boolean({
+    description: 'Enable cookie banner',
+    required_error: 'Provide the variable NEXT_PUBLIC_ENABLE_COOKIE_BANNER',
+  }),
 });
 
 const featuresFlagConfig = FeatureFlagsSchema.parse({
@@ -28,6 +32,10 @@ const featuresFlagConfig = FeatureFlagsSchema.parse({
     .NEXT_PUBLIC_LANGUAGE_PRIORITY as LanguagePriority,
   enableVersionUpdater: getBoolean(
     process.env.NEXT_PUBLIC_ENABLE_VERSION_UPDATER,
+    false,
+  ),
+  enableCookieBanner: getBoolean(
+    process.env.NEXT_PUBLIC_ENABLE_COOKIE_BANNER,
     false,
   ),
 } satisfies z.infer<typeof FeatureFlagsSchema>);

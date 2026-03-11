@@ -5,7 +5,6 @@ import { useCallback, useMemo, useState } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 
 import { Button } from '../shadcn/button';
-import { Heading } from '../shadcn/heading';
 import { Trans } from './trans';
 
 // configure this as you wish
@@ -36,14 +35,16 @@ export function CookieBanner() {
       >
         <div className={'flex flex-col space-y-4'}>
           <div>
-            <Heading level={3}>
+            <DialogPrimitive.Title className="font-heading scroll-m-20 text-xl font-semibold tracking-tight lg:text-2xl">
               <Trans i18nKey={'cookieBanner.title'} />
-            </Heading>
+            </DialogPrimitive.Title>
           </div>
 
-          <div className={'text-gray-500 dark:text-gray-400'}>
-            <Trans i18nKey={'cookieBanner.description'} />
-          </div>
+          <DialogPrimitive.Description asChild>
+            <div className={'text-gray-500 dark:text-gray-400'}>
+              <Trans i18nKey={'cookieBanner.description'} />
+            </div>
+          </DialogPrimitive.Description>
 
           <div className={'flex justify-end space-x-2.5'}>
             <Button variant={'ghost'} onClick={reject}>
