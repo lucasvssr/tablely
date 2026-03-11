@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Trans } from '@kit/ui/trans';
 import { AppLogo } from '~/components/app-logo';
 import { ModeToggle } from '@kit/ui/mode-toggle';
+import { LanguageSelector } from '@kit/ui/language-selector';
 import appConfig from '~/config/app.config';
 import { cn } from '@kit/ui/utils';
 
@@ -30,6 +31,11 @@ export function PublicFooter({ className }: { className?: string }) {
                             <li>
                                 <Link href="/pricing" className="text-zinc-600 dark:text-zinc-300 hover:text-brand-copper transition-colors text-lg font-medium">
                                     <Trans i18nKey="home:pricing" />
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/faq" className="text-zinc-600 dark:text-zinc-300 hover:text-brand-copper transition-colors text-lg font-medium">
+                                    <Trans i18nKey="home:faq" />
                                 </Link>
                             </li>
                         </ul>
@@ -69,7 +75,8 @@ export function PublicFooter({ className }: { className?: string }) {
                             }}
                         />
                     </p>
-                    <div className="flex items-center gap-8">
+                    <div className="flex items-center gap-6">
+                        <LanguageSelector className="w-min gap-2 h-9 bg-transparent border-none shadow-none text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors focus:ring-0" />
                         <ModeToggle className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" />
                         <Link href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Twitter</Link>
                         <Link href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">LinkedIn</Link>

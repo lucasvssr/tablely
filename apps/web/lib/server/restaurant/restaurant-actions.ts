@@ -3,9 +3,10 @@
 import { isAfter, subMinutes, addMinutes, parseISO, subDays, format } from 'date-fns';
 
 import { redirect } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, unstable_cache, updateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
+import { getSupabaseServerStaticClient } from '@kit/supabase/server-static-client';
 import { getSupabaseServerAdminClient } from '@kit/supabase/server-admin-client';
 import { enhanceAction } from '@kit/next/actions';
 import { RestaurantSchema, ServiceSchema, TableSchema, ReservationSchema, UpdateReservationSchema } from './restaurant.schema';
@@ -123,6 +124,7 @@ export const upsertServiceAction = enhanceAction(
                 if (dayError) throw new Error(dayError.message);
             }
         }
+        updateTag(`services-${accountId}`);
     },
     { auth: true }
 );
@@ -162,6 +164,8 @@ export const upsertTableAction = enhanceAction(
             const { error } = await supabase.from('dining_tables').insert({ ...data, account_id: accountId });
             if (error) throw new Error(error.message);
         }
+        updateTag(`tables-${accountId}`);
+        updateTag(`restaurant-slug`); // Table changes affect total capacity in public profile
     },
     { auth: true }
 );
@@ -248,6 +252,7 @@ export const createRestaurantAction = enhanceAction(
         }
 
         // Successfully created, redirect to home
+        updateTag('restaurants-list');
         redirect('/home');
     },
     {
@@ -275,6 +280,7 @@ export const deleteServiceAction = enhanceAction(
             .eq('account_id', accountId as string);
 
         if (error) throw new Error(error.message);
+        updateTag(`services-${accountId}`);
     },
     { auth: true }
 );
@@ -299,6 +305,8 @@ export const deleteTableAction = enhanceAction(
             .eq('account_id', accountId as string);
 
         if (error) throw new Error(error.message);
+        updateTag(`tables-${accountId}`);
+        updateTag(`restaurant-slug`);
     },
     { auth: true }
 );
@@ -353,6 +361,8 @@ export const updateRestaurantAction = enhanceAction(
             .single();
 
         revalidatePath('/home', 'layout');
+        updateTag('restaurants-list');
+        updateTag(`restaurant-slug`);
         if (account?.slug) {
             revalidatePath(`/restaurant/${account.slug}`);
         }
@@ -370,19 +380,26 @@ export const getServicesAction = enhanceAction(
         const accountId = await getUserAccount(supabase, user.id);
         if (!accountId) throw new Error('Compte non trouvé');
 
-        const { data, error } = await supabase
-            .from('services')
-            .select('*, service_operating_days(day_of_week)')
-            .eq('account_id', accountId)
-            .order('start_time', { ascending: true });
+        const fetchServices = unstable_cache(
+            async (accId: string) => {
+                const { data, error } = await supabase
+                    .from('services')
+                    .select('*, service_operating_days(day_of_week)')
+                    .eq('account_id', accId)
+                    .order('start_time', { ascending: true });
 
-        if (error) throw new Error(error.message);
+                if (error) throw new Error(error.message);
 
-        // Transform days to the flat array format the frontend expects
-        return (data || []).map(service => ({
-            ...service,
-            days_of_week: service.service_operating_days?.map((d: { day_of_week: number }) => d.day_of_week) || []
-        }));
+                return (data || []).map(service => ({
+                    ...service,
+                    days_of_week: service.service_operating_days?.map((d: { day_of_week: number }) => d.day_of_week) || []
+                }));
+            },
+            [`services`],
+            { revalidate: 3600, tags: [`services-${accountId}`] }
+        );
+
+        return fetchServices(accountId);
     },
     { auth: true }
 );
@@ -397,14 +414,22 @@ export const getTablesAction = enhanceAction(
         const accountId = await getUserAccount(supabase, user.id);
         if (!accountId) throw new Error('Compte non trouvé');
 
-        const { data, error } = await supabase
-            .from('dining_tables')
-            .select('*')
-            .eq('account_id', accountId)
-            .order('name', { ascending: true });
+        const fetchTables = unstable_cache(
+            async (accId: string) => {
+                const { data, error } = await supabase
+                    .from('dining_tables')
+                    .select('*')
+                    .eq('account_id', accId)
+                    .order('name', { ascending: true });
 
-        if (error) throw new Error(error.message);
-        return data || [];
+                if (error) throw new Error(error.message);
+                return data || [];
+            },
+            [`tables`],
+            { revalidate: 3600, tags: [`tables-${accountId}`] }
+        );
+
+        return fetchTables(accountId);
     },
     { auth: true }
 );
@@ -763,74 +788,96 @@ export const createReservationAction = enhanceAction(
 
 /**
  * @name getRestaurantBySlugAction
- * @description Fetches restaurant details and total capacity by slug.
- * This is used for the public restaurant page to keep database logic on the server.
+ * @description Fetches restaurant details and total capacity by slug, cached for 1 hour.
  */
-export async function getRestaurantBySlugAction(slug: string) {
-    const supabase = getSupabaseServerClient<Database>();
+export const getRestaurantBySlugAction = unstable_cache(
+    async (slug: string) => {
+        // Use Static client (anon) to avoid dynamic cookies() calls inside cache
+        // and respect RLS without requiring Admin privileges
+        const supabase = getSupabaseServerStaticClient();
 
-    // 1. Fetch account and restaurant
-    const { data: account, error: accountError } = await supabase
-        .from('accounts')
-        .select(`
-            id,
-            name,
-            restaurants (
+        // 1. Fetch account and restaurant
+        const { data: account, error: accountError } = await supabase
+            .from('accounts')
+            .select(`
                 id,
                 name,
-                location,
-                phone
-            )
-        `)
-        .eq('slug', slug)
-        .single();
+                restaurants (
+                    id,
+                    name,
+                    location,
+                    phone
+                )
+            `)
+            .eq('slug', slug)
+            .single();
 
-    if (accountError || !account || !account.restaurants?.[0]) {
-        return null;
+        if (accountError || !account || !account.restaurants?.[0]) {
+            return null;
+        }
+
+        const restaurant = account.restaurants[0];
+
+        // 2. Fetch total capacity
+        const { data: tables } = await supabase
+            .from('dining_tables')
+            .select('capacity')
+            .eq('account_id', account.id)
+            .eq('is_active', true);
+
+        const totalCapacity = tables?.reduce((acc, t) => acc + (t.capacity || 0), 0) || 0;
+
+        return {
+            account: {
+                id: account.id,
+                name: account.name,
+                slug
+            },
+            restaurant,
+            totalCapacity
+        };
+    },
+    ['restaurant-slug'],
+    {
+        revalidate: 3600,
+        tags: ['restaurant-slug'],
     }
-
-    const restaurant = account.restaurants[0];
-
-    // 2. Fetch total capacity
-    const { data: tables } = await supabase
-        .from('dining_tables')
-        .select('capacity')
-        .eq('account_id', account.id)
-        .eq('is_active', true);
-
-    const totalCapacity = tables?.reduce((acc, t) => acc + (t.capacity || 0), 0) || 0;
-
-    return {
-        account: {
-            id: account.id,
-            name: account.name,
-            slug
-        },
-        restaurant,
-        totalCapacity
-    };
-}
+);
 
 /**
  * @name getRestaurantsAction
- * @description Fetches all restaurants for the public list.
+ * @description Fetches all restaurants for the public list, cached for 1 hour.
  */
-export async function getRestaurantsAction() {
-    const supabase = getSupabaseServerClient<Database>();
+export const getRestaurantsAction = unstable_cache(
+    async () => {
+        // Use Static client (anon) to avoid dynamic cookies() calls inside cache
+        // and respect RLS without requiring Admin privileges
+        const supabase = getSupabaseServerStaticClient();
+        const { data, error } = await supabase
+            .from('restaurants')
+            .select('id, name, location, phone, accounts(slug)')
+            .order('name');
 
-    const { data, error: _error } = await supabase
-        .from('restaurants')
-        .select('id, name, location, phone, accounts(slug)')
-        .order('name');
+        if (error) {
+            console.error('getRestaurantsAction error:', error);
+            return [];
+        }
 
-    return ((data as unknown as Record<string, unknown>[]) || []).map((r) => ({
-        id: r.id as string,
-        name: r.name as string,
-        location: r.location as string,
-        phone: r.phone as string,
-        slug: (r.accounts as unknown as { slug: string })?.slug
-    }));
-}
+        return (data as any[] || []).map((r) => ({
+            id: r.id,
+            name: r.name,
+            location: r.location,
+            phone: r.phone,
+            slug: (Array.isArray(r.accounts) ? r.accounts[0]?.slug : r.accounts?.slug) || ''
+        }));
+    },
+    ['restaurants-list-v2'],
+    {
+        revalidate: 3600,
+        tags: ['restaurants-list'],
+    }
+);
+
 
 /**
  * @name getUserReservationsAction

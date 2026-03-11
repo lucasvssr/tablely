@@ -14,8 +14,10 @@ import {
 
 export function LanguageSelector({
   onChange,
+  className,
 }: {
   onChange?: (locale: string) => unknown;
+  className?: string;
 }) {
   const { i18n } = useTranslation();
   const { language: currentLanguage, options } = i18n;
@@ -50,7 +52,7 @@ export function LanguageSelector({
 
   return (
     <Select value={value} onValueChange={languageChanged}>
-      <SelectTrigger>
+      <SelectTrigger className={className}>
         <SelectValue />
       </SelectTrigger>
 

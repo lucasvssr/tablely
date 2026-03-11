@@ -58,8 +58,6 @@ const plans = [
 function PricingPage() {
   return (
     <div className={'flex flex-col min-h-screen'}>
-      <SiteHeader />
-      
       <div className={'container mx-auto px-4 py-24 flex-1 space-y-16'}>
         <div className="text-center space-y-4 pt-16">
           <Heading level={1} className="font-heading text-4xl md:text-6xl font-bold">
@@ -72,20 +70,19 @@ function PricingPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {plans.map((plan) => (
-            <div 
+            <div
               key={plan.nameKey}
-              className={`relative p-8 rounded-3xl border ${
-                plan.featured 
-                  ? 'border-brand-copper bg-zinc-50 dark:bg-zinc-900/50 shadow-xl scale-105 z-10' 
+              className={`relative p-8 rounded-3xl border ${plan.featured
+                  ? 'border-brand-copper bg-zinc-50 dark:bg-zinc-900/50 shadow-xl scale-105 z-10'
                   : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950'
-              } flex flex-col space-y-6`}
+                } flex flex-col space-y-6`}
             >
               {plan.featured && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand-copper text-white px-4 py-1 rounded-full text-sm font-bold uppercase tracking-wider">
                   <Trans i18nKey={'home:pricingPopular'} />
                 </div>
               )}
-              
+
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold">
                   <Trans i18nKey={plan.nameKey} />
@@ -102,7 +99,7 @@ function PricingPage() {
                   {plan.periodKey && <span className="text-muted-foreground"><Trans i18nKey={plan.periodKey} /></span>}
                 </div>
                 <p className="text-muted-foreground">
-                   <Trans i18nKey={plan.descriptionKey} />
+                  <Trans i18nKey={plan.descriptionKey} />
                 </p>
               </div>
 
@@ -115,8 +112,8 @@ function PricingPage() {
                 ))}
               </ul>
 
-              <Button 
-                variant={plan.featured ? 'default' : 'outline'} 
+              <Button
+                variant={plan.featured ? 'default' : 'outline'}
                 className={`w-full py-6 text-lg ${plan.featured ? 'bg-brand-copper hover:bg-brand-copper/90' : ''}`}
                 asChild
               >
@@ -129,17 +126,17 @@ function PricingPage() {
         </div>
 
         <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-3xl p-12 text-center max-w-4xl mx-auto border border-dashed border-zinc-300 dark:border-zinc-700">
-           <h3 className="text-2xl font-bold mb-4">
-             <Trans i18nKey={'home:pricingDemoTitle'} />
-           </h3>
-           <p className="text-muted-foreground mb-8 text-lg">
-             <Trans i18nKey={'home:pricingDemoSubtitle'} />
-           </p>
-           <Button variant="outline" size="lg" asChild>
-             <Link href="/contact">
-               <Trans i18nKey={'home:pricingDemoButton'} />
-             </Link>
-           </Button>
+          <h3 className="text-2xl font-bold mb-4">
+            <Trans i18nKey={'home:pricingDemoTitle'} />
+          </h3>
+          <p className="text-muted-foreground mb-8 text-lg">
+            <Trans i18nKey={'home:pricingDemoSubtitle'} />
+          </p>
+          <Button variant="outline" size="lg" asChild>
+            <Link href="/contact">
+              <Trans i18nKey={'home:pricingDemoButton'} />
+            </Link>
+          </Button>
         </div>
       </div>
     </div>
