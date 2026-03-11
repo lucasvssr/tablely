@@ -43,6 +43,8 @@ export function AccountSwitcher({
 
     const activeAccount = accounts.find((a) => a.id === activeAccountId) || accounts[0];
 
+    if (!activeAccount) return null;
+
     const onSelect = (accountId: string) => {
         if (accountId === activeAccountId) return;
 
@@ -55,8 +57,6 @@ export function AccountSwitcher({
     const canAdd = activeAccount.role !== 'member';
     const hasMultipleAccounts = accounts.length > 1;
     const shouldShowDropdown = hasMultipleAccounts || canAdd;
-
-    if (!activeAccount) return null;
 
     const trigger = (
         <Button

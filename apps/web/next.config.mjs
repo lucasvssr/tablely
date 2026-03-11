@@ -30,12 +30,14 @@ const config = {
   outputFileTracingIncludes: {
     '/*': ['./content/**/*'],
   },
+  // moved out of experimental in Next.js 16
+  reactCompiler: ENABLE_REACT_COMPILER,
+  // moved out of experimental in Next.js 16
+  turbopack: {
+    resolveExtensions: ['.ts', '.tsx', '.js', '.jsx'],
+  },
   experimental: {
     mdxRs: true,
-    reactCompiler: ENABLE_REACT_COMPILER,
-    turbo: {
-      resolveExtensions: ['.ts', '.tsx', '.js', '.jsx'],
-    },
     optimizePackageImports: [
       'recharts',
       'lucide-react',
@@ -52,14 +54,13 @@ const config = {
     },
   },
   /** We already do linting and typechecking as separate tasks in CI */
-  eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
 };
 
 export default config;
 
 function getRemotePatterns() {
-  /** @type {import('next').NextConfig['remotePatterns']} */
+  /** @type {import('next/dist/shared/lib/image-config').RemotePattern[]} */
   const remotePatterns = [];
 
   if (SUPABASE_URL) {
@@ -73,7 +74,7 @@ function getRemotePatterns() {
 
   return IS_PRODUCTION
     ? remotePatterns
-    : [
+    : /** @type {import('next/dist/shared/lib/image-config').RemotePattern[]} */ ([
         {
           protocol: 'http',
           hostname: '127.0.0.1',
@@ -82,5 +83,5 @@ function getRemotePatterns() {
           protocol: 'http',
           hostname: 'localhost',
         },
-      ];
+      ]);
 }
