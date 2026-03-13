@@ -12,9 +12,9 @@ function LogoImage({
 }) {
   return (
     <div
-      style={{ width }}
+      style={{ '--logo-width': `${width}px` } as React.CSSProperties}
       className={cn(
-        'relative flex items-center transition-all hover:opacity-80 group-data-[state=collapsed]:justify-center',
+        'relative flex items-center justify-center transition-all hover:opacity-80 w-[var(--logo-width)] group-data-[state=collapsed]:w-auto group-data-[state=collapsed]:justify-center',
         className,
       )}
     >
@@ -23,7 +23,7 @@ function LogoImage({
         alt="Tablely Logo"
         width={733}
         height={272}
-        className="block dark:hidden group-data-[state=collapsed]:hidden w-full h-auto object-contain"
+        className="block dark:hidden group-data-[state=collapsed]:hidden w-auto h-full object-contain max-h-[55px]"
         priority
       />
       <Image
@@ -31,12 +31,17 @@ function LogoImage({
         alt="Tablely Logo"
         width={733}
         height={272}
-        className="hidden dark:block group-data-[state=collapsed]:hidden w-full h-auto object-contain"
+        className="hidden dark:block group-data-[state=collapsed]:hidden w-auto h-full object-contain max-h-[55px]"
         priority
       />
-      <div className="hidden group-data-[state=collapsed]:flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-copper font-heading font-black text-white dark:text-black shadow-lg shadow-brand-copper/20 dark:shadow-none transition-transform hover:scale-110 duration-500">
-        T.
-      </div>
+      <Image
+        src="/images/favicon/android-chrome-192x192.png"
+        alt="Tablely Logo"
+        width={48}
+        height={48}
+        className="hidden group-data-[state=collapsed]:block w-10 h-10 object-contain"
+        priority
+      />
     </div>
   );
 }

@@ -70,7 +70,7 @@ export function HomeMenuNavigation(props: {
             />
           </div>
         ) : (
-          <AppLogo />
+          <AppLogo width={160} />
         )}
 
         <BorderedNavigationMenu>

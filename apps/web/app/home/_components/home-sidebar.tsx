@@ -46,7 +46,7 @@ export function HomeSidebar(props: {
             activeAccountId={activeAccountId as string}
           />
         ) : (
-          <AppLogo href={pathsConfig.app.home} />
+          <AppLogo href={pathsConfig.app.home} className='w-full h-full' />
         )}
       </SidebarHeader>
 

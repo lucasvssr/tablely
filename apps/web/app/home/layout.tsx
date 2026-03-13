@@ -73,7 +73,7 @@ function MobileNavigation(props: {
           />
         </div>
       ) : (
-        <AppLogo href={pathsConfig.app.home} />
+        <AppLogo href={pathsConfig.app.home} width={100} />
       )}
 
       <div className={'flex items-center justify-end space-x-2'}>
