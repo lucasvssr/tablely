@@ -18,7 +18,7 @@ export function PublicFooter({ className }: { className?: string }) {
             <div className="max-w-7xl mx-auto px-6 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-24">
                     <div className="md:col-span-2 space-y-8">
-                        <AppLogo className="scale-125 origin-left w-min" />
+                        <AppLogo className="scale-125 origin-left" width={160} />
                         <p className="text-zinc-600 dark:text-zinc-400 text-xl font-medium max-w-sm leading-relaxed mt-8">
                             <Trans i18nKey="home:footerDescription" />
                         </p>
@@ -77,7 +77,7 @@ export function PublicFooter({ className }: { className?: string }) {
                             }}
                         />
                     </p>
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-6 flex-col md:flex-row">
                         <LanguageSelector className="w-min gap-2 h-9 bg-transparent border-none shadow-none text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors focus:ring-0" />
                         <ModeToggle className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" />
                         <Link href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Twitter</Link>

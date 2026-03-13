@@ -9,12 +9,16 @@ import { Calendar, Clock, Users, ChevronRight, Star } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@kit/ui/utils';
 
+import { EditReservationDialog } from '../../../home/_components/edit-reservation-dialog';
+
 interface Reservation {
     id: string;
     date: string;
     start_time: string;
     guest_count: number;
     status: string;
+    client_name?: string | null;
+    notes?: string | null;
 }
 
 export function UserReservations({
@@ -116,11 +120,26 @@ export function UserReservations({
                                 </div>
                             </div>
 
-                            <div className="mt-8 pt-6 border-t border-zinc-100 dark:border-white/5 flex items-center justify-between">
-                                <span className="text-sm font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest">{t('public:booking.viewDetails')}</span>
-                                <div className="w-10 h-10 rounded-full bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center group-hover:bg-brand-copper group-hover:text-white transition-all duration-500">
-                                    <ChevronRight className="h-5 w-5" />
-                                </div>
+                            <div className="mt-8 pt-6 border-t border-zinc-100 dark:border-white/5">
+                                <EditReservationDialog reservation={{
+                                    id: res.id,
+                                    restaurant_id: restaurantId,
+                                    date: res.date,
+                                    client_name: res.client_name || '',
+                                    guest_count: res.guest_count,
+                                    start_time: res.start_time,
+                                    status: res.status,
+                                    notes: res.notes || null,
+                                }}>
+                                    <div className="flex items-center justify-between cursor-pointer group/action">
+                                        <span className="text-sm font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest group-hover/action:text-brand-copper transition-colors">
+                                            {t('public:booking.viewDetails')}
+                                        </span>
+                                        <div className="w-10 h-10 rounded-full bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center group-hover/action:bg-brand-copper group-hover/action:text-white transition-all duration-500">
+                                            <ChevronRight className="h-5 w-5" />
+                                        </div>
+                                    </div>
+                                </EditReservationDialog>
                             </div>
                         </CardContent>
                     </Card>

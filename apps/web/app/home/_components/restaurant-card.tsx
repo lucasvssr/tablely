@@ -5,6 +5,8 @@ import { Button } from '@kit/ui/button';
 import Link from 'next/link';
 import { MapPin, Utensils } from 'lucide-react';
 
+import pathsConfig from '~/config/paths.config';
+
 interface RestaurantItem {
     id: string;
     name: string;
@@ -14,6 +16,8 @@ interface RestaurantItem {
 }
 
 export function RestaurantCard({ restaurant }: { restaurant: RestaurantItem }) {
+    const bookingPath = `${pathsConfig.app.booking}/${restaurant.slug}`;
+
     return (
         <Card className="overflow-hidden flex flex-row items-center hover:shadow-lg transition-all duration-300 border-zinc-200/50 dark:border-white/5 bg-white dark:bg-zinc-900/50 shadow-sm group rounded-xl h-28">
             <div className="w-24 h-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center shrink-0">
@@ -32,7 +36,7 @@ export function RestaurantCard({ restaurant }: { restaurant: RestaurantItem }) {
                     <span className="truncate">{restaurant.location}</span>
                 </div>
                 <Button asChild size="sm" className="bg-brand-copper hover:bg-brand-copper/90 shadow-md shadow-brand-copper/10 text-xs h-7 px-4 w-fit font-semibold">
-                    <Link href={`/restaurant/${restaurant.slug}`}>
+                    <Link href={bookingPath}>
                         Réserver
                     </Link>
                 </Button>

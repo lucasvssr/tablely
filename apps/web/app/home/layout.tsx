@@ -26,6 +26,7 @@ import { HomeSidebar } from './_components/home-sidebar';
 import { AccountSwitcher } from './_components/account-switcher';
 import { getActiveMembership, getMembershipsAction } from '~/lib/server/restaurant/restaurant-actions';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
+import pathsConfig from '~/config/paths.config';
 
 interface Account {
   id: string;
@@ -72,7 +73,7 @@ function MobileNavigation(props: {
           />
         </div>
       ) : (
-        <AppLogo />
+        <AppLogo href={pathsConfig.app.home} />
       )}
 
       <div className={'flex items-center justify-end space-x-2'}>

@@ -7,6 +7,8 @@ import { Trans } from '@kit/ui/trans';
 import { withI18n } from '~/lib/i18n/with-i18n';
 import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { RestaurantSearchBar } from './_components/restaurant-search-bar';
+import { redirect } from 'next/navigation';
+import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { Suspense } from 'react';
 
 interface RestaurantsPageProps {
@@ -14,6 +16,13 @@ interface RestaurantsPageProps {
 }
 
 async function RestaurantsPage({ searchParams }: RestaurantsPageProps) {
+    const supabase = getSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+        return redirect('/home/restaurants');
+    }
+
     const { q } = await searchParams;
     const allRestaurants = await getRestaurantsAction();
     const i18n = await createI18nServerInstance();

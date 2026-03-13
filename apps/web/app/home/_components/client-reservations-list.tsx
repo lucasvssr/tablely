@@ -12,6 +12,8 @@ import { Tabs, TabsList, TabsTrigger } from '@kit/ui/tabs';
 import Link from 'next/link';
 import { EditReservationDialog } from './edit-reservation-dialog';
 
+import pathsConfig from '~/config/paths.config';
+
 interface ClientReservation {
     id: string;
     date: string;
@@ -57,54 +59,58 @@ export function ClientReservationsList({ reservations }: { reservations: ClientR
         }
     };
 
-    const ReservationItem = ({ res }: { res: ClientReservation }) => (
-        <div
-            key={res.id}
-            className="group flex items-center justify-between p-4 px-6 hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors border-t border-zinc-100 dark:border-white/5 first:border-t-0"
-        >
-            <div className="flex flex-col min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-bold text-sm text-zinc-900 dark:text-white truncate">
-                        {res.restaurant_name}
-                    </h4>
-                    {getStatusBadge(res.status)}
+    const ReservationItem = ({ res }: { res: ClientReservation }) => {
+        const bookingPath = `${pathsConfig.app.booking}/${res.restaurant_slug}`;
+
+        return (
+            <div
+                key={res.id}
+                className="group flex items-center justify-between p-4 px-6 hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors border-t border-zinc-100 dark:border-white/5 first:border-t-0"
+            >
+                <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                        <h4 className="font-bold text-sm text-zinc-900 dark:text-white truncate">
+                            {res.restaurant_name}
+                        </h4>
+                        {getStatusBadge(res.status)}
+                    </div>
+                    <div className="flex items-center gap-4 text-xs text-zinc-500 font-medium">
+                        <span className="flex items-center gap-1.5 shrink-0">
+                            <CalendarIcon className="w-3.5 h-3.5" />
+                            {format(parseISO(res.date), 'd MMMM yyyy', { locale: dateLocale })}
+                        </span>
+                        <span className="flex items-center gap-1.5 shrink-0">
+                            <Clock className="w-3.5 h-3.5" />
+                            {res.start_time.substring(0, 5)}
+                        </span>
+                        <span className="flex items-center gap-1.5 shrink-0">
+                            <Users className="w-3.5 h-3.5" />
+                            {res.guest_count}
+                        </span>
+                    </div>
                 </div>
-                <div className="flex items-center gap-4 text-xs text-zinc-500 font-medium">
-                    <span className="flex items-center gap-1.5 shrink-0">
-                        <CalendarIcon className="w-3.5 h-3.5" />
-                        {format(parseISO(res.date), 'd MMMM yyyy', { locale: dateLocale })}
-                    </span>
-                    <span className="flex items-center gap-1.5 shrink-0">
-                        <Clock className="w-3.5 h-3.5" />
-                        {res.start_time.substring(0, 5)}
-                    </span>
-                    <span className="flex items-center gap-1.5 shrink-0">
-                        <Users className="w-3.5 h-3.5" />
-                        {res.guest_count}
-                    </span>
+                <div className="flex items-center gap-2 shrink-0">
+                    {res.status !== 'cancelled' && (
+                        <EditReservationDialog reservation={{
+                            id: res.id,
+                            restaurant_id: res.restaurant_id,
+                            date: res.date,
+                            client_name: res.client_name || '',
+                            guest_count: res.guest_count,
+                            start_time: res.start_time,
+                            status: res.status,
+                            notes: res.notes
+                        }} />
+                    )}
+                    <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-full shrink-0 hover:bg-brand-copper/10 hover:text-brand-copper">
+                        <Link href={bookingPath}>
+                            <ChevronRight className="w-5 h-5" />
+                        </Link>
+                    </Button>
                 </div>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
-                {res.status !== 'cancelled' && (
-                    <EditReservationDialog reservation={{
-                        id: res.id,
-                        restaurant_id: res.restaurant_id,
-                        date: res.date,
-                        client_name: res.client_name || '',
-                        guest_count: res.guest_count,
-                        start_time: res.start_time,
-                        status: res.status,
-                        notes: res.notes
-                    }} />
-                )}
-                <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-full shrink-0 hover:bg-brand-copper/10 hover:text-brand-copper">
-                    <Link href={`/restaurant/${res.restaurant_slug}`}>
-                        <ChevronRight className="w-5 h-5" />
-                    </Link>
-                </Button>
-            </div>
-        </div>
-    );
+        );
+    };
 
     return (
         <Card className="border-none shadow-md bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden w-full">

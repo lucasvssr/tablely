@@ -45,6 +45,7 @@ async function PersonalAccountSettingsPage() {
       <PageHeader
         title={i18n.t('account:settingsTab')}
         description={i18n.t('account:settingsTabDescription', { defaultValue: 'Gérez vos informations personnelles et votre compte.' })}
+        displaySidebarTrigger={false}
       />
       <PageBody>
         <div className={'flex w-full flex-1 flex-col lg:max-w-2xl'}>

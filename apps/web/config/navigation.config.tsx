@@ -20,7 +20,7 @@ const routes = [
       },
       {
         label: 'common:routes.restaurants',
-        path: '/restaurants',
+        path: pathsConfig.app.restaurants,
         Icon: <Utensils className={iconClasses} />,
         roles: ['client', 'restaurateur'],
       },

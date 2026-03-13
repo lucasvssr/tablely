@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import Image from 'next/image';
 import type { JwtPayload } from '@supabase/supabase-js';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
@@ -59,6 +59,10 @@ export default async function RestaurantPublicPage({ params }: RestaurantPagePro
 
     const { data: { user } } = await supabase.auth.getUser();
     const userId = user?.id;
+
+    if (userId) {
+        return redirect(`/home/booking/${slug}`);
+    }
 
     // Fetch profile if user is logged in
     const { data: profile } = userId 

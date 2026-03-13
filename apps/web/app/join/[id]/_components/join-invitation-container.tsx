@@ -58,8 +58,8 @@ export function JoinInvitationContainer({ invitationId }: { invitationId: string
                     </CardDescription>
                 </CardContent>
                 <CardFooter className="justify-center pb-10">
-                    <Button onClick={() => router.push('/')} variant="outline">
-                        {t('join.goHome')}
+                    <Button onClick={() => router.back()} variant="outline">
+                        {t('join.goBack')}
                     </Button>
                 </CardFooter>
             </Card>

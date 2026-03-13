@@ -20,7 +20,7 @@
         "description": "Gérez votre restaurant et vos réservations en un coup d'œil."
     },
     "reservations": {
-        "title": "Réservations du jour",
+        "title": "Réservations à venir",
         "today": "Aujourd'hui",
         "noReservations": "Aucune réservation",
         "noReservationsDesc": "Il n'y a pas encore de réservation pour cette date.",

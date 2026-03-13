@@ -118,7 +118,7 @@
         "acceptButton": "Accepter l'invitation",
         "accepting": "Acceptation...",
         "connectedAs": "Connecté en tant qu'utilisateur actuel.",
-        "goHome": "Retour à l'accueil",
+        "goBack": "Retour",
         "toastSuccess": "Invitation acceptée !",
         "unknownError": "Erreur inconnue"
     }

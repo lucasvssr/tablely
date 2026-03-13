@@ -20,7 +20,7 @@
         "description": "Manage your restaurant and bookings at a glance."
     },
     "reservations": {
-        "title": "Today's bookings",
+        "title": "Upcoming bookings",
         "today": "Today",
         "noReservations": "No bookings",
         "noReservationsDesc": "There are no bookings for this date yet.",

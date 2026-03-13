@@ -13,6 +13,7 @@ import { AppLogo } from '~/components/app-logo';
 import { ProfileAccountDropdownContainer } from '~/components/personal-account-dropdown-container';
 import { navigationConfig } from '~/config/navigation.config';
 import { AccountSwitcher } from './account-switcher';
+import pathsConfig from '~/config/paths.config';
 
 interface Account {
   id: string;
@@ -45,7 +46,7 @@ export function HomeSidebar(props: {
             activeAccountId={activeAccountId as string}
           />
         ) : (
-          <AppLogo />
+          <AppLogo href={pathsConfig.app.home} />
         )}
       </SidebarHeader>
 

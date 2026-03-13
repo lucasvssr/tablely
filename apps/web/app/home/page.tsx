@@ -1,4 +1,5 @@
 import { PageBody, PageHeader } from '@kit/ui/page';
+import pathsConfig from '~/config/paths.config';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
 import { DashboardDemo } from '~/home/_components/dashboard-demo';
@@ -16,7 +17,6 @@ import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { getClientReservationsAction, getRestaurantsAction } from '~/lib/server/restaurant/restaurant-actions';
 import { ClientReservationsList } from './_components/client-reservations-list';
 import { RestaurantCard } from './_components/restaurant-card';
-import { PublicFooter } from '../(home)/_components/public-footer';
 
 export default async function HomePage() {
   const user = await requireUserInServerComponent();
@@ -64,7 +64,7 @@ export default async function HomePage() {
               <div className="flex items-center justify-between mb-4 px-1">
                 <h3 className="text-xl font-bold font-heading">{i18n.t('dashboard:welcome.readyTitle')}</h3>
                 <Button asChild variant="link" size="sm" className="text-brand-copper h-auto p-0 text-sm">
-                  <Link href="/restaurants" className="flex items-center gap-1.5 font-semibold">
+                  <Link href={pathsConfig.app.restaurants} className="flex items-center gap-1.5 font-semibold">
                     {i18n.t('dashboard:welcome.browseButton')}
                     <Search className="h-4 w-4" />
                   </Link>
@@ -76,7 +76,6 @@ export default async function HomePage() {
                   <RestaurantCard key={restaurant.id} restaurant={restaurant} />
                 ))}
               </div>
-              <PublicFooter className="pt-16" />
             </div>
           </div>
         </PageBody>
@@ -119,7 +118,6 @@ export default async function HomePage() {
               </CardContent>
             )}
           </Card>
-          <PublicFooter className="pt-16" />
         </PageBody>
       </>
     );
@@ -158,7 +156,6 @@ export default async function HomePage() {
               <DashboardDemo stats={stats} />
             </div>
           </div>
-          <PublicFooter className="pt-16" />
         </div>
       </PageBody>
     </>

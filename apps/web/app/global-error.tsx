@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { BackButton } from '~/components/back-button';
 
-import { ArrowLeft, MessageCircle } from 'lucide-react';
+import { MessageCircle, RefreshCw } from 'lucide-react';
 
 import { Button } from '@kit/ui/button';
 import { Heading } from '@kit/ui/heading';
@@ -54,21 +55,21 @@ const GlobalErrorPage = ({
                   </p>
                 </div>
 
-                <div>
+                <div className="flex space-x-4">
                   <Button
                     className={'w-full'}
                     variant={'default'}
                     onClick={reset}
                   >
-                    <ArrowLeft className={'mr-2 h-4'} />
-
-                    <Trans i18nKey={'common:goBack'} />
+                    <RefreshCw className={'mr-2 h-4'} />
+                    <Trans i18nKey={'common:tryAgain'} />
                   </Button>
 
-                  <Button className={'w-full'} variant={'outline'} asChild>
+                  <BackButton className={'w-full'} variant={'outline'} />
+
+                  <Button className={'w-full'} variant={'ghost'} asChild>
                     <Link href={'/contact'}>
                       <MessageCircle className={'mr-2 h-4'} />
-
                       <Trans i18nKey={'common:contactUs'} />
                     </Link>
                   </Button>

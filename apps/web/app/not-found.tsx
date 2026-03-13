@@ -1,9 +1,6 @@
-import Link from 'next/link';
-
-import { ArrowLeft } from 'lucide-react';
+import { BackButton } from '~/components/back-button';
 
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
-import { Button } from '@kit/ui/button';
 import { Heading } from '@kit/ui/heading';
 import { Trans } from '@kit/ui/trans';
 
@@ -54,13 +51,7 @@ const NotFoundPage = async () => {
               </p>
             </div>
 
-            <Button asChild variant={'outline'}>
-              <Link href={'/'}>
-                <ArrowLeft className={'mr-2 h-4'} />
-
-                <Trans i18nKey={'common:backToHomePage'} />
-              </Link>
-            </Button>
+            <BackButton variant={'outline'} />
           </div>
         </div>
       </div>

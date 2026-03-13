@@ -382,7 +382,8 @@ export const getServicesAction = enhanceAction(
 
         const fetchServices = unstable_cache(
             async (accId: string) => {
-                const { data, error } = await supabase
+                const adminClient = getSupabaseServerAdminClient<Database>();
+                const { data, error } = await adminClient
                     .from('services')
                     .select('*, service_operating_days(day_of_week)')
                     .eq('account_id', accId)
@@ -416,7 +417,8 @@ export const getTablesAction = enhanceAction(
 
         const fetchTables = unstable_cache(
             async (accId: string) => {
-                const { data, error } = await supabase
+                const adminClient = getSupabaseServerAdminClient<Database>();
+                const { data, error } = await adminClient
                     .from('dining_tables')
                     .select('*')
                     .eq('account_id', accId)
@@ -906,7 +908,7 @@ export async function getUserReservationsAction({
 
     const { data, error } = await supabase
         .from('reservations')
-        .select('id, date, start_time, guest_count, status')
+        .select('id, date, start_time, guest_count, status, client_name, notes')
         .eq('restaurant_id', restaurantId)
         .eq('user_id', userId)
         .gte('date', today)
@@ -920,7 +922,10 @@ export async function getUserReservationsAction({
         throw new Error(t('actions.fetchReservationsError'));
     }
 
-    return data || [];
+    return (data || []).map(res => ({
+        ...res,
+        notes: res.notes ? decrypt(res.notes) : null
+    }));
 }
 
 

@@ -59,7 +59,10 @@ const parseAllergiesAndNotes = (combinedText: string | null) => {
     return { allergies: [] as string[], pureNotes: combinedText };
 };
 
-export function EditReservationDialog({ reservation }: EditReservationDialogProps) {
+export function EditReservationDialog({ 
+    reservation,
+    children 
+}: EditReservationDialogProps & { children?: React.ReactNode }) {
     const { t } = useTranslation(['dashboard', 'public']);
     const [isOpen, setIsOpen] = useState(false);
     const [isPending, setIsPending] = useState(false);
@@ -159,14 +162,16 @@ export function EditReservationDialog({ reservation }: EditReservationDialogProp
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-brand-copper hover:bg-brand-copper/5 rounded-lg px-2"
-                >
-                    <Edit2 className="w-3.5 h-3.5 mr-2" />
-                    {t('dashboard:reservations.actions.edit')}
-                </Button>
+                {children || (
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full justify-start text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-brand-copper hover:bg-brand-copper/5 rounded-lg px-2"
+                    >
+                        <Edit2 className="w-3.5 h-3.5 mr-2" />
+                        {t('dashboard:reservations.actions.edit')}
+                    </Button>
+                )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] rounded-2xl border-none shadow-2xl">
                 <DialogHeader className="space-y-3">
