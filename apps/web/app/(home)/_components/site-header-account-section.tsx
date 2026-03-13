@@ -37,12 +37,14 @@ export function SiteHeaderAccountSection({
     setIsMounted(true);
   }, []);
   return (
-    <div className="flex items-center space-x-2">
-      <If condition={isMounted && features.enableThemeToggle}>
-        <Suspense fallback={null}>
-          <ModeToggle />
-        </Suspense>
-      </If>
+    <div className="flex items-center space-x-1 sm:space-x-2">
+      <div className="hidden sm:block">
+        <If condition={isMounted && features.enableThemeToggle}>
+          <Suspense fallback={null}>
+            <ModeToggle />
+          </Suspense>
+        </If>
+      </div>
 
       {user ? (
         <SuspendedPersonalAccountDropdown user={user} />
@@ -92,20 +94,14 @@ function SuspendedPersonalAccountDropdown(props: { user: JwtPayload | null }) {
 
 function AuthButtons() {
   return (
-    <div className={'flex items-center space-x-1 sm:space-x-2'}>
-      <Button asChild variant={'ghost'} size={'sm'} className="px-2 sm:px-4">
+    <div className={'flex items-center gap-1 sm:gap-2 shrink-0'}>
+      <Button asChild variant={'ghost'} size={'sm'} className="h-8 px-1.5 sm:px-4 text-[12px] sm:text-sm">
         <Link href={pathsConfig.auth.signIn}>
           <Trans i18nKey={'auth:signIn'} />
         </Link>
       </Button>
 
-      <Button asChild className="group hidden xs:flex h-9 sm:h-10" variant={'default'}>
-        <Link href={pathsConfig.auth.signUp}>
-          <Trans i18nKey={'auth:signUp'} />
-        </Link>
-      </Button>
-
-      <Button asChild className="group flex xs:hidden h-8 px-3 text-xs" variant={'default'}>
+      <Button asChild className="h-8 sm:h-10 px-2 sm:px-4 text-[12px] sm:text-sm" variant={'default'}>
         <Link href={pathsConfig.auth.signUp}>
           <Trans i18nKey={'auth:signUp'} />
         </Link>

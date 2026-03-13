@@ -45,7 +45,7 @@ export function PasswordSignUpForm({
   loading: boolean;
   readOnlyEmail?: boolean;
 }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['auth', 'common']);
 
   const form = useForm({
     resolver: zodResolver(PasswordSignUpSchema),
@@ -64,20 +64,20 @@ export function PasswordSignUpForm({
         className={'w-full space-y-2.5'}
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
             name={'firstName'}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                   Prénom
+                   <Trans i18nKey={'common:firstName'} />
                 </FormLabel>
 
                 <FormControl>
                   <Input
                     required
-                    placeholder="Jean"
+                    placeholder={t('common:firstNamePlaceholder')}
                     {...field}
                   />
                 </FormControl>
@@ -93,13 +93,13 @@ export function PasswordSignUpForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                   Nom
+                   <Trans i18nKey={'common:lastName'} />
                 </FormLabel>
 
                 <FormControl>
                   <Input
                     required
-                    placeholder="Dupont"
+                    placeholder={t('common:lastNamePlaceholder')}
                     {...field}
                   />
                 </FormControl>
@@ -125,7 +125,7 @@ export function PasswordSignUpForm({
                     <div className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-muted px-3 py-2 text-sm text-muted-foreground opacity-70">
                       <span>{field.value}</span>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">
-                        Confirmé
+                        <Trans i18nKey={'auth:emailConfirmed'} />
                       </span>
                     </div>
                     <input type="hidden" {...field} />
@@ -135,7 +135,7 @@ export function PasswordSignUpForm({
                     data-test={'email-input'}
                     required
                     type="email"
-                    placeholder={t('emailPlaceholder')}
+                    placeholder={t('auth:emailPlaceholder')}
                     {...field}
                   />
                 )}

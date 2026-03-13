@@ -87,5 +87,10 @@
         "description": "Ce site utilise des cookies pour vous garantir la meilleure expérience.",
         "reject": "Refuser",
         "accept": "Accepter"
-    }
+    },
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "firstNamePlaceholder": "Jean",
+    "lastNamePlaceholder": "Dupont",
+    "fieldRequired": "Ce champ est obligatoire"
 }
