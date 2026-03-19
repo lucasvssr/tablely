@@ -38,16 +38,21 @@
       "react-is": "19.0.0",
       "tar": ">=7.5.11",
       "tmp": ">=0.2.4"
+    },
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "next": "16"
+      }
     }
   },
   "devDependencies": {
     "@manypkg/cli": "^0.25.1",
-    "@turbo/gen": "^2.8.13",
+    "@turbo/gen": "^2.8.19",
     "cross-env": "^10.1.0",
     "next": "16.1.6",
     "prettier": "^3.8.1",
-    "tar": ">=7.5.11",
-    "tmp": ">=0.2.4",
+    "tar": "^7.5.11",
+    "tmp": "^0.2.5",
     "turbo": "2.8.13",
     "typescript": "^5.9.3"
   }
