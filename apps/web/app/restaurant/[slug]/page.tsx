@@ -26,20 +26,15 @@ interface RestaurantPageProps {
 
 export async function generateMetadata({ params }: RestaurantPageProps): Promise<Metadata> {
     const { slug } = await params;
-    const supabase = getSupabaseServerClient<Database>();
     const { t } = await createI18nServerInstance();
 
-    const { data: account } = await supabase
-        .from('accounts')
-        .select('name')
-        .eq('slug', slug)
-        .single();
+    const restaurantData = await getRestaurantBySlugAction(slug);
 
-    if (!account) return { title: 'Restaurant non trouvé' };
+    if (!restaurantData) return { title: 'Restaurant non trouvé' };
 
     return {
-        title: t('public:metadata.bookingTitle', { name: account.name }),
-        description: t('public:metadata.bookingDescription', { name: account.name }),
+        title: t('public:metadata.bookingTitle', { name: restaurantData.restaurant.name }),
+        description: t('public:metadata.bookingDescription', { name: restaurantData.restaurant.name }),
     };
 }
 

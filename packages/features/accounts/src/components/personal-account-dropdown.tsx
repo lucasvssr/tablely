@@ -57,17 +57,20 @@ export function PersonalAccountDropdown({
   const personalAccountData = usePersonalAccountData(user.id, account);
 
   const signedInAsLabel = useMemo(() => {
-    const email = user?.email ?? undefined;
-    const phone = user?.phone ?? undefined;
-
-    return email ?? phone;
-  }, [user]);
+    return (
+      personalAccountData?.data?.name ??
+      account?.name ??
+      user?.email ??
+      user?.phone ??
+      ''
+    );
+  }, [personalAccountData?.data?.name, account?.name, user]);
 
   const displayName =
     personalAccountData?.data?.name ?? account?.name ?? user?.email ?? '';
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger
         aria-label="Open your profile menu"
         data-test={'account-dropdown-trigger'}

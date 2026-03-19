@@ -19,6 +19,7 @@ const PathsSchema = z.object({
     restaurants: z.string().min(1),
     booking: z.string().min(1),
     restaurantSettings: z.string().min(1),
+    manageEstablishments: z.string().min(1),
     join: z.string().min(1),
   }),
 });
@@ -42,6 +43,7 @@ const pathsConfig = PathsSchema.parse({
     restaurants: '/home/restaurants',
     booking: '/home/booking',
     restaurantSettings: '/home/settings/restaurant',
+    manageEstablishments: '/home/settings/establishments',
     join: '/join',
   },
 } satisfies z.infer<typeof PathsSchema>);

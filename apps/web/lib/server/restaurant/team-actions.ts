@@ -2,7 +2,7 @@
 
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { getSupabaseServerAdminClient } from '@kit/supabase/server-admin-client';
-import { Database } from '@kit/supabase/database';
+import { Database } from '~/lib/database.types';
 import { enhanceAction } from '@kit/next/actions';
 import { z } from 'zod';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
@@ -10,6 +10,7 @@ import { requireUserInServerComponent } from '~/lib/server/require-user-in-serve
 const InviteSchema = z.object({
     email: z.string().email(),
     role: z.enum(['admin', 'member']),
+    restaurant_id: z.string().uuid().optional().nullable(),
 });
 
 import { getUserAccount } from '~/lib/server/restaurant/restaurant-actions';
@@ -29,13 +30,14 @@ export const inviteMemberAction = enhanceAction(
         const result = InviteSchema.safeParse(Object.fromEntries(formData.entries()));
         if (!result.success) throw new Error(t('teams:errors.invalidInvitationData'));
 
-        const { email, role } = result.data;
+        const { email, role, restaurant_id } = result.data;
 
         const { error } = await supabase.from('invitations').insert({
             account_id: accountId,
             email: email.toLowerCase(),
             role,
             invited_by: user.id,
+            restaurant_id: restaurant_id || null,
         });
 
         if (error) {
@@ -113,6 +115,7 @@ export const acceptInvitationAction = enhanceAction(
             account_id: invitation.account_id,
             user_id: user.id,
             role: invitation.role,
+            restaurant_id: invitation.restaurant_id,
         });
 
         if (memberError) throw new Error(memberError.message);
@@ -140,10 +143,14 @@ export const getTeamMembersAction = enhanceAction(
                 role,
                 user_id,
                 account_id,
+                restaurant_id,
                 profiles(
                     display_name,
                     email,
                     avatar_url
+                ),
+                restaurants(
+                    name
                 )
             `)
             .eq('account_id', accountId);
@@ -164,7 +171,7 @@ export const getInvitationsAction = enhanceAction(
 
         const { data, error } = await supabase
             .from('invitations')
-            .select('*')
+            .select('*, restaurants(name)')
             .eq('account_id', accountId)
             .order('created_at', { ascending: false });
 
@@ -211,6 +218,7 @@ export const signUpViaInvitationAction = enhanceAction(
             account_id: invitation.account_id,
             user_id: userId,
             role: invitation.role,
+            restaurant_id: invitation.restaurant_id,
         });
 
         if (memberError) throw new Error(memberError.message);

@@ -224,7 +224,8 @@
     "restaurantPreviewHeading": "Nos établissements partenaires",
     "restaurantPreviewSubtitle": "Découvrez une sélection de restaurants qui nous font confiance pour leur gestion quotidienne.",
     "viewAllRestaurants": "Voir tous les restaurants",
-    "bookNow": "Réserver maintenant",
+    "bookNow": "Réserver",
+    "seeOnMap": "Voir sur la carte",
     "restaurantsFound_one": "{{count}} restaurant trouvé",
     "restaurantsFound_other": "{{count}} restaurants trouvés",
     "resultsFor": "pour \"{{query}}\"",
@@ -268,5 +269,6 @@
     "pricingEnterpriseFeature1": "Multi-établissements",
     "pricingEnterpriseFeature2": "API personnalisée",
     "pricingEnterpriseFeature3": "Accompagnement dédié",
-    "pricingEnterpriseFeature4": "SLA garanti"
-}
+    "pricingEnterpriseFeature4": "SLA garanti",
+    "selectLanguage": "Choisir la langue"
+}

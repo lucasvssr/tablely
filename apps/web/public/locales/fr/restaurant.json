@@ -13,12 +13,28 @@
             "locationPlaceholder": "123 Rue de la Paix, Paris",
             "phoneLabel": "Numéro de téléphone",
             "phonePlaceholder": "01 23 45 67 89",
+            "latLabel": "Latitude (facultatif)",
+            "latPlaceholder": "48.8566",
+            "lngLabel": "Longitude (facultatif)",
+            "lngPlaceholder": "2.3522",
+            "geocode": "Localiser sur la carte",
+            "geocoding": "Recherche...",
+            "geocodeSuccess": "Coordonnées mises à jour !",
+            "geocodeError": "Adresse non trouvée",
+            "pickerLabel": "Sélectionner sur la carte",
+            "pickerDescription": "Cliquez sur la carte pour définir précisément l'emplacement.",
             "submit": "Enregistrer les modifications",
             "submitting": "Enregistrement...",
             "success": "Paramètres du restaurant mis à jour",
             "errorUnknown": "Erreur inconnue"
+        },
+        "account": {
+            "title": "Modifier l'établissement",
+            "description": "Modifiez le nom de votre établissement (compte principal).",
+            "success": "Établissement mis à jour avec succès"
         }
     },
+
     "services": {
         "pageTitle": "Services & Horaires",
         "pageDescription": "Configurez vos périodes de service (Midi, Soir) pour ouvrir vos créneaux de réservation.",
@@ -116,6 +132,7 @@
         "invalidServiceData": "Données du service invalides",
         "invalidTableData": "Données de la table invalides",
         "accountNotFound": "Compte non trouvé",
+        "invalidAccountData": "Données d'établissement invalides",
         "invalidRestaurantData": "Données du restaurant invalides",
         "orgCreationError": "Erreur lors de la création de l'organisation",
         "membershipCreationError": "Erreur lors de la création de l'appartenance",
@@ -128,8 +145,10 @@
         "fetchReservationsError": "Erreur lors de la récupération des réservations",
         "reservationNotFound": "Réservation non trouvée",
         "permissionDenied": "Permission refusée",
+        "cannotModifyPastReservation": "Impossible de modifier le statut d'une réservation passée",
         "arrivedTooEarly": "Impossible de marquer comme arrivé plus de 30 min à l'avance",
         "noShowTooEarly": "Impossible de marquer comme No-show avant 15 min après l'heure",
+        "cannotConfirmCancelled": "Une réservation annulée ne peut plus être confirmée",
         "updateStatusError": "Erreur lors de la mise à jour du statut",
         "updatePermissionDenied": "Vous n'avez pas la permission de modifier cette réservation",
         "availabilityChangeError": "Désolé, plus de disponibilité pour ce changement (tables complètes)",
@@ -137,5 +156,41 @@
         "accountAccessDenied": "Vous n'avez pas accès à ce compte",
         "fetchStatsError": "Erreur lors de la récupération des statistiques",
         "invalidReservationData": "Données de la réservation invalides"
+    },
+    "create": {
+        "pageTitle": "Nouvel Établissement",
+        "pageDescription": "Configurez votre restaurant pour commencer à gérer vos réservations.",
+        "cardTitle": "Détails de l'établissement",
+        "cardDescription": "Remplissez les informations de base de votre restaurant. Vous pourrez les modifier plus tard.",
+        "form": {
+            "submit": "Créer mon établissement",
+            "submitting": "Création en cours...",
+            "success": "Établissement créé avec succès !"
+        }
+    },
+    "manage": {
+        "pageTitle": "Gérer vos établissements",
+        "pageDescription": "Aperçu et gestion de l'ensemble de vos restaurants.",
+        "noRestaurants": "Vous n'avez pas encore d'établissement.",
+        "newRestaurant": "Nouvel Établissement",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet établissement ? Cette action est irréversible.",
+        "deleteSuccess": "Établissement supprimé avec succès",
+        "deleteRestaurant": "Supprimer le restaurant",
+        "deleteRestaurantConfirm": "Êtes-vous sûr de vouloir supprimer ce restaurant ? Cette action est irréversible.",
+        "deleteRestaurantSuccess": "Restaurant supprimé avec succès",
+        "switch": "Gérer",
+        "switchSuccess": "Établissement activé"
+    },
+    "map": {
+        "loading": "Chargement de la carte...",
+        "results_one": "{{count}} Établissement affiché",
+        "results_other": "{{count}} Établissements affichés",
+        "active": "Actif"
+    },
+    "switcher": {
+        "list": "Liste",
+        "map": "Carte"
     }
 }

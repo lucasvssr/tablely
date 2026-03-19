@@ -61,10 +61,10 @@ export function TablesList({
             {initialTables.map((table) => (
                 <div
                     key={table.id}
-                    className="group relative flex items-center justify-between rounded-xl border bg-card p-4 transition-all hover:border-primary/50 hover:shadow-md"
+                    className="group/table relative flex items-center justify-between rounded-xl border bg-card p-4 transition-all hover:border-primary/50 hover:shadow-md"
                 >
                     <div className="flex items-center gap-4">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground font-bold">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover/table:bg-primary group-hover/table:text-primary-foreground font-bold">
                             {table.capacity}
                         </div>
                         <div>

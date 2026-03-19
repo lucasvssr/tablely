@@ -21,18 +21,20 @@ import {
     AlertDialogTrigger,
 } from '@kit/ui/alert-dialog';
 
-interface Profile {
+export interface Profile {
     display_name: string | null;
     email: string;
     avatar_url: string | null;
 }
 
-interface Member {
+export interface Member {
     id: string;
     role: string;
     user_id: string;
     account_id: string;
+    restaurant_id: string | null;
     profiles: Profile | null;
+    restaurants: { name: string } | null;
 }
 
 export function MembersList({
@@ -45,7 +47,7 @@ export function MembersList({
     const { t } = useTranslation('teams');
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
-    const members = initialMembers as unknown as Member[];
+    const members = initialMembers;
 
     const handleRemove = (userId: string, accountId: string) => {
         startTransition(async () => {
@@ -83,6 +85,15 @@ export function MembersList({
                                     </Badge>
                                 </div>
                                 <div className="text-sm text-muted-foreground">{member.profiles?.email}</div>
+                                {member.restaurants?.name ? (
+                                    <div className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground w-fit mt-1 border">
+                                        Restaurant: <span className="font-semibold text-foreground/80">{member.restaurants.name}</span>
+                                    </div>
+                                ) : (
+                                    <div className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground w-fit mt-1 border">
+                                        <span className="italic">Accès global (Établissement)</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
 

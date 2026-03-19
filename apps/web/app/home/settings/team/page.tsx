@@ -2,8 +2,8 @@ import { PageBody, PageHeader } from '@kit/ui/page';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@kit/ui/card';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { Database } from '~/lib/database.types';
-import { MembersList } from './_components/members-list';
-import { InvitationsList } from './_components/invitations-list';
+import { MembersList, Member } from './_components/members-list';
+import { InvitationsList, Invitation } from './_components/invitations-list';
 import { InviteMemberForm } from './_components/invite-member-form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@kit/ui/tabs';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
@@ -32,8 +32,11 @@ export default async function TeamSettingsPage() {
     const isAdmin = role === 'owner' || role === 'admin';
 
     // Prefetching data on server for better performance and SEO
-    const members = accountId ? await getTeamMembersAction({ accountId }) : [];
-    const invitations = accountId ? await getInvitationsAction({ accountId }) : [];
+    const [members, invitations, { data: restaurants }] = await Promise.all([
+        accountId ? getTeamMembersAction({ accountId }) : Promise.resolve([]),
+        accountId ? getInvitationsAction({ accountId }) : Promise.resolve([]),
+        supabase.from('restaurants').select('id, name').eq('account_id', accountId || '').order('name')
+    ]);
 
     return (
         <>
@@ -60,7 +63,7 @@ export default async function TeamSettingsPage() {
                                     </CardHeader>
                                     <CardContent>
                                         {accountId ? (
-                                            <MembersList initialMembers={members} isAdmin={isAdmin} />
+                                            <MembersList initialMembers={members as Member[]} isAdmin={isAdmin} />
                                         ) : (
                                             <div className="p-4 text-center text-muted-foreground">{i18n.t('teams:noData')}</div>
                                         )}
@@ -76,7 +79,7 @@ export default async function TeamSettingsPage() {
                                     </CardHeader>
                                     <CardContent>
                                         {accountId ? (
-                                            <InvitationsList initialInvitations={invitations} isAdmin={isAdmin} />
+                                            <InvitationsList initialInvitations={invitations as Invitation[]} isAdmin={isAdmin} />
                                         ) : (
                                             <div className="p-4 text-center text-muted-foreground">{i18n.t('teams:noData')}</div>
                                         )}
@@ -95,7 +98,10 @@ export default async function TeamSettingsPage() {
                                     <CardDescription>{i18n.t('teams:inviteMemberDescription')}</CardDescription>
                                 </CardHeader>
                                 <CardContent>
-                                    <InviteMemberForm />
+                                    <InviteMemberForm 
+                                        restaurants={restaurants || []} 
+                                        activeMembership={activeMembership}
+                                    />
                                 </CardContent>
                             </Card>
                         </div>

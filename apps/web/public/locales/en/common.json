@@ -69,7 +69,8 @@
     "services": "Services & Hours",
     "tables": "Table Plan",
     "team": "Team",
-    "restaurants": "Restaurants"
+    "restaurants": "Restaurants",
+    "establishments": "My Establishments"
   },
   "roles": {
     "owner": {
@@ -92,5 +93,6 @@
   "lastName": "Last Name",
   "firstNamePlaceholder": "John",
   "lastNamePlaceholder": "Doe",
+  "na": "N/A",
   "fieldRequired": "This field is required"
 }

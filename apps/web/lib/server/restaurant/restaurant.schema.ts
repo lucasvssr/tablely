@@ -1,13 +1,18 @@
 import { z } from 'zod';
 
 export const RestaurantSchema = z.object({
+    id: z.string().uuid().optional(),
+    account_id: z.string().uuid().optional(),
     name: z.string().min(2, 'validation.nameMin2'),
     location: z.string().min(5, 'validation.locationMin5'),
     phone: z.string().optional(),
+    lat: z.coerce.number().optional().nullable(),
+    lng: z.coerce.number().optional().nullable(),
 });
 
 export const ServiceSchema = z.object({
     id: z.string().uuid().optional(),
+    restaurant_id: z.string().uuid().optional(),
     name: z.string().min(2, 'validation.serviceNameRequired'),
     start_time: z.string().regex(/^([01]\d|2[0-3]):?([0-5]\d)$/, 'validation.formatHHMM'),
     end_time: z.string().regex(/^([01]\d|2[0-3]):?([0-5]\d)$/, 'validation.formatHHMM'),
@@ -18,6 +23,7 @@ export const ServiceSchema = z.object({
 
 export const TableSchema = z.object({
     id: z.string().uuid().optional(),
+    restaurant_id: z.string().uuid().optional(),
     name: z.string().min(1, 'validation.tableNameRequired'),
     capacity: z.coerce.number().min(1, 'validation.capacityMin1'),
     is_active: z.boolean(),
@@ -47,8 +53,14 @@ export const UpdateReservationSchema = z.object({
     allergies: z.array(z.string()).optional(),
 });
 
+export const AccountSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string().min(2, 'validation.nameMin2'),
+});
+
 export type RestaurantSchemaType = z.infer<typeof RestaurantSchema>;
 export type ServiceSchemaType = z.infer<typeof ServiceSchema>;
 export type TableSchemaType = z.infer<typeof TableSchema>;
 export type ReservationSchemaType = z.infer<typeof ReservationSchema>;
 export type UpdateReservationSchemaType = z.infer<typeof UpdateReservationSchema>;
+export type AccountSchemaType = z.infer<typeof AccountSchema>;

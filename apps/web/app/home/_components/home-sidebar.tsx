@@ -20,6 +20,7 @@ interface Account {
   name: string;
   slug: string;
   role: string;
+  restaurants?: Array<{ id: string; name: string }>;
 }
 
 export function HomeSidebar(props: {
@@ -32,6 +33,7 @@ export function HomeSidebar(props: {
   user: JwtPayload;
   accounts?: Account[];
   activeAccountId?: string;
+  activeRestaurantId?: string;
 }) {
   const accounts = props.accounts ?? [];
   const isRestaurateur = props.account?.role === 'restaurateur';
@@ -44,6 +46,7 @@ export function HomeSidebar(props: {
           <AccountSwitcher
             accounts={accounts}
             activeAccountId={activeAccountId as string}
+            activeRestaurantId={props.activeRestaurantId}
           />
         ) : (
           <AppLogo href={pathsConfig.app.home} className='w-full h-full' />

@@ -12,7 +12,17 @@
             "locationLabel": "Location / Address",
             "locationPlaceholder": "123 Peace Street, Paris",
             "phoneLabel": "Phone Number",
-            "phonePlaceholder": "01 23 45 67 89",
+            "phonePlaceholder": "+33 1 23 45 67 89",
+            "latLabel": "Latitude (optional)",
+            "latPlaceholder": "48.8566",
+            "lngLabel": "Longitude (optional)",
+            "lngPlaceholder": "2.3522",
+            "geocode": "Locate on map",
+            "geocoding": "Searching...",
+            "geocodeSuccess": "Coordinates updated!",
+            "geocodeError": "Address not found",
+            "pickerLabel": "Select on map",
+            "pickerDescription": "Click on the map to precisely set the location.",
             "submit": "Save Changes",
             "submitting": "Saving...",
             "success": "Restaurant settings updated",
@@ -128,8 +138,10 @@
         "fetchReservationsError": "Error fetching reservations",
         "reservationNotFound": "Reservation not found",
         "permissionDenied": "Permission denied",
+        "cannotModifyPastReservation": "Cannot modify the status of a past reservation",
         "arrivedTooEarly": "Cannot mark as arrived more than 30 min in advance",
         "noShowTooEarly": "Cannot mark as No-show before 15 min after the time",
+        "cannotConfirmCancelled": "A cancelled reservation cannot be confirmed",
         "updateStatusError": "Error updating status",
         "updatePermissionDenied": "You do not have permission to modify this reservation",
         "availabilityChangeError": "Sorry, no more availability for this change (tables full)",
@@ -137,5 +149,38 @@
         "accountAccessDenied": "You do not have access to this account",
         "fetchStatsError": "Error fetching stats",
         "invalidReservationData": "Invalid reservation data"
+    },
+    "create": {
+        "pageTitle": "New Establishment",
+        "pageDescription": "Set up your restaurant to start managing your bookings.",
+        "cardTitle": "Establishment Details",
+        "cardDescription": "Fill in your restaurant's basic information. You can change them later.",
+        "form": {
+            "submit": "Create my establishment",
+            "submitting": "Creating...",
+            "success": "Establishment created successfully!"
+        }
+    },
+    "manage": {
+        "pageTitle": "Manage your establishments",
+        "pageDescription": "Overview and management of all your restaurants.",
+        "noRestaurants": "You don't have any establishments yet.",
+        "newRestaurant": "New Establishment",
+        "edit": "Edit",
+        "delete": "Delete",
+        "deleteConfirm": "Are you sure you want to delete this establishment? This action is irreversible.",
+        "deleteSuccess": "Establishment deleted successfully",
+        "switch": "Manage",
+        "switchSuccess": "Establishment activated"
+    },
+    "map": {
+        "loading": "Loading map...",
+        "results_one": "{{count}} Establishment displayed",
+        "results_other": "{{count}} Establishments displayed",
+        "active": "Active"
+    },
+    "switcher": {
+        "list": "List",
+        "map": "Map"
     }
 }

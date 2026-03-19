@@ -65,7 +65,7 @@ export function ClientReservationsList({ reservations }: { reservations: ClientR
         return (
             <div
                 key={res.id}
-                className="group flex items-center justify-between p-4 px-6 hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors border-t border-zinc-100 dark:border-white/5 first:border-t-0"
+                className="group/reservation flex items-center justify-between p-4 px-6 hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors border-t border-zinc-100 dark:border-white/5 first:border-t-0"
             >
                 <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-2 mb-1">

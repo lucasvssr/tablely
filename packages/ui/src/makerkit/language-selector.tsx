@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { useTranslation } from 'react-i18next';
+import { Globe } from 'lucide-react';
 
 import {
   Select,
@@ -15,9 +16,11 @@ import {
 export function LanguageSelector({
   onChange,
   className,
+  ariaLabel = 'Select language',
 }: {
   onChange?: (locale: string) => unknown;
   className?: string;
+  ariaLabel?: string;
 }) {
   const { i18n } = useTranslation();
   const { language: currentLanguage, options } = i18n;
@@ -52,8 +55,11 @@ export function LanguageSelector({
 
   return (
     <Select value={value} onValueChange={languageChanged}>
-      <SelectTrigger className={className}>
-        <SelectValue />
+      <SelectTrigger className={className} aria-label={ariaLabel}>
+        <div className="flex items-center gap-2">
+          <Globe className="h-4 w-4 opacity-50" />
+          <SelectValue />
+        </div>
       </SelectTrigger>
 
       <SelectContent>

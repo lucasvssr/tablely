@@ -17,6 +17,7 @@ interface Account {
   name: string;
   slug: string;
   role: string;
+  restaurants?: Array<{ id: string; name: string }>;
 }
 
 export function HomeMenuNavigation(props: {
@@ -29,6 +30,7 @@ export function HomeMenuNavigation(props: {
   };
   accounts?: Account[];
   activeAccountId?: string;
+  activeRestaurantId?: string;
 }) {
   const accounts = props.accounts ?? [];
   const isRestaurateur = props.account?.role === 'restaurateur';
@@ -67,6 +69,7 @@ export function HomeMenuNavigation(props: {
             <AccountSwitcher
               accounts={accounts}
               activeAccountId={activeAccountId as string}
+              activeRestaurantId={props.activeRestaurantId}
             />
           </div>
         ) : (

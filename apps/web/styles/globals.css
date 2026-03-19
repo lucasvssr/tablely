@@ -54,3 +54,29 @@
     appearance: none;
   }
 }
+
+@layer components {
+  /* Leaflet Reset & Customization */
+  .custom-leaflet-popup .leaflet-popup-content-wrapper {
+    @apply rounded-xl border border-zinc-200 dark:border-zinc-800 dark:bg-zinc-950 p-2 shadow-2xl;
+  }
+
+  .custom-leaflet-popup .leaflet-popup-content {
+    @apply m-0 !w-auto;
+  }
+
+  /* Force white text for buttons inside popups against Leaflet defaults */
+  .custom-leaflet-popup .leaflet-popup-content a {
+    @apply !no-underline;
+    color: inherit !important;
+  }
+
+  .custom-leaflet-popup .leaflet-popup-tip {
+    @apply dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800;
+  }
+
+  /* Ensure our brand button text stays white */
+  .custom-leaflet-popup .bg-brand-copper {
+    @apply !text-white;
+  }
+}

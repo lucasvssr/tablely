@@ -26,6 +26,7 @@ import { HomeSidebar } from './_components/home-sidebar';
 import { AccountSwitcher } from './_components/account-switcher';
 import { getActiveMembership, getMembershipsAction } from '~/lib/server/restaurant/restaurant-actions';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
+import { Database } from '~/lib/database.types';
 import pathsConfig from '~/config/paths.config';
 
 interface Account {
@@ -33,6 +34,7 @@ interface Account {
   name: string;
   slug: string;
   role: string;
+  restaurants?: Array<{ id: string; name: string }>;
 }
 
 function HomeLayout({ children }: React.PropsWithChildren) {
@@ -57,6 +59,7 @@ function MobileNavigation(props: {
   };
   accounts?: Account[];
   activeAccountId?: string;
+  activeRestaurantId?: string;
 }) {
   const isRestaurateur = props.account?.role === 'restaurateur';
   const accounts = props.accounts ?? [];
@@ -69,6 +72,7 @@ function MobileNavigation(props: {
           <AccountSwitcher
             accounts={accounts}
             activeAccountId={activeAccountId as string}
+            activeRestaurantId={props.activeRestaurantId}
             collapsed={false}
           />
         </div>
@@ -83,6 +87,7 @@ function MobileNavigation(props: {
           account={props.account}
           accounts={props.accounts}
           activeAccountId={props.activeAccountId}
+          activeRestaurantId={props.activeRestaurantId}
         />
       </div>
     </div>
@@ -92,14 +97,15 @@ function MobileNavigation(props: {
 function SidebarLayout({ children }: React.PropsWithChildren) {
   const sidebarMinimized = navigationConfig.sidebarCollapsed;
   const userPromise = requireUserInServerComponent();
-  const supabase = getSupabaseServerClient();
+  const supabase = getSupabaseServerClient<Database>();
 
-  const [user, account, activeMembership, memberships] = use(
+  const [user, account, activeMembership, memberships, activeRestaurantId] = use(
     Promise.all([
       userPromise,
       userPromise.then((user) => getPersonalAccount(user.id)),
       userPromise.then((user) => getActiveMembership(supabase, user.id)),
       getMembershipsAction({}),
+      cookies().then((c) => c.get('active_restaurant_id')?.value),
     ]),
   );
 
@@ -119,6 +125,7 @@ function SidebarLayout({ children }: React.PropsWithChildren) {
             account={sidebarAccount}
             accounts={memberships}
             activeAccountId={activeMembership?.account_id}
+            activeRestaurantId={activeRestaurantId}
           />
         </PageNavigation>
 
@@ -128,6 +135,7 @@ function SidebarLayout({ children }: React.PropsWithChildren) {
             account={sidebarAccount}
             accounts={memberships}
             activeAccountId={activeMembership?.account_id}
+            activeRestaurantId={activeRestaurantId}
           />
         </PageMobileNavigation>
 
@@ -139,14 +147,15 @@ function SidebarLayout({ children }: React.PropsWithChildren) {
 
 function HeaderLayout({ children }: React.PropsWithChildren) {
   const userPromise = requireUserInServerComponent();
-  const supabase = getSupabaseServerClient();
+  const supabase = getSupabaseServerClient<Database>();
 
-  const [user, account, activeMembership, memberships] = use(
+  const [user, account, activeMembership, memberships, activeRestaurantId] = use(
     Promise.all([
       userPromise,
       userPromise.then((user) => getPersonalAccount(user.id)),
       userPromise.then((user) => getActiveMembership(supabase, user.id)),
       getMembershipsAction({}),
+      cookies().then((c) => c.get('active_restaurant_id')?.value),
     ]),
   );
 
@@ -165,6 +174,7 @@ function HeaderLayout({ children }: React.PropsWithChildren) {
           account={headerAccount}
           accounts={memberships as Account[]}
           activeAccountId={activeMembership?.account_id}
+          activeRestaurantId={activeRestaurantId}
         />
       </PageNavigation>
 
@@ -174,6 +184,7 @@ function HeaderLayout({ children }: React.PropsWithChildren) {
           account={headerAccount}
           accounts={memberships}
           activeAccountId={activeMembership?.account_id}
+          activeRestaurantId={activeRestaurantId}
         />
       </PageMobileNavigation>
 

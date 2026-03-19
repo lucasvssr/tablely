@@ -69,7 +69,8 @@
         "services": "Services & Horaires",
         "tables": "Plan de Salle",
         "team": "Équipe",
-        "restaurants": "Restaurants"
+        "restaurants": "Restaurants",
+        "establishments": "Mes Établissements"
     },
     "roles": {
         "owner": {
@@ -92,5 +93,6 @@
     "lastName": "Nom",
     "firstNamePlaceholder": "Jean",
     "lastNamePlaceholder": "Dupont",
+    "na": "N/A",
     "fieldRequired": "Ce champ est obligatoire"
 }

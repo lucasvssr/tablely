@@ -2,7 +2,7 @@ import { getRestaurantsAction } from '~/lib/server/restaurant/restaurant-actions
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@kit/ui/card';
 import { Button } from '@kit/ui/button';
 import Link from 'next/link';
-import { MapPin, Phone, ArrowRight, Utensils, SearchX } from 'lucide-react';
+import { MapPin, Phone, Map as MapIcon, Utensils, ArrowRight } from 'lucide-react';
 import { Trans } from '@kit/ui/trans';
 import { withI18n } from '~/lib/i18n/with-i18n';
 import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
@@ -10,6 +10,7 @@ import { RestaurantSearchBar } from './_components/restaurant-search-bar';
 import { redirect } from 'next/navigation';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { Suspense } from 'react';
+import { RestaurantResultsClient } from './_components/restaurant-results-client';
 
 interface RestaurantsPageProps {
     searchParams: Promise<{ q?: string }>;
@@ -50,7 +51,7 @@ async function RestaurantsPage({ searchParams }: RestaurantsPageProps) {
             </div>
 
             {/* Search bar */}
-            <div className="mb-10">
+            <div className="mb-10 max-w-xl">
                 <Suspense>
                     <RestaurantSearchBar defaultValue={q ?? ''} />
                 </Suspense>
@@ -72,35 +73,14 @@ async function RestaurantsPage({ searchParams }: RestaurantsPageProps) {
                 )}
             </div>
 
-            {/* Grid */}
-            {restaurants.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {restaurants.map((restaurant) => (
-                        <RestaurantCard key={restaurant.id} restaurant={restaurant} query={query} />
-                    ))}
-                </div>
-            ) : allRestaurants.length === 0 ? (
-                /* No restaurants at all */
-                <div className="text-center py-20 flex flex-col items-center gap-4 bg-muted/20 rounded-xl border-2 border-dashed border-zinc-200 dark:border-white/10">
-                    <Utensils className="h-12 w-12 text-muted-foreground" />
-                    <p className="text-lg text-muted-foreground">
-                        <Trans i18nKey="home:noRestaurantsAvailable" />
-                    </p>
-                </div>
-            ) : (
-                /* No results for this search */
-                <div className="text-center py-20 flex flex-col items-center gap-4 bg-muted/20 rounded-xl border-2 border-dashed border-zinc-200 dark:border-white/10">
-                    <SearchX className="h-12 w-12 text-muted-foreground" />
-                    <div className="space-y-1">
-                        <p className="text-lg font-semibold text-zinc-900 dark:text-white">
-                            <Trans i18nKey="home:noMatchingRestaurant" />
-                        </p>
-                        <p className="text-muted-foreground">
-                            <Trans i18nKey="home:tryAnotherName" />
-                        </p>
-                    </div>
-                </div>
-            )}
+            <RestaurantResultsClient
+                restaurants={restaurants}
+                allRestaurantsEmpty={allRestaurants.length === 0}
+            >
+                {restaurants.map((restaurant) => (
+                    <RestaurantCard key={restaurant.id} restaurant={restaurant} query={query} />
+                ))}
+            </RestaurantResultsClient>
         </div>
     );
 }
@@ -127,6 +107,8 @@ interface RestaurantItem {
     location: string;
     phone: string;
     slug: string;
+    lat: number | null;
+    lng: number | null;
 }
 
 function RestaurantCard({ restaurant, query }: { restaurant: RestaurantItem; query: string }) {
@@ -162,12 +144,20 @@ function RestaurantCard({ restaurant, query }: { restaurant: RestaurantItem; que
                 )}
             </CardContent>
             <CardFooter className="pt-0 pb-6 px-6">
-                <Button asChild className="w-full bg-brand-copper hover:bg-brand-copper/90 shadow-md shadow-brand-copper/10 transition-all active:scale-95">
-                    <Link href={`/restaurant/${restaurant.slug}`}>
-                        <Trans i18nKey="home:bookNow" />
-                        <ArrowRight className="ml-2 h-4 w-4 animate-in slide-in-from-left-1" />
-                    </Link>
-                </Button>
+                <div className="flex gap-2 w-full flex-wrap">
+                    <Button asChild variant="outline" className="flex-1 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all active:scale-95">
+                        <Link href={`?focus=${restaurant.id}`} scroll={false}>
+                            <MapIcon className="mr-2 h-4 w-4" />
+                            <Trans i18nKey="home:seeOnMap" />
+                        </Link>
+                    </Button>
+                    <Button asChild className="flex-1 bg-brand-copper hover:bg-brand-copper/90 shadow-md shadow-brand-copper/10 transition-all active:scale-95">
+                        <Link href={`/restaurant/${restaurant.slug}`}>
+                            <Trans i18nKey="home:bookNow" />
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                        </Link>
+                    </Button>
+                </div>
             </CardFooter>
         </Card>
     );

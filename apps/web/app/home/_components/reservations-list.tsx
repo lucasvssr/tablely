@@ -36,6 +36,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from '@kit/ui/dropdown-menu';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger
+} from "@kit/ui/popover";
 import { useSupabase } from '@kit/supabase/hooks/use-supabase';
 import { getDailyReservationsAction, updateReservationStatusAction } from '~/lib/server/restaurant/restaurant-actions';
 import { toast } from 'sonner';
@@ -71,6 +76,8 @@ export function ReservationsList({
     const supabase = useSupabase();
 
     const formattedDate = format(currentDate, 'yyyy-MM-dd');
+    const todayDate = format(new Date(), 'yyyy-MM-dd');
+    const isPastDate = formattedDate < todayDate;
 
     // Keep "now" updated every minute
     useEffect(() => {
@@ -173,7 +180,8 @@ export function ReservationsList({
     };
 
     return (
-        <Card className="border-none shadow-2xl bg-white dark:bg-zinc-900 rounded-[2rem] overflow-hidden">
+        <TooltipProvider>
+            <Card className="border-none shadow-2xl bg-white dark:bg-zinc-900 rounded-[2rem] overflow-hidden">
             <CardHeader className="border-b border-zinc-100 dark:border-white/5 pb-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
@@ -259,47 +267,54 @@ export function ReservationsList({
                                         <td className="px-6 py-5">
                                             <div className="flex items-center gap-2">
                                                 <div className="font-bold text-zinc-900 dark:text-white">{res.client_name}</div>
-                                                {hasAllergy(res.notes) && (
-                                                    <TooltipProvider>
-                                                        <Tooltip delayDuration={0}>
-                                                            <TooltipTrigger asChild>
+                                                 {hasAllergy(res.notes) && (
+                                                     <Popover>
+                                                         <PopoverTrigger asChild>
                                                                 <div className="flex items-center justify-center w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 animate-pulse cursor-help">
                                                                     <AlertTriangle className="w-3.5 h-3.5" />
                                                                 </div>
-                                                            </TooltipTrigger>
-                                                            <TooltipContent side="top" className="bg-red-600 text-white border-none p-3 max-w-xs rounded-xl shadow-xl">
-                                                                <p className="font-bold mb-1 flex items-center gap-2 text-xs uppercase tracking-wider">
-                                                                    <AlertTriangle className="w-3 h-3" />
+                                                         </PopoverTrigger>
+                                                         <PopoverContent align="start" className="bg-red-600 text-white border-none p-4 w-72 rounded-2xl shadow-2xl z-50">
+                                                            <div className="space-y-2">
+                                                                <p className="font-bold flex items-center gap-2 text-xs uppercase tracking-[0.2em]">
+                                                                    <AlertTriangle className="w-4 h-4" />
                                                                     {t('reservations.notes.allergyAlert')}
                                                                 </p>
+                                                                <div className="h-px bg-white/20 w-full" />
                                                                 <p className="text-sm font-medium leading-relaxed">
                                                                     {res.notes}
                                                                 </p>
-                                                            </TooltipContent>
-                                                        </Tooltip>
-                                                    </TooltipProvider>
-                                                )}
-                                                {!hasAllergy(res.notes) && res.notes && (
-                                                    <TooltipProvider>
-                                                        <Tooltip delayDuration={300}>
-                                                            <TooltipTrigger asChild>
-                                                                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 cursor-help">
+                                                            </div>
+                                                         </PopoverContent>
+                                                     </Popover>
+                                                  )}
+                                                  {!hasAllergy(res.notes) && res.notes && (
+                                                     <Popover>
+                                                         <PopoverTrigger asChild>
+                                                                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 cursor-help hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
                                                                     <Info className="w-3.5 h-3.5" />
                                                                 </div>
-                                                            </TooltipTrigger>
-                                                            <TooltipContent side="top" className="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white border-zinc-200 dark:border-white/10 p-3 max-w-xs rounded-xl shadow-xl">
-                                                                <p className="font-bold mb-1 text-xs uppercase tracking-wider text-zinc-500">
+                                                         </PopoverTrigger>
+                                                         <PopoverContent align="start" className="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white border-zinc-200 dark:border-white/10 p-4 w-72 rounded-2xl shadow-2xl z-50">
+                                                            <div className="space-y-2">
+                                                                <p className="font-bold text-xs uppercase tracking-[0.2em] text-zinc-400">
                                                                     {t('reservations.notes.clientNote')}
                                                                 </p>
-                                                                <p className="text-sm font-medium">
+                                                                <div className="h-px bg-zinc-100 dark:bg-white/5 w-full" />
+                                                                <p className="text-sm font-medium leading-relaxed">
                                                                     {res.notes}
                                                                 </p>
-                                                            </TooltipContent>
-                                                        </Tooltip>
-                                                    </TooltipProvider>
-                                                )}
+                                                            </div>
+                                                         </PopoverContent>
+                                                     </Popover>
+                                                  )}
                                             </div>
-                                            <div className="text-xs text-zinc-500 font-medium">{res.client_email}</div>
+                                             <div className="text-xs text-zinc-500 font-medium">{res.client_email}</div>
+                                             {res.notes && (
+                                                <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1.5 italic line-clamp-2 max-w-[180px] leading-snug">
+                                                    {res.notes}
+                                                </div>
+                                             )}
                                         </td>
                                         <td className="px-6 py-5">
                                             <div className="flex items-center gap-1.5 font-bold">
@@ -311,7 +326,7 @@ export function ReservationsList({
                                             {getStatusBadge(res.status)}
                                         </td>
                                         <td className="px-6 py-5 text-right">
-                                            <DropdownMenu>
+                                            <DropdownMenu modal={false}>
                                                 <DropdownMenuTrigger asChild>
                                                     <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg outline-none">
                                                         <MoreHorizontal className="h-4 w-4" />
@@ -321,31 +336,31 @@ export function ReservationsList({
                                                     <DropdownMenuLabel>{t('reservations.table.actions')}</DropdownMenuLabel>
                                                     <DropdownMenuSeparator />
 
-                                                     {res.status !== 'cancelled' && (
+                                                     {!isPastDate && res.status !== 'cancelled' && (
                                                         <EditReservationDialog reservation={res} />
                                                      )}
 
                                                     <DropdownMenuSeparator />
 
                                                     <TooltipProvider>
-                                                        {(() => {
-                                                            const reservationTime = parseISO(`${res.date}T${res.start_time}`);
-                                                            const canMarkArrived = isAfter(now, subMinutes(reservationTime, 30));
-                                                            const canMarkNoShow = isAfter(now, addMinutes(reservationTime, 15));
+                                                         {(() => {
+                                                             const reservationTime = parseISO(`${res.date}T${res.start_time}`);
+                                                             const canMarkArrived = isAfter(now, subMinutes(reservationTime, 30));
+                                                             const canMarkNoShow = isAfter(now, addMinutes(reservationTime, 15));
 
-                                                            return (
-                                                                <>
-                                                                    <Tooltip delayDuration={300}>
+                                                             return (
+                                                                 <>
+                                                                     <Tooltip delayDuration={300}>
                                                                         <TooltipTrigger asChild>
                                                                             <div>
-                                                                                <DropdownMenuItem
-                                                                                    className="gap-2 font-medium"
-                                                                                    onClick={() => handleStatusChange(res.id, 'arrived')}
-                                                                                    disabled={res.status === 'arrived' || !canMarkArrived}
-                                                                                >
-                                                                                    <UserCheck className={cn("w-4 h-4", canMarkArrived ? "text-brand-copper" : "text-zinc-300")} />
-                                                                                    {t('reservations.actions.markArrived')}
-                                                                                </DropdownMenuItem>
+                                                                                 <DropdownMenuItem
+                                                                                     className="gap-2 font-medium"
+                                                                                     onClick={() => handleStatusChange(res.id, 'arrived')}
+                                                                                     disabled={isPastDate || res.status === 'arrived' || !canMarkArrived}
+                                                                                 >
+                                                                                     <UserCheck className={cn("w-4 h-4", !isPastDate && canMarkArrived ? "text-brand-copper" : "text-zinc-300")} />
+                                                                                     {t('reservations.actions.markArrived')}
+                                                                                 </DropdownMenuItem>
                                                                             </div>
                                                                         </TooltipTrigger>
                                                                         {!canMarkArrived && (
@@ -358,14 +373,14 @@ export function ReservationsList({
                                                                     <Tooltip delayDuration={300}>
                                                                         <TooltipTrigger asChild>
                                                                             <div>
-                                                                                <DropdownMenuItem
-                                                                                    className="gap-2 font-medium"
-                                                                                    onClick={() => handleStatusChange(res.id, 'no-show')}
-                                                                                    disabled={res.status === 'no-show' || !canMarkNoShow}
-                                                                                >
-                                                                                    <HelpCircle className={cn("w-4 h-4", canMarkNoShow ? "text-zinc-500" : "text-zinc-300")} />
-                                                                                    {t('reservations.actions.markNoShow')}
-                                                                                </DropdownMenuItem>
+                                                                                 <DropdownMenuItem
+                                                                                     className="gap-2 font-medium"
+                                                                                     onClick={() => handleStatusChange(res.id, 'no-show')}
+                                                                                     disabled={isPastDate || res.status === 'no-show' || !canMarkNoShow}
+                                                                                 >
+                                                                                     <HelpCircle className={cn("w-4 h-4", !isPastDate && canMarkNoShow ? "text-zinc-500" : "text-zinc-300")} />
+                                                                                     {t('reservations.actions.markNoShow')}
+                                                                                 </DropdownMenuItem>
                                                                             </div>
                                                                         </TooltipTrigger>
                                                                         {!canMarkNoShow && (
@@ -374,24 +389,24 @@ export function ReservationsList({
                                                                             </TooltipContent>
                                                                         )}
                                                                     </Tooltip>
-                                                                </>
-                                                            );
-                                                        })()}
-                                                    </TooltipProvider>
+                                                                 </>
+                                                             );
+                                                         })()}
+                                                     </TooltipProvider>
 
-                                                    <DropdownMenuItem
-                                                        className="gap-2 font-medium"
-                                                        onClick={() => handleStatusChange(res.id, 'confirmed')}
-                                                        disabled={res.status === 'confirmed'}
-                                                    >
-                                                        <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                                        {t('reservations.actions.confirmReset')}
-                                                    </DropdownMenuItem>
+                                                     <DropdownMenuItem
+                                                         className="gap-2 font-medium"
+                                                         onClick={() => handleStatusChange(res.id, 'confirmed')}
+                                                         disabled={isPastDate || res.status === 'confirmed' || res.status === 'cancelled'}
+                                                     >
+                                                         <CheckCircle2 className={cn("w-4 h-4", !isPastDate ? "text-green-500" : "text-zinc-300")} />
+                                                         {t('reservations.actions.confirmReset')}
+                                                     </DropdownMenuItem>
                                                     <DropdownMenuSeparator />
                                                     <DropdownMenuItem
                                                         className="gap-2 font-medium text-destructive focus:text-destructive focus:bg-destructive/10"
                                                         onClick={() => handleStatusChange(res.id, 'cancelled')}
-                                                        disabled={res.status === 'cancelled'}
+                                                        disabled={isPastDate || res.status === 'cancelled'}
                                                     >
                                                         <XCircle className="w-4 h-4" />
                                                         {t('reservations.actions.cancel')}
@@ -407,5 +422,6 @@ export function ReservationsList({
                 )}
             </CardContent>
         </Card >
+        </TooltipProvider>
     );
 }

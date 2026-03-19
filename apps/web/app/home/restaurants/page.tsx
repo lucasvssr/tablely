@@ -9,6 +9,7 @@ import { withI18n } from '~/lib/i18n/with-i18n';
 
 // Use components from the public restaurants page
 import { RestaurantSearchBar } from '~/(home)/restaurants/_components/restaurant-search-bar';
+import { RestaurantResultsClient } from '~/(home)/restaurants/_components/restaurant-results-client';
 import { RestaurantCard } from '../_components/restaurant-card';
 
 interface RestaurantsPageProps {
@@ -61,20 +62,14 @@ async function RestaurantsDashboardPage({ searchParams }: RestaurantsPageProps) 
                         )}
                     </div>
 
-                    {/* Grid */}
-                    {restaurants.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                            {restaurants.map((restaurant) => (
-                                <RestaurantCard key={restaurant.id} restaurant={restaurant} />
-                            ))}
-                        </div>
-                    ) : (
-                         <div className="text-center py-20 flex flex-col items-center gap-4 bg-muted/20 rounded-xl border-2 border-dashed border-zinc-200 dark:border-white/10">
-                            <p className="text-lg text-muted-foreground">
-                                <Trans i18nKey="home:noRestaurantsAvailable" />
-                            </p>
-                        </div>
-                    )}
+                    <RestaurantResultsClient 
+                        restaurants={restaurants} 
+                        allRestaurantsEmpty={allRestaurants.length === 0}
+                    >
+                        {restaurants.map((restaurant) => (
+                            <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+                        ))}
+                    </RestaurantResultsClient>
                 </div>
             </PageBody>
         </>

@@ -5,7 +5,7 @@ import { requireUserInServerComponent } from '~/lib/server/require-user-in-serve
 import { RestaurantSettingsForm } from './_components/restaurant-settings-form';
 import { notFound } from 'next/navigation';
 import { Database } from '~/lib/database.types';
-import { getUserRoleAction, getActiveMembership } from '~/lib/server/restaurant/restaurant-actions';
+import { getUserRoleAction, getActiveMembership, getActiveRestaurant } from '~/lib/server/restaurant/restaurant-actions';
 import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 
 export async function generateMetadata() {
@@ -21,29 +21,34 @@ export default async function RestaurantSettingsPage() {
     const supabase = getSupabaseServerClient<Database>();
     const i18n = await createI18nServerInstance();
 
-    const [activeMembership, role] = await Promise.all([
+    const [activeMembership, role, activeRestaurantId] = await Promise.all([
         getActiveMembership(supabase, user.id),
-        getUserRoleAction({})
+        getUserRoleAction({}),
+        getActiveRestaurant(supabase, user.id)
     ]);
 
     const accountId = activeMembership?.account_id;
 
-    if (!accountId) return notFound();
+    if (!accountId || !activeRestaurantId) return notFound();
 
     const isAdmin = role === 'owner' || role === 'admin';
 
     const { data: restaurant } = await supabase
         .from('restaurants')
-        .select('name, location, phone')
+        .select('id, name, location, phone, lat, lng')
+        .eq('id', activeRestaurantId)
         .eq('account_id', accountId)
         .single();
 
     if (!restaurant) return notFound();
 
     const initialData = {
+        id: restaurant.id,
         name: restaurant.name,
         location: restaurant.location || '',
         phone: restaurant.phone || '',
+        lat: restaurant.lat || undefined,
+        lng: restaurant.lng || undefined,
     };
 
     return (
@@ -55,7 +60,7 @@ export default async function RestaurantSettingsPage() {
             />
 
             <PageBody>
-                <div className="max-w-4xl mx-auto">
+                <div className="max-w-4xl mx-auto pb-16">
                     <Card className="border-none shadow-xl bg-gradient-to-br from-background to-muted/20 overflow-hidden">
                         <div className="h-2 w-full bg-brand-copper" />
                         <CardHeader>

@@ -7,11 +7,15 @@ import { ModeToggle } from '@kit/ui/mode-toggle';
 import { LanguageSelector } from '@kit/ui/language-selector';
 import appConfig from '~/config/app.config';
 import { cn } from '@kit/ui/utils';
+import { useTranslation } from 'react-i18next';
+
 
 export function PublicFooter({ className }: { className?: string }) {
+    const { t } = useTranslation('home');
 
     return (
         <footer className={cn("pt-32 pb-16 bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-white relative overflow-hidden transition-colors duration-500", className)}>
+
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-zinc-200 dark:via-white/10 to-transparent" />
             <div className="absolute -top-24 -right-24 w-96 h-96 bg-brand-copper/10 dark:bg-brand-copper/20 rounded-full blur-[120px] pointer-events-none" />
 
@@ -78,8 +82,12 @@ export function PublicFooter({ className }: { className?: string }) {
                         />
                     </p>
                     <div className="flex items-center gap-6 flex-col md:flex-row">
-                        <LanguageSelector className="w-min gap-2 h-9 bg-transparent border-none shadow-none text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors focus:ring-0" />
+                        <LanguageSelector 
+                            className="w-min gap-2 h-9 bg-transparent border-none shadow-none text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors focus:ring-0" 
+                            ariaLabel={t('selectLanguage')}
+                        />
                         <ModeToggle className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" />
+
                         <Link href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Twitter</Link>
                         <Link href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">LinkedIn</Link>
                         <Link href="#" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Instagram</Link>

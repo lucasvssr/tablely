@@ -20,11 +20,13 @@ import {
     AlertDialogTrigger,
 } from '@kit/ui/alert-dialog';
 
-interface Invitation {
+export interface Invitation {
     id: string;
     email: string;
     role: string;
     created_at: string | null;
+    restaurant_id: string | null;
+    restaurants: { name: string } | null;
 }
 
 export function InvitationsList({
@@ -37,7 +39,7 @@ export function InvitationsList({
     const { t } = useTranslation('teams');
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
-    const invitations = initialInvitations as Invitation[];
+    const invitations = initialInvitations;
 
     const handleDelete = (id: string) => {
         startTransition(async () => {
@@ -76,6 +78,15 @@ export function InvitationsList({
                                 <div className="text-xs text-muted-foreground">
                                     {t('sentOn', { date: new Date(invitation.created_at || '').toLocaleDateString() })}
                                 </div>
+                                {invitation.restaurants?.name ? (
+                                    <div className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground w-fit mt-1 border">
+                                        Restaurant: <span className="font-semibold text-foreground/80">{invitation.restaurants.name}</span>
+                                    </div>
+                                ) : (
+                                    <div className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground w-fit mt-1 border">
+                                        <span className="italic">Accès global (Établissement)</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         {isAdmin && (

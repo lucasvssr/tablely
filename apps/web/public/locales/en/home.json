@@ -135,11 +135,11 @@
   "privacyPolicyDataCollectedTitle": "2. Data Collected",
   "privacyPolicyDataCollectedContent": [
     "We only collect the strictly necessary information:",
-      [
-        "For <strong>Customers</strong>: Name, first name, email address, phone number and reservation history.",
-        "For <strong>Restaurateurs</strong>: Professional information, establishment address, floor plan and billing data.",
-        "Payment Data: Bank card information is processed exclusively by <strong>Stripe</strong>. Tablely never has access to your card numbers."
-      ]
+    [
+      "For <strong>Customers</strong>: Name, first name, email address, phone number and reservation history.",
+      "For <strong>Restaurateurs</strong>: Professional information, establishment address, floor plan and billing data.",
+      "Payment Data: Bank card information is processed exclusively by <strong>Stripe</strong>. Tablely never has access to your card numbers."
+    ]
   ],
   "privacyPolicyTreatmentPurposeTitle": "3. Purpose of Processing",
   "privacyPolicyTreatmentPurposeContent": [
@@ -154,26 +154,26 @@
   "privacyPolicyShareDataTitle": "4. Data Sharing",
   "privacyPolicyShareDataContent": [
     "Your personal data is only shared with third parties essential to the service:",
-      [
-        "The <strong>Restaurateur</strong>: Receives your name/first name/phone number to prepare your welcome.",
-        "<strong>Supabase</strong>: For secure database hosting and authentication.",
-        "<strong>Stripe</strong>: For secure transaction and banking fingerprint management.",
-        "<strong>Vercel</strong>: For audience analysis and site performance monitoring (Vercel Analytics & Speed Insights).",
-        "No data is <strong>sold or shared</strong> for commercial purposes.",
-        "Your data is stored securely on <strong>Supabase servers (EU)</strong>."
-      ]
+    [
+      "The <strong>Restaurateur</strong>: Receives your name/first name/phone number to prepare your welcome.",
+      "<strong>Supabase</strong>: For secure database hosting and authentication.",
+      "<strong>Stripe</strong>: For secure transaction and banking fingerprint management.",
+      "<strong>Vercel</strong>: For audience analysis and site performance monitoring (Vercel Analytics & Speed Insights).",
+      "No data is <strong>sold or shared</strong> for commercial purposes.",
+      "Your data is stored securely on <strong>Supabase servers (EU)</strong>."
+    ]
   ],
   "privacyPolicyDataRetentionTitle": "5. Data Retention",
   "privacyPolicyDataRetentionContent": "Data is kept as long as your account is active. In case of prolonged inactivity (2 years), your personal data is anonymized or deleted, unless there is a legal obligation to retain it.",
   "privacyPolicyUserRightsTitle": "6. Your Rights",
   "privacyPolicyUserRightsContent": [
     "In accordance with the RGPD, you have the following rights:",
-      [
-        "<strong>Right of access</strong>: Obtain a copy of your data.",
-        "<strong>Right of rectification</strong>: Correct inaccurate information.",
-        "<strong>Right to erasure</strong>: Request the deletion of your data.",
-        "<strong>Right to object</strong>: Object to the processing of your data."
-      ],
+    [
+      "<strong>Right of access</strong>: Obtain a copy of your data.",
+      "<strong>Right of rectification</strong>: Correct inaccurate information.",
+      "<strong>Right to erasure</strong>: Request the deletion of your data.",
+      "<strong>Right to object</strong>: Object to the processing of your data."
+    ],
     "To exercise these rights, please contact us at the following address: {{email}}"
   ],
   "privacyPolicySecurityTitle": "7. Security",
@@ -224,7 +224,8 @@
   "restaurantPreviewHeading": "Our partner establishments",
   "restaurantPreviewSubtitle": "Discover a selection of restaurants that trust us for their daily management.",
   "viewAllRestaurants": "View all restaurants",
-  "bookNow": "Book now",
+  "bookNow": "Book",
+  "seeOnMap": "See on map",
   "restaurantsFound_one": "{{count}} restaurant found",
   "restaurantsFound_other": "{{count}} restaurants found",
   "resultsFor": "for \"{{query}}\"",
@@ -268,5 +269,6 @@
   "pricingEnterpriseFeature1": "Multi-location management",
   "pricingEnterpriseFeature2": "Custom API",
   "pricingEnterpriseFeature3": "Dedicated onboarding",
-  "pricingEnterpriseFeature4": "Guaranteed SLA"
+  "pricingEnterpriseFeature4": "Guaranteed SLA",
+  "selectLanguage": "Select language"
 }

@@ -11,6 +11,7 @@ interface Account {
   name: string;
   slug: string;
   role: string;
+  restaurants?: Array<{ id: string; name: string }>;
 }
 
 import { useSignOut } from '@kit/supabase/hooks/use-sign-out';
@@ -40,6 +41,7 @@ export function HomeMobileNavigation(props: {
   };
   accounts?: Account[];
   activeAccountId?: string;
+  activeRestaurantId?: string;
 }) {
   const isRestaurateur = props.account?.role === 'restaurateur';
   const signOut = useSignOut();
@@ -86,6 +88,7 @@ export function HomeMobileNavigation(props: {
                         <AccountSwitcher
                             accounts={accounts}
                             activeAccountId={activeAccountId as string}
+                            activeRestaurantId={props.activeRestaurantId}
                             collapsed={false}
                         />
                     </div>

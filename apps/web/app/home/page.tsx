@@ -1,10 +1,11 @@
 import { PageBody, PageHeader } from '@kit/ui/page';
 import pathsConfig from '~/config/paths.config';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
+import { Database } from '~/lib/database.types';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
 import { DashboardDemo } from '~/home/_components/dashboard-demo';
 import { PublicPageLinkCard } from './_components/public-page-link-card';
-import { getDashboardStatsAction, getDailyReservationsAction, getActiveMembership } from '~/lib/server/restaurant/restaurant-actions';
+import { getDashboardStatsAction, getDailyReservationsAction, getActiveMembership, getActiveRestaurant } from '~/lib/server/restaurant/restaurant-actions';
 import { ReservationsList, Reservation } from './_components/reservations-list';
 import { format } from 'date-fns';
 import { Button } from '@kit/ui/button';
@@ -20,7 +21,7 @@ import { RestaurantCard } from './_components/restaurant-card';
 
 export default async function HomePage() {
   const user = await requireUserInServerComponent();
-  const supabase = getSupabaseServerClient();
+  const supabase = getSupabaseServerClient<Database>();
   const i18n = await createI18nServerInstance();
 
   // Get user profile for role
@@ -32,10 +33,13 @@ export default async function HomePage() {
 
   const role = profile?.role || 'client';
 
-  // Get user's active account (Organization/Restaurant)
   const membership = await getActiveMembership(supabase, user.id);
-
-  const slug = (membership?.accounts as Record<string, string> | null)?.slug;
+  const activeRestaurantId = await getActiveRestaurant(supabase, user.id);
+  const restaurants = (membership?.accounts as unknown as { restaurants: { id: string; slug: string }[] })?.restaurants || [];
+  const activeRestaurant = restaurants.find((r) => r.id === activeRestaurantId) || restaurants[0];
+  
+  // Use restaurant slug if available, fallback to account slug
+  const restaurantSlug = activeRestaurant?.slug || (membership?.accounts as { slug: string | null } | null)?.slug;
 
   if (role === 'client') {
     const [clientReservations, allRestaurants] = await Promise.all([
@@ -84,7 +88,7 @@ export default async function HomePage() {
   }
 
   // If restaurateur but no organization yet
-  if (!membership || !slug) {
+  if (!membership || !restaurantSlug) {
     const isMember = role === 'member';
 
     return (
@@ -141,9 +145,9 @@ export default async function HomePage() {
 
       <PageBody>
         <div className="flex flex-col gap-10">
-          {slug && (
+          {restaurantSlug && (
             <div className="max-w-xl px-6">
-              <PublicPageLinkCard slug={slug} />
+              <PublicPageLinkCard slug={restaurantSlug} />
             </div>
           )}
 
