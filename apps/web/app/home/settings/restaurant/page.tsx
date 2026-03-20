@@ -72,7 +72,7 @@ export default async function RestaurantSettingsPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="pt-6">
-                            <RestaurantSettingsForm initialData={initialData} readOnly={!isAdmin} />
+                            <RestaurantSettingsForm key={activeRestaurantId} initialData={initialData} readOnly={!isAdmin} />
                         </CardContent>
                     </Card>
                 </div>

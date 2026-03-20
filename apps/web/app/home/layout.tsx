@@ -139,7 +139,9 @@ function SidebarLayout({ children }: React.PropsWithChildren) {
           />
         </PageMobileNavigation>
 
-        {children}
+        <div key={activeRestaurantId} className="flex flex-1 flex-col">
+          {children}
+        </div>
       </Page>
     </SidebarProvider>
   );
@@ -188,7 +190,9 @@ function HeaderLayout({ children }: React.PropsWithChildren) {
         />
       </PageMobileNavigation>
 
-      {children}
+      <div key={activeRestaurantId} className="flex flex-1 flex-col">
+        {children}
+      </div>
     </Page>
   );
 }

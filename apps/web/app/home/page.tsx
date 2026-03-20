@@ -154,10 +154,11 @@ export default async function HomePage() {
           <div className="flex flex-col gap-10" id="reservations-section">
             <div className="flex flex-col gap-10 px-6 py-6">
               <ReservationsList
+                key={activeRestaurantId}
                 initialReservations={reservations as Reservation[]}
                 accountId={membership.account_id}
               />
-              <DashboardDemo stats={stats} />
+              <DashboardDemo key={activeRestaurantId} stats={stats} />
             </div>
           </div>
         </div>
