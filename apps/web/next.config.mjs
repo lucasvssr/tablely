@@ -1,3 +1,9 @@
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const ENABLE_REACT_COMPILER = process.env.ENABLE_REACT_COMPILER === 'true';
@@ -34,6 +40,7 @@ const config = {
   reactCompiler: ENABLE_REACT_COMPILER,
   // moved out of experimental in Next.js 16
   turbopack: {
+    root: resolve(__dirname, '../../'),
     resolveExtensions: ['.ts', '.tsx', '.js', '.jsx'],
   },
   experimental: {
