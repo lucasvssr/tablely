@@ -27,6 +27,11 @@
             "submitting": "Saving...",
             "success": "Restaurant settings updated",
             "errorUnknown": "Unknown error"
+        },
+        "account": {
+            "title": "Edit Establishment",
+            "description": "Change your establishment name (main account).",
+            "success": "Establishment updated successfully"
         }
     },
     "services": {
@@ -126,6 +131,7 @@
         "invalidServiceData": "Invalid service data",
         "invalidTableData": "Invalid table data",
         "accountNotFound": "Account not found",
+        "invalidAccountData": "Invalid establishment data",
         "invalidRestaurantData": "Invalid restaurant data",
         "orgCreationError": "Error creating organization",
         "membershipCreationError": "Error creating membership",
@@ -170,6 +176,9 @@
         "delete": "Delete",
         "deleteConfirm": "Are you sure you want to delete this establishment? This action is irreversible.",
         "deleteSuccess": "Establishment deleted successfully",
+        "deleteRestaurant": "Delete Restaurant",
+        "deleteRestaurantConfirm": "Are you sure you want to delete this restaurant? This action is irreversible.",
+        "deleteRestaurantSuccess": "Restaurant deleted successfully",
         "switch": "Manage",
         "switchSuccess": "Establishment activated"
     },

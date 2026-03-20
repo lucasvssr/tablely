@@ -1,0 +1,12 @@
+{
+    "title": "Willkommen bei Tablely",
+    "description": "Lassen Sie uns Ihren Betrieb einrichten, um loszulegen.",
+    "form": {
+        "restaurantName": "Restaurant-Name",
+        "restaurantNamePlaceholder": "z. B. Das kleine Bistro",
+        "location": "Standort / Stadt",
+        "locationPlaceholder": "z. B. Berlin, Mitte",
+        "submit": "Meinen Betrieb erstellen",
+        "creating": "Wird erstellt..."
+    }
+}

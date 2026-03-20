@@ -1,0 +1,118 @@
+{
+    "welcome": {
+        "title": "Willkommen bei Tablely",
+        "description": "Finden und buchen Sie die besten Tische in Ihrer Nähe.",
+        "readyTitle": "Bereit für ein kulinarisches Erlebnis?",
+        "readyDescription": "Entdecken Sie unsere Partnerrestaurants und buchen Sie Ihren Tisch mit wenigen Klicks.",
+        "browseButton": "Restaurants durchstöbern"
+    },
+    "setup": {
+        "title": "Konfigurieren Ihres Restaurants",
+        "description": "Beginnen wir mit der Erstellung Ihres ersten Betriebs.",
+        "createTitle": "Erstellen Sie Ihr Restaurant",
+        "createDescription": "Sie haben noch kein Restaurant konfiguriert. Erstellen Sie Ihren Betrieb, um mit der Verwaltung Ihrer Dienste und Buchungen zu beginnen.",
+        "createButton": "Meinen Betrieb erstellen",
+        "noAccessTitle": "Eingeschränkter Zugang",
+        "noAccessDescription": "Sie sind derzeit mit keinem Betrieb verknüpft. Bitte kontaktieren Sie Ihren Administrator, um eine Einladung zu erhalten."
+    },
+    "main": {
+        "title": "Dashboard",
+        "description": "Verwalten Sie Ihr Restaurant und Ihre Buchungen auf einen Blick."
+    },
+    "reservations": {
+        "title": "Anstehende Buchungen",
+        "today": "Heute",
+        "noReservations": "Keine Buchungen",
+        "noReservationsDesc": "Für dieses Datum gibt es noch keine Buchungen.",
+        "clientSubtitle": "Ihre anstehenden Buchungen",
+        "noUpcoming": "Sie haben keine anstehenden Buchungen.",
+        "upcoming": "Anstehend",
+        "history": "Verlauf",
+        "noPast": "Keine vergangenen Buchungen.",
+        "table": {
+            "time": "Zeit",
+            "client": "Kunde",
+            "guests": "Gäste",
+            "status": "Status",
+            "actions": "Aktionen"
+        },
+        "status": {
+            "confirmed": "Bestätigt",
+            "cancelled": "Storniert",
+            "arrived": "Angekommen",
+            "noshow": "Nicht erschienen"
+        },
+        "actions": {
+            "markArrived": "Als angekommen markieren",
+            "markNoShow": "Als nicht erschienen markieren",
+            "confirmReset": "Bestätigen (Zurücksetzen)",
+            "cancel": "Abbrechen",
+            "edit": "Bearbeiten",
+            "arrivedRestriction": "Möglich 30 Min. vor der Zeit",
+            "noshowRestriction": "Möglich 15 Min. nach der Zeit"
+        },
+        "notes": {
+            "allergyAlert": "Allergie-Alarm",
+            "clientNote": "Kundennotiz"
+        },
+        "toasts": {
+            "statusUpdated": "Status aktualisiert",
+            "updateError": "Fehler beim Aktualisieren",
+            "refreshError": "Fehler beim Aktualisieren der Buchungen"
+        }
+    },
+    "publicPageCard": {
+        "title": "Ihre Buchungsseite",
+        "description": "Teilen Sie diesen Link mit Ihren Kunden in sozialen Netzwerken oder auf Ihrer Website, um Buchungen zu erhalten.",
+        "copyButton": "Link kopieren",
+        "copySuccess": "Link in die Zwischenablage kopiert",
+        "viewPage": "Meine öffentliche Seite anzeigen",
+        "manageReservations": "Reservierungen verwalten"
+    },
+    "editReservation": {
+        "title": "Reservierung bearbeiten",
+        "description": "Passen Sie die Gästeanzahl, Zeit oder Notizen für {{name}} an.",
+        "guests": "Gäste",
+        "time": "Buchungszeit",
+        "noSlots": "Keine Zeitfenster für diese Gästeanzahl verfügbar",
+        "allergies": "Allergien",
+        "notesLabel": "Notizen",
+        "notesPlaceholder": "Allergien, bevorzugter Tisch, etc.",
+        "cancelMyBooking": "Diese Buchung stornieren",
+        "cancelConfirm": "Sind Sie sicher, dass Sie diese Buchung stornieren möchten?",
+        "save": "Änderungen speichern",
+        "saving": "Speichern...",
+        "cancel": "Abbrechen",
+        "successUpdate": "Reservierung aktualisiert",
+        "successCancel": "Reservierung storniert",
+        "error": "Ein Fehler ist aufgetreten"
+    },
+    "stats": {
+        "services": "Dienste",
+        "servicesDesc": "Anzahl konfigurierter Dienste",
+        "reservations": "Buchungen",
+        "reservationsDesc": "Gesamtzahl bestätigter Buchungen",
+        "guests": "Gäste",
+        "guestsDesc": "Gesamtzahl begrüßter Gäste",
+        "clients": "Kunden",
+        "clientsDesc": "Gesamtzahl eindeutiger Kunden",
+        "dailyReservations": "Tägliches Buchungsvolumen",
+        "dailyGuests": "Kumulierte Gästezahl pro Tag",
+        "topClients": "Top-Kunden",
+        "topClientsDesc": "Häufigste Kunden in Ihrem Betrieb",
+        "active": "Aktiv",
+        "total": "Gesamt",
+        "service": "Dienst",
+        "loyal": "Loyal",
+        "vip": "VIP",
+        "regular": "Stammgast",
+        "noClients": "Noch keine Kunden",
+        "table": {
+            "client": "Kunde",
+            "reservations": "Buchungen",
+            "totalGuests": "Gesamt Gäste",
+            "lastVisit": "Letzter Besuch",
+            "status": "Status"
+        }
+    }
+}

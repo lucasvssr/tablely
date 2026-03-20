@@ -1,0 +1,118 @@
+{
+    "welcome": {
+        "title": "Bienvenido a Tablely",
+        "description": "Encuentre y reserve las mejores mesas cerca de usted.",
+        "readyTitle": "¿Preparado para una experiencia culinaria?",
+        "readyDescription": "Explore nuestros restaurantes asociados y reserve una mesa con unos pocos clics.",
+        "browseButton": "Explorar restaurantes"
+    },
+    "setup": {
+        "title": "Configurando su restaurante",
+        "description": "Empecemos por crear su primer establecimiento.",
+        "createTitle": "Cree su restaurante",
+        "createDescription": "Aún no tiene configurado ningún restaurante. Cree su establecimiento para empezar a gestionar sus servicios y reservas.",
+        "createButton": "Crear mi establecimiento",
+        "noAccessTitle": "Acceso limitado",
+        "noAccessDescription": "Actualmente no está vinculado a ningún establecimiento. Póngase en contacto con su administrador para recibir una invitación."
+    },
+    "main": {
+        "title": "Panel de control",
+        "description": "Gestione su restaurante y sus reservas de un vistazo."
+    },
+    "reservations": {
+        "title": "Próximas reservas",
+        "today": "Hoy",
+        "noReservations": "No hay reservas",
+        "noReservationsDesc": "Aún no hay reservas para esta fecha.",
+        "clientSubtitle": "Sus próximas reservas",
+        "noUpcoming": "No tiene ninguna próxima reserva.",
+        "upcoming": "Próximas",
+        "history": "Histórico",
+        "noPast": "No hay reservas pasadas.",
+        "table": {
+            "time": "Hora",
+            "client": "Cliente",
+            "guests": "Comensales",
+            "status": "Estado",
+            "actions": "Acciones"
+        },
+        "status": {
+            "confirmed": "Confirmada",
+            "cancelled": "Cancelada",
+            "arrived": "Llegada",
+            "noshow": "No presentado"
+        },
+        "actions": {
+            "markArrived": "Marcar como llegado",
+            "markNoShow": "Marcar como no presentado",
+            "confirmReset": "Confirmar (resetear)",
+            "cancel": "Cancelar",
+            "edit": "Editar",
+            "arrivedRestriction": "Posible 30 min antes de la hora",
+            "noshowRestriction": "Posible 15 min después de la hora"
+        },
+        "notes": {
+            "allergyAlert": "Alerta de alergia",
+            "clientNote": "Nota del cliente"
+        },
+        "toasts": {
+            "statusUpdated": "Estado actualizado",
+            "updateError": "Error durante la actualización",
+            "refreshError": "Error al refrescar las reservas"
+        }
+    },
+    "publicPageCard": {
+        "title": "Página de reservas",
+        "description": "Comparta este enlace con sus clientes en redes sociales o en su sitio web para recibir reservas.",
+        "copyButton": "Copiar el enlace",
+        "copySuccess": "Enlace copiado al portapapeles",
+        "viewPage": "Ver mi página pública",
+        "manageReservations": "Gestionar las reservas"
+    },
+    "editReservation": {
+        "title": "Editar reserva",
+        "description": "Ajuste el número de invitados, la hora o las notas de {{name}}.",
+        "guests": "Invitados",
+        "time": "Hora de la reserva",
+        "noSlots": "No hay franjas de tiempo disponibles para este número de invitados.",
+        "allergies": "Alergias",
+        "notesLabel": "Notas",
+        "notesPlaceholder": "Alergias, mesa favorita, etc.",
+        "cancelMyBooking": "Cancelar esta reserva",
+        "cancelConfirm": "¿Seguro que desea cancelar esta reserva?",
+        "save": "Guardar los cambios",
+        "saving": "Guardando...",
+        "cancel": "Cancelar",
+        "successUpdate": "Reserva actualizada",
+        "successCancel": "Reserva cancelada",
+        "error": "Ha ocurrido un error"
+    },
+    "stats": {
+        "services": "Servicios",
+        "servicesDesc": "Número de servicios configurados",
+        "reservations": "Reservas",
+        "reservationsDesc": "Número total de reservas confirmadas",
+        "guests": "Invitados",
+        "guestsDesc": "Número total de invitados recibidos",
+        "clients": "Clientes",
+        "clientsDesc": "Número total de clientes únicos",
+        "dailyReservations": "Volumen diario de reservas",
+        "dailyGuests": "Número acumulado de invitados por día",
+        "topClients": "Mejores clientes",
+        "topClientsDesc": "Los clientes más frecuentes en su establecimiento",
+        "active": "Activo",
+        "total": "Total",
+        "service": "Servicio",
+        "loyal": "Leal",
+        "vip": "VIP",
+        "regular": "Frecuente",
+        "noClients": "No hay clientes todavía",
+        "table": {
+            "client": "Cliente",
+            "reservations": "Reservas",
+            "totalGuests": "Total invitados",
+            "lastVisit": "Última visita",
+            "status": "Estado"
+        }
+    }
+}

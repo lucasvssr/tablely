@@ -1,0 +1,195 @@
+{
+    "settings": {
+        "pageTitle": "Ajustes del restaurante",
+        "pageDescription": "Gestione la información general de su establecimiento.",
+        "cardTitle": "Información del establecimiento",
+        "cardDescriptionAdmin": "Esta información será visible para sus clientes en la página de reservas.",
+        "cardDescriptionStaff": "Ver la información general de su establecimiento.",
+        "form": {
+            "nameLabel": "Nombre del restaurante",
+            "namePlaceholder": "El Pequeño Bistro",
+            "nameDescription": "El nombre que aparece en su página pública y en sus recibos.",
+            "locationLabel": "Ubicación / Dirección",
+            "locationPlaceholder": "Calle de la Paz 123, Madrid",
+            "phoneLabel": "Número de teléfono",
+            "phonePlaceholder": "01 23 45 67 89",
+            "latLabel": "Latitud (opcional)",
+            "latPlaceholder": "40.4168",
+            "lngLabel": "Longitud (opcional)",
+            "lngPlaceholder": "-3.7038",
+            "geocode": "Localizar en el mapa",
+            "geocoding": "Buscando...",
+            "geocodeSuccess": "¡Coordenadas actualizadas!",
+            "geocodeError": "Dirección no encontrada",
+            "pickerLabel": "Seleccionar en el mapa",
+            "pickerDescription": "Haga clic en el mapa para establecer la ubicación con precisión.",
+            "submit": "Guardar los cambios",
+            "submitting": "Guardando...",
+            "success": "Ajustes del restaurante actualizados",
+            "errorUnknown": "Error desconocido"
+        },
+        "account": {
+            "title": "Editar establecimiento",
+            "description": "Cambie el nombre de su establecimiento (cuenta principal).",
+            "success": "Establecimiento actualizado con éxito"
+        }
+    },
+    "services": {
+        "pageTitle": "Servicios y horarios",
+        "pageDescription": "Configure sus franjas de servicio (comida, cena) para abrir sus reservas.",
+        "container": {
+            "title": "Servicios configurados",
+            "description": "Periodos durante los cuales los clientes pueden reservar mesa.",
+            "newService": "Nuevo servicio",
+            "editService": "Editar servicio",
+            "newServiceDescription": "Añada un intervalo de tiempo de servicio.",
+            "editServiceDescription": "Actualizar el horario de servicio",
+            "cancel": "Cancelar"
+        },
+        "list": {
+            "deleteConfirm": "¿Seguro que desea eliminar este servicio?",
+            "deleteSuccess": "Servicio eliminado",
+            "deleteError": "Error durante la eliminación",
+            "noDays": "No hay días",
+            "allDays": "Todos los días",
+            "noServices": "Aún no hay servicios configurados.",
+            "noServicesDesc": "Defina sus horas de apertura (ej. Comida 12:00-14:30)."
+        },
+        "form": {
+            "nameLabel": "Nombre del servicio",
+            "namePlaceholder": "ej. Comida, Cena, Brunch",
+            "startTimeLabel": "Inicio",
+            "endTimeLabel": "Fin",
+            "durationLabel": "Duración de la comida (min)",
+            "bufferLabel": "Margen de rotación (min)",
+            "daysLabel": "Días de apertura",
+            "submitCreate": "Añadir servicio",
+            "submitUpdate": "Guardar los cambios",
+            "submitting": "Guardando...",
+            "successCreate": "¡Servicio guardado!",
+            "successUpdate": "¡Servicio actualizado!",
+            "error": "Error al guardar"
+        },
+        "days": {
+            "1": "Lun",
+            "2": "Mar",
+            "3": "Mié",
+            "4": "Jue",
+            "5": "Vie",
+            "6": "Sáb",
+            "7": "Dom"
+        }
+    },
+    "tables": {
+        "pageTitle": "Plano de mesa",
+        "pageDescription": "Gestione las mesas de su restaurante para calcular con precisión su disponibilidad.",
+        "container": {
+            "title": "Sus mesas",
+            "description": "Lista de las mesas disponibles en su establecimiento.",
+            "newTable": "Nueva mesa",
+            "editTable": "Editar mesa",
+            "newTableDescription": "Cada restaurante tiene sus propios espacios y mesas. Usted podrá definirlos aquí.",
+            "editTableDescription": "Actualice los detalles de la mesa.",
+            "cancel": "Cancelar"
+        },
+        "list": {
+            "deleteConfirm": "¿Seguro que desea eliminar esta mesa?",
+            "deleteSuccess": "Mesa eliminada",
+            "deleteError": "Error durante la eliminación",
+            "noTables": "No hay mesas configuradas todavía.",
+            "noTablesDesc": "Añada su primera mesa para empezar.",
+            "capacity": "{{count}} comensales",
+            "active": "Activo",
+            "inactive": "Inactivo"
+        },
+        "form": {
+            "nameLabel": "Nombre o número",
+            "namePlaceholder": "ej. Mesa 4, Cuadrante A1",
+            "capacityLabel": "Capacidad (personas)",
+            "submitCreate": "Añadir mesa",
+            "submitUpdate": "Guardar los cambios",
+            "submitting": "Guardando...",
+            "successCreate": "¡Mesa añadida!",
+            "successUpdate": "¡Mesa actualizada!",
+            "error": "Error al guardar"
+        }
+    },
+    "validation": {
+        "nameMin2": "El nombre debe tener al menos 2 caracteres",
+        "locationMin5": "La localización debe tener al menos 5 caracteres",
+        "serviceNameRequired": "El nombre del servicio es obligatorio",
+        "formatHHMM": "Formato HH:MM obligatorio",
+        "durationMin15": "Duración mínima de 15 min",
+        "bufferNonNegative": "Margen no puede ser negativo",
+        "tableNameRequired": "El nombre de la mesa es obligatorio",
+        "capacityMin1": "Capacidad mínima de 1",
+        "nameRequired": "El nombre es obligatorio",
+        "emailInvalid": "Correo electrónico no válido"
+    },
+    "actions": {
+        "restaurantNotFound": "Restaurante no encontrado",
+        "invalidServiceData": "Datos de servicio no válidos",
+        "invalidTableData": "Datos de mesa no válidos",
+        "accountNotFound": "Cuenta no encontrada",
+        "invalidAccountData": "Datos del establecimiento no válidos",
+        "invalidRestaurantData": "Datos del restaurante no válidos",
+        "orgCreationError": "Error al crear la organización",
+        "membershipCreationError": "Error al crear la membresía",
+        "restaurantCreationError": "Error al crear el restaurante",
+        "fetchSlotsError": "Error al obtener las franjas",
+        "existingReservation": "Ya tiene una reserva confirmada para este servicio ese día",
+        "noTableAvailable": "No hay mesa disponible para ese número de comensales",
+        "tablesFull": "Todas nuestras mesas están completas en este horario (teniendo en cuenta la duración de la comida)",
+        "validationError": "Error al validar la reserva",
+        "fetchReservationsError": "Error al obtener las reservas",
+        "reservationNotFound": "Reserva no encontrada",
+        "permissionDenied": "Permiso denegado",
+        "cannotModifyPastReservation": "No se puede modificar el estado de una reserva pasada",
+        "arrivedTooEarly": "No se puede marcar como llegado con más de 30 min de antelación",
+        "noShowTooEarly": "No se puede marcar como no presentado antes de que pasen 15 min tras la hora",
+        "cannotConfirmCancelled": "Una reserva cancelada no puede ser confirmada",
+        "updateStatusError": "Error al actualizar el estado",
+        "updatePermissionDenied": "No tiene permiso para modificar esta reserva",
+        "availabilityChangeError": "Lo sentimos, no hay disponibilidad para este cambio (mesas completas)",
+        "updateError": "Error al actualizar",
+        "accountAccessDenied": "No tiene acceso a esta cuenta",
+        "fetchStatsError": "Error al obtener las estadísticas",
+        "invalidReservationData": "Datos de reserva no válidos"
+    },
+    "create": {
+        "pageTitle": "Nuevo establecimiento",
+        "pageDescription": "Configure su restaurante para empezar a gestionar sus reservas.",
+        "cardTitle": "Detalles del establecimiento",
+        "cardDescription": "Rellene la información básica de su restaurante. Puede cambiarla más adelante.",
+        "form": {
+            "submit": "Crear mi establecimiento",
+            "submitting": "Creando...",
+            "success": "¡Establecimiento creado con éxito!"
+        }
+    },
+    "manage": {
+        "pageTitle": "Gestione sus establecimientos",
+        "pageDescription": "Resumen y gestión de todos sus restaurantes.",
+        "noRestaurants": "Aún no tiene establecimientos.",
+        "newRestaurant": "Nuevo establecimiento",
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "deleteConfirm": "¿Seguro que desea eliminar este establecimiento? Esta acción es irreversible.",
+        "deleteSuccess": "Establecimiento eliminado con éxito",
+        "deleteRestaurant": "Eliminar restaurante",
+        "deleteRestaurantConfirm": "¿Seguro que desea eliminar este restaurante? Esta acción es irreversible.",
+        "deleteRestaurantSuccess": "Restaurante eliminado con éxito",
+        "switch": "Gestionar",
+        "switchSuccess": "Establecimiento activado"
+    },
+    "map": {
+        "loading": "Cargando mapa...",
+        "results_one": "{{count}} establecimiento mostrado",
+        "results_other": "{{count}} establecimientos mostrados",
+        "active": "Activo"
+    },
+    "switcher": {
+        "list": "Lista",
+        "map": "Mapa"
+    }
+}

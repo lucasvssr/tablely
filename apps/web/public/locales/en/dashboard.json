@@ -66,7 +66,8 @@
         "description": "Share this link with your customers on social networks or your website to receive bookings.",
         "copyButton": "Copy link",
         "copySuccess": "Link copied to clipboard",
-        "viewPage": "View my public page"
+        "viewPage": "View my public page",
+        "manageReservations": "Manage reservations"
     },
     "editReservation": {
         "title": "Edit Reservation",

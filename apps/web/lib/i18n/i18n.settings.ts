@@ -7,13 +7,17 @@ import { createI18nSettings } from '@kit/i18n';
  */
 const defaultLanguage = process.env.NEXT_PUBLIC_DEFAULT_LOCALE ?? 'en';
 
+const supportedLanguages = process.env.NEXT_PUBLIC_SUPPORTED_LOCALES
+  ? process.env.NEXT_PUBLIC_SUPPORTED_LOCALES.split(',')
+  : [defaultLanguage];
+
 /**
  * The list of supported languages.
  * By default, only the default language is supported.
  * Add more languages here if needed.
  */
 export const languages: string[] = Array.from(
-  new Set([defaultLanguage, 'en', 'fr']),
+  new Set([defaultLanguage, ...supportedLanguages]),
 );
 
 /**

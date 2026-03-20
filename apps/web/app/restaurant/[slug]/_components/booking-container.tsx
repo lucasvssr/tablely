@@ -76,7 +76,7 @@ export function BookingContainer({
             // Priority: profile.display_name -> user_metadata.full_name -> user_metadata.display_name -> user_metadata.name -> name (claim) -> full_name (claim)
             const metadata = user.user_metadata || {};
             const profile = user.profile || {};
-            
+
             const displayName = profile.display_name || (metadata.full_name as string) || (metadata.display_name as string) || (metadata.name as string) || '';
             const displayEmail = user.email || (metadata.email as string) || profile.email || '';
             const displayPhone = user.phone || (metadata.phone as string) || profile.phone || '';

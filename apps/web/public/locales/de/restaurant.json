@@ -1,0 +1,195 @@
+{
+    "settings": {
+        "pageTitle": "Restaurant-Einstellungen",
+        "pageDescription": "Verwalten Sie die allgemeinen Informationen Ihres Betriebs.",
+        "cardTitle": "Betriebsinformationen",
+        "cardDescriptionAdmin": "Diese Informationen werden Ihren Kunden auf der Buchungsseite angezeigt.",
+        "cardDescriptionStaff": "Allgemeine Informationen Ihres Betriebs ansehen.",
+        "form": {
+            "nameLabel": "Name des Restaurants",
+            "namePlaceholder": "Das kleine Bistro",
+            "nameDescription": "Der Name wird auf Ihrer öffentlichen Seite und den Belegen angezeigt.",
+            "locationLabel": "Standort / Adresse",
+            "locationPlaceholder": "Friedensstraße 123, Berlin",
+            "phoneLabel": "Telefonnummer",
+            "phonePlaceholder": "030 123 456 78",
+            "latLabel": "Breitengrad (optional)",
+            "latPlaceholder": "52.5200",
+            "lngLabel": "Längengrad (optional)",
+            "lngPlaceholder": "13.4050",
+            "geocode": "Auf Karte suchen",
+            "geocoding": "Suche...",
+            "geocodeSuccess": "Koordinaten aktualisiert!",
+            "geocodeError": "Adresse nicht gefunden",
+            "pickerLabel": "Auf Karte auswählen",
+            "pickerDescription": "Klicken Sie auf die Karte, um die Position genau festzulegen.",
+            "submit": "Änderungen speichern",
+            "submitting": "Speichern...",
+            "success": "Restaurant-Einstellungen aktualisiert",
+            "errorUnknown": "Unbekannter Fehler"
+        },
+        "account": {
+            "title": "Betrieb bearbeiten",
+            "description": "Ändern Sie Ihren Betriebsnamen (Hauptkonto).",
+            "success": "Betrieb erfolgreich aktualisiert"
+        }
+    },
+    "services": {
+        "pageTitle": "Dienste & Zeiten",
+        "pageDescription": "Konfigurieren Sie Ihre Service-Zeitfenster (Mittagessen, Abendessen), um Ihre Buchungsslots zu öffnen.",
+        "container": {
+            "title": "Konfigurierte Dienste",
+            "description": "Zeiträume, in denen Kunden einen Tisch buchen können.",
+            "newService": "Neuer Dienst",
+            "editService": "Dienst bearbeiten",
+            "newServiceDescription": "Einen Dienst-Zeitraum hinzufügen.",
+            "editServiceDescription": "Dienst-Zeiten aktualisieren",
+            "cancel": "Abbrechen"
+        },
+        "list": {
+            "deleteConfirm": "Sind Sie sicher, dass Sie diesen Dienst löschen möchten?",
+            "deleteSuccess": "Dienst gelöscht",
+            "deleteError": "Fehler beim Löschen",
+            "noDays": "Keine Tage",
+            "allDays": "Jeden Tag",
+            "noServices": "Keine Dienste konfiguriert.",
+            "noServicesDesc": "Definieren Sie Ihre Öffnungszeiten (z. B. Mittagessen 12:00-14:30)."
+        },
+        "form": {
+            "nameLabel": "Dienst-Name",
+            "namePlaceholder": "z. B. Mittagessen, Abendessen, Brunch",
+            "startTimeLabel": "Beginn",
+            "endTimeLabel": "Ende",
+            "durationLabel": "Essensdauer (Min.)",
+            "bufferLabel": "Umschlag-Marge (Min.)",
+            "daysLabel": "Öffnungstage",
+            "submitCreate": "Dienst hinzufügen",
+            "submitUpdate": "Änderungen speichern",
+            "submitting": "Speichern...",
+            "successCreate": "Dienst gespeichert!",
+            "successUpdate": "Dienst aktualisiert!",
+            "error": "Fehler beim Speichern"
+        },
+        "days": {
+            "1": "Mo",
+            "2": "Di",
+            "3": "Mi",
+            "4": "Do",
+            "5": "Fr",
+            "6": "Sa",
+            "7": "So"
+        }
+    },
+    "tables": {
+        "pageTitle": "Tischplan",
+        "pageDescription": "Verwalten Sie die Tische Ihres Restaurants, um Ihre Verfügbarkeit genau zu berechnen.",
+        "container": {
+            "title": "Ihre Tische",
+            "description": "Liste der in Ihrem Betrieb verfügbaren Tische.",
+            "newTable": "Neuer Tisch",
+            "editTable": "Tisch bearbeiten",
+            "newTableDescription": "Einen Tisch zu Ihrem Tischplan hinzufügen.",
+            "editTableDescription": "Tischdetails aktualisieren.",
+            "cancel": "Abbrechen"
+        },
+        "list": {
+            "deleteConfirm": "Sind Sie sicher, dass Sie diesen Tisch löschen möchten?",
+            "deleteSuccess": "Tisch gelöscht",
+            "deleteError": "Fehler beim Löschen",
+            "noTables": "Noch keine Tische konfiguriert.",
+            "noTablesDesc": "Nutzen Sie das Formular, um Ihren ersten Tisch hinzuzufügen.",
+            "capacity": "{{count}} Gäste",
+            "active": "Aktiv",
+            "inactive": "Inaktiv"
+        },
+        "form": {
+            "nameLabel": "Name oder Nummer",
+            "namePlaceholder": "z. B. Tisch 4, Quadrat A1",
+            "capacityLabel": "Kapazität (Personen)",
+            "submitCreate": "Tisch hinzufügen",
+            "submitUpdate": "Änderungen speichern",
+            "submitting": "Speichern...",
+            "successCreate": "Tisch hinzugefügt!",
+            "successUpdate": "Tisch aktualisiert!",
+            "error": "Fehler beim Speichern"
+        }
+    },
+    "validation": {
+        "nameMin2": "Name muss mindestens 2 Zeichen lang sein",
+        "locationMin5": "Standort muss mindestens 5 Zeichen lang sein",
+        "serviceNameRequired": "Dienst-Name ist erforderlich",
+        "formatHHMM": "Format HH:MM erforderlich",
+        "durationMin15": "Mindestdauer von 15 Min.",
+        "bufferNonNegative": "Puffer kann nicht negativ sein",
+        "tableNameRequired": "Tischname ist erforderlich",
+        "capacityMin1": "Mindestkapazität von 1",
+        "nameRequired": "Name ist erforderlich",
+        "emailInvalid": "Ungültige E-Mail"
+    },
+    "actions": {
+        "restaurantNotFound": "Restaurant nicht gefunden",
+        "invalidServiceData": "Ungültige Dienst-Daten",
+        "invalidTableData": "Ungültige Tisch-Daten",
+        "accountNotFound": "Konto nicht gefunden",
+        "invalidAccountData": "Ungültige Betriebs-Daten",
+        "invalidRestaurantData": "Ungültige Restaurant-Daten",
+        "orgCreationError": "Fehler beim Erstellen der Organisation",
+        "membershipCreationError": "Fehler beim Erstellen der Mitgliedschaft",
+        "restaurantCreationError": "Fehler beim Erstellen des Restaurants",
+        "fetchSlotsError": "Fehler beim Laden der Zeitfenster",
+        "existingReservation": "Sie haben bereits eine bestätigte Reservierung für diesen Dienst an diesem Tag",
+        "noTableAvailable": "Kein Tisch für diese Gäsezahl verfügbar",
+        "tablesFull": "Alle unsere Tische sind zu dieser Zeit besetzt (unter Berücksichtigung der Essensdauer)",
+        "validationError": "Fehler bei der Reservierungvalidierung",
+        "fetchReservationsError": "Fehler beim Laden der Reservierungen",
+        "reservationNotFound": "Reservierung nicht gefunden",
+        "permissionDenied": "Zugriff verweigert",
+        "cannotModifyPastReservation": "Zustand einer vergangenen Reservierung kann nicht geändert werden",
+        "arrivedTooEarly": "Kann nicht früher als 30 Min. im Voraus als angekommen markiert werden",
+        "noShowTooEarly": "Kann nicht vor Ablauf von 15 Min. nach der Zeit als nicht erschienen markiert werden",
+        "cannotConfirmCancelled": "Eine stornierte Reservierung kann nicht bestätigt werden",
+        "updateStatusError": "Fehler beim Aktualisieren des Status",
+        "updatePermissionDenied": "Sie haben keine Berechtigung, diese Reservierung zu ändern",
+        "availabilityChangeError": "Entschuldigung, keine Verfügbarkeit mehr für diese Änderung (Tische voll)",
+        "updateError": "Fehler beim Aktualisieren",
+        "accountAccessDenied": "Sie haben keinen Zugriff auf dieses Konto",
+        "fetchStatsError": "Fehler beim Laden der Statistiken",
+        "invalidReservationData": "Ungültige Reservierungsdaten"
+    },
+    "create": {
+        "pageTitle": "Neuer Betrieb",
+        "pageDescription": "Richten Sie Ihr Restaurant ein, um mit der Verwaltung Ihrer Buchungen zu beginnen.",
+        "cardTitle": "Betriebs-Details",
+        "cardDescription": "Geben Sie die Basisinformationen Ihres Restaurants ein. Sie können diese später ändern.",
+        "form": {
+            "submit": "Meinen Betrieb erstellen",
+            "submitting": "Wird erstellt...",
+            "success": "Betrieb erfolgreich erstellt!"
+        }
+    },
+    "manage": {
+        "pageTitle": "Ihre Betriebe verwalten",
+        "pageDescription": "Übersicht und Verwaltung all Ihrer Restaurants.",
+        "noRestaurants": "Sie haben noch keine Betriebe.",
+        "newRestaurant": "Neuer Betrieb",
+        "edit": "Bearbeiten",
+        "delete": "Löschen",
+        "deleteConfirm": "Sind Sie sicher, dass Sie diesen Betrieb löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+        "deleteSuccess": "Betrieb erfolgreich gelöscht",
+        "deleteRestaurant": "Restaurant löschen",
+        "deleteRestaurantConfirm": "Sind Sie sicher, dass Sie dieses Restaurant löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+        "deleteRestaurantSuccess": "Restaurant erfolgreich gelöscht",
+        "switch": "Verwalten",
+        "switchSuccess": "Betrieb aktiviert"
+    },
+    "map": {
+        "loading": "Karte wird geladen...",
+        "results_one": "{{count}} Betrieb angezeigt",
+        "results_other": "{{count}} Betriebe angezeigt",
+        "active": "Aktiv"
+    },
+    "switcher": {
+        "list": "Liste",
+        "map": "Karte"
+    }
+}

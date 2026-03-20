@@ -1,0 +1,118 @@
+{
+  "subscriptionTabSubheading": "Gestione su suscripción y facturación",
+  "planCardTitle": "Su plan",
+  "planCardDescription": "A continuación encontrará los detalles de su plan actual. Puede cambiar su plan o cancelar su suscripción en cualquier momento.",
+  "planRenewal": "Se renueva cada {{interval}} por {{price}}",
+  "planDetails": "Detalles del plan",
+  "checkout": "Ir al pago",
+  "trialEndsOn": "Su periodo de prueba finaliza el",
+  "billingPortalCardButton": "Visite el portal de facturación",
+  "billingPortalCardTitle": "Gestione sus detalles de facturación",
+  "billingPortalCardDescription": "Visite su portal de facturación para gestionar su suscripción y facturación. Puede actualizar o cancelar su plan, o descargar sus facturas.",
+  "cancelAtPeriodEndDescription": "Su suscripción está programada para ser cancelada el {{- endDate }}.",
+  "renewAtPeriodEndDescription": "Su suscripción está programada para ser renovada el {{- endDate }}",
+  "noPermissionsAlertHeading": "No tiene permisos para cambiar los detalles de facturación",
+  "noPermissionsAlertBody": "Póngase en contacto con el propietario de la cuenta para cambiar los ajustes de facturación de su cuenta.",
+  "checkoutSuccessTitle": "¡Hecho! Todo listo.",
+  "checkoutSuccessDescription": "¡Gracias por suscribirse, hemos procesado con éxito su suscripción! Se le enviará un correo de confirmación a {{ customerEmail }}.",
+  "checkoutSuccessBackButton": "Ir a la aplicación",
+  "cannotManageBillingAlertTitle": "No puede gestionar la facturación",
+  "cannotManageBillingAlertDescription": "No tiene permisos para gestionar la facturación. Póngase en contacto con el propietario de la cuenta.",
+  "manageTeamPlan": "Gestionar su plan de equipo",
+  "manageTeamPlanDescription": "Elija un plan que se adapte a las necesidades de su equipo. Puede actualizar o degradar su plan en cualquier momento.",
+  "basePlan": "Plan base",
+  "billingInterval": {
+    "label": "Elija su presupuesto de facturación",
+    "month": "Facturado mensualmente",
+    "year": "Facturado anualmente"
+  },
+  "perMonth": "al mes",
+  "custom": "Plan personalizado",
+  "lifetime": "De por vida",
+  "trialPeriod": "Prueba de {{period}} días",
+  "perPeriod": "por {{period}}",
+  "redirectingToPayment": "Redirigiendo al pago. Espere...",
+  "proceedToPayment": "Ir al pago",
+  "startTrial": "Empezar la prueba",
+  "perTeamMember": "Por cada miembro del equipo",
+  "perUnit": "Por cada {{unit}} de uso",
+  "teamMembers": "Miembros de equipo",
+  "includedUpTo": "Hasta {{upTo}} {{unit}} incluidos en el plan",
+  "fromPreviousTierUpTo": "por cada {{unit}} para las próximas {{ upTo }} {{ unit }}",
+  "andAbove": "por encima de {{ previousTier }} {{ unit }}",
+  "forEveryUnit": "por cada {{ unit }}",
+  "setupFee": "más una cuota de configuración de {{ setupFee }}",
+  "perUnitIncluded": "({{included}} incluido/s)",
+  "featuresLabel": "Características",
+  "detailsLabel": "Detalles",
+  "planPickerLabel": "Elija su plan favorito",
+  "planCardLabel": "Gestionar su plan",
+  "planPickerAlertErrorTitle": "Error al solicitar el pago",
+  "planPickerAlertErrorDescription": "Se ha producido un error al solicitar el pago. Inténtelo de nuevo más tarde.",
+  "subscriptionCancelled": "Suscripción cancelada",
+  "cancelSubscriptionDate": "Su suscripción se cancelará al final del periodo",
+  "noPlanChosen": "Elija un plan",
+  "noIntervalPlanChosen": "Elija un intervalo de facturación",
+  "status": {
+    "free": {
+      "badge": "Plan gratuito",
+      "heading": "Actualmente se encuentra en el plan gratuito",
+      "description": "Está en un plan gratuito. Puede actualizar a un plan de pago en cualquier momento."
+    },
+    "active": {
+      "badge": "Activa",
+      "heading": "Su suscripción está activa",
+      "description": "Su suscripción está activa. Puede gestionar su suscripción y facturación en el Portal del Cliente."
+    },
+    "trialing": {
+      "badge": "Prueba",
+      "heading": "Está en periodo de prueba",
+      "description": "Puede disfrutar de las ventajas del plan hasta que finalice el periodo de prueba"
+    },
+    "past_due": {
+      "badge": "Impagada",
+      "heading": "Su factura ha vencido",
+      "description": "Su factura ha vencido. Actualice su método de pago."
+    },
+    "canceled": {
+      "badge": "Cancelada",
+      "heading": "Su suscripción está cancelada",
+      "description": "Su suscripción está cancelada. Está programada para finalizar al final del periodo de facturación."
+    },
+    "unpaid": {
+      "badge": "No pagado",
+      "heading": "Su factura no ha sido pagada",
+      "description": "Su factura no ha sido pagada. Actualice su método de pago."
+    },
+    "incomplete": {
+      "badge": "Incompleta",
+      "heading": "Estamos esperando su pago",
+      "description": "Estamos esperando a que se procese su pago. Tenga paciencia."
+    },
+    "incomplete_expired": {
+      "badge": "Caducado",
+      "heading": "Su pago ha caducado",
+      "description": "Su pago ha caducado. Actualice su método de pago."
+    },
+    "paused": {
+      "badge": "Pausada",
+      "heading": "Su suscripción está pausada",
+      "description": "Su suscripción está pausada. Puede reanudarla en cualquier momento."
+    },
+    "succeeded": {
+      "badge": "Éxito",
+      "heading": "Su pago se ha realizado con éxito",
+      "description": "¡Su pago se ha realizado con éxito. Gracias por suscribirse!"
+    },
+    "pending": {
+      "badge": "Pendiente",
+      "heading": "Su pago está pendiente",
+      "description": "Su pago está pendiente. Tenga paciencia."
+    },
+    "failed": {
+      "badge": "Error",
+      "heading": "Fallo al realizar el pago",
+      "description": "Su pago ha fallado. Actualice su método de pago."
+    }
+  }
+}
