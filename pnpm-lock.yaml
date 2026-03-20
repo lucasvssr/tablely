@@ -17,8 +17,8 @@ importers:
         specifier: ^0.25.1
         version: 0.25.1
       '@turbo/gen':
-        specifier: ^2.8.19
-        version: 2.8.19(@types/node@25.3.5)
+        specifier: ^2.8.20
+        version: 2.8.20(@types/node@25.3.5)
       cross-env:
         specifier: ^10.1.0
         version: 10.1.0
@@ -30,13 +30,13 @@ importers:
         version: 3.8.1
       tar:
         specifier: '>=7.5.11'
-        version: 7.5.11
+        version: 7.5.12
       tmp:
         specifier: '>=0.2.4'
         version: 0.2.5
       turbo:
-        specifier: 2.8.13
-        version: 2.8.13
+        specifier: 2.8.20
+        version: 2.8.20
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -264,6 +264,9 @@ importers:
       '@tanstack/react-query':
         specifier: 5.90.2
         version: 5.90.2(react@19.2.4)
+      '@types/node':
+        specifier: ^24.12.0
+        version: 24.12.0
       '@types/react':
         specifier: 19.2.14
         version: 19.2.14
@@ -333,6 +336,9 @@ importers:
       '@tanstack/react-query':
         specifier: 5.90.2
         version: 5.90.2(react@19.2.4)
+      '@types/node':
+        specifier: ^24.12.0
+        version: 24.12.0
       '@types/react':
         specifier: 19.2.14
         version: 19.2.14
@@ -382,6 +388,9 @@ importers:
       '@tanstack/react-query':
         specifier: 5.90.2
         version: 5.90.2(react@19.2.4)
+      '@types/node':
+        specifier: ^24.12.0
+        version: 24.12.0
       next:
         specifier: 16.2.0
         version: 16.2.0(@playwright/test@1.58.2)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -415,6 +424,9 @@ importers:
       '@supabase/supabase-js':
         specifier: 2.75.0
         version: 2.75.0
+      '@types/node':
+        specifier: ^24.12.0
+        version: 24.12.0
       next:
         specifier: 16.2.0
         version: 16.2.0(@playwright/test@1.58.2)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -437,6 +449,9 @@ importers:
       '@kit/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
+      '@types/node':
+        specifier: ^24.12.0
+        version: 24.12.0
       '@types/react':
         specifier: 19.2.14
         version: 19.2.14
@@ -461,6 +476,9 @@ importers:
       '@tanstack/react-query':
         specifier: 5.90.2
         version: 5.90.2(react@19.2.4)
+      '@types/node':
+        specifier: ^24.12.0
+        version: 24.12.0
       '@types/react':
         specifier: 19.2.14
         version: 19.2.14
@@ -582,6 +600,9 @@ importers:
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@types/node':
+        specifier: ^24.12.0
+        version: 24.12.0
       '@types/react':
         specifier: 19.2.14
         version: 19.2.14
@@ -644,7 +665,7 @@ importers:
         version: 15.5.7(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
       eslint-config-turbo:
         specifier: ^2.8.19
-        version: 2.8.19(eslint@9.39.4(jiti@2.6.1))(turbo@2.8.13)
+        version: 2.8.19(eslint@9.39.4(jiti@2.6.1))(turbo@2.8.20)
       typescript-eslint:
         specifier: 8.46.0
         version: 8.46.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
@@ -751,8 +772,8 @@ packages:
   '@emnapi/core@1.9.0':
     resolution: {integrity: sha512-0DQ98G9ZQZOxfUcQn1waV2yS8aWdZ6kJMbYCJB3oUBecjWYO1fqJ+a1DRfPF3O5JEkwqwP1A9QEN/9mYm2Yd0w==}
 
-  '@emnapi/runtime@1.9.0':
-    resolution: {integrity: sha512-QN75eB0IH2ywSpRpNddCRfQIhmJYBCJ1x5Lb3IscKAL8bMnVAKnRg8dCoXbHzVLLH7P38N2Z3mtulB7W0J0FKw==}
+  '@emnapi/runtime@1.9.1':
+    resolution: {integrity: sha512-VYi5+ZVLhpgK4hQ0TAjiQiZ6ol0oe4mBx7mVv7IflsiEp0OWoVsp/+f9Vc1hOhE0TtkORVrI1GvzyreqpgWtkA==}
 
   '@emnapi/wasi-threads@1.2.0':
     resolution: {integrity: sha512-N10dEJNSsUx41Z6pZsXU8FjPjpBEplgH24sfkmITrBED1/U2Esum9F3lfLrMjKHHjmi557zQn7kR9R+XWXu5Rg==}
@@ -2166,9 +2187,39 @@ packages:
       svelte:
         optional: true
 
-  '@turbo/gen@2.8.19':
-    resolution: {integrity: sha512-h+0WWcI1Dw4IfnhdfyEKGi9REShjCDSQp9Hf1jBv/9uuDf2ngMSi3CbIzfvznZjTVkur81xUVoQbTh3C90h2yg==}
+  '@turbo/darwin-64@2.8.20':
+    resolution: {integrity: sha512-FQ9EX1xMU5nbwjxXxM3yU88AQQ6Sqc6S44exPRroMcx9XZHqqppl5ymJF0Ig/z3nvQNwDmz1Gsnvxubo+nXWjQ==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@turbo/darwin-arm64@2.8.20':
+    resolution: {integrity: sha512-Gpyh9ATFGThD6/s9L95YWY54cizg/VRWl2B67h0yofG8BpHf67DFAh9nuJVKG7bY0+SBJDAo5cMur+wOl9YOYw==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@turbo/gen@2.8.20':
+    resolution: {integrity: sha512-SazKn5Pc9mitpc3uc6Pmf+QhkNtvF5t6Ro0V1cuc0QFhblbfw4KwWqFnnfTEmGzgDtb2CZJB3BK8LFMBX52eLg==}
     hasBin: true
+
+  '@turbo/linux-64@2.8.20':
+    resolution: {integrity: sha512-p2QxWUYyYUgUFG0b0kR+pPi8t7c9uaVlRtjTTI1AbCvVqkpjUfCcReBn6DgG/Hu8xrWdKLuyQFaLYFzQskZbcA==}
+    cpu: [x64]
+    os: [linux]
+
+  '@turbo/linux-arm64@2.8.20':
+    resolution: {integrity: sha512-Gn5yjlZGLRZWarLWqdQzv0wMqyBNIdq1QLi48F1oY5Lo9kiohuf7BPQWtWxeNVS2NgJ1+nb/DzK1JduYC4AWOA==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@turbo/windows-64@2.8.20':
+    resolution: {integrity: sha512-vyaDpYk/8T6Qz5V/X+ihKvKFEZFUoC0oxYpC1sZanK6gaESJlmV3cMRT3Qhcg4D2VxvtC2Jjs9IRkrZGL+exLw==}
+    cpu: [x64]
+    os: [win32]
+
+  '@turbo/windows-arm64@2.8.20':
+    resolution: {integrity: sha512-voicVULvUV5yaGXo0Iue13BcHGYW3u0VgqSbfQwBaHbpj1zLjYV4KIe+7fYIo6DO8FVUJzxFps3ODCQG/Wy2Qw==}
+    cpu: [arm64]
+    os: [win32]
 
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
@@ -2618,8 +2669,8 @@ packages:
     resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
     engines: {node: 18 || 20 || >=22}
 
-  baseline-browser-mapping@2.10.8:
-    resolution: {integrity: sha512-PCLz/LXGBsNTErbtB6i5u4eLpHeMfi93aUv5duMmj6caNu6IphS4q6UevDnL36sZQv9lrP11dbPKGMaXPwMKfQ==}
+  baseline-browser-mapping@2.10.9:
+    resolution: {integrity: sha512-OZd0e2mU11ClX8+IdXe3r0dbqMEznRiT4TfbhYIbcRPZkqJ7Qwer8ij3GZAmLsRKa+II9V1v5czCkvmHH3XZBg==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -4383,8 +4434,8 @@ packages:
     resolution: {integrity: sha512-g9ljZiwki/LfxmQADO3dEY1CbpmXT5Hm2fJ+QaGKwSXUylMybePR7/67YW7jOrrvjEgL1Fmz5kzyAjWVWLlucg==}
     engines: {node: '>=6'}
 
-  tar@7.5.11:
-    resolution: {integrity: sha512-ChjMH33/KetonMTAtpYdgUFr0tbz69Fp2v7zWxQfYZX4g5ZN2nOBXm1R2xyA+lMIKrLKIoKAwFj93jE/avX9cQ==}
+  tar@7.5.12:
+    resolution: {integrity: sha512-9TsuLcdhOn4XztcQqhNyq1KOwOOED/3k58JAvtULiYqbO8B/0IBAAIE1hj0Svmm58k27TmcigyDI0deMlgG3uw==}
     engines: {node: '>=18'}
 
   thread-stream@4.0.0:
@@ -4432,38 +4483,8 @@ packages:
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
-  turbo-darwin-64@2.8.13:
-    resolution: {integrity: sha512-PmOvodQNiOj77+Zwoqku70vwVjKzL34RTNxxoARjp5RU5FOj/CGiC6vcDQhNtFPUOWSAaogHF5qIka9TBhX4XA==}
-    cpu: [x64]
-    os: [darwin]
-
-  turbo-darwin-arm64@2.8.13:
-    resolution: {integrity: sha512-kI+anKcLIM4L8h+NsM7mtAUpElkCOxv5LgiQVQR8BASyDFfc8Efj5kCk3cqxuxOvIqx0sLfCX7atrHQ2kwuNJQ==}
-    cpu: [arm64]
-    os: [darwin]
-
-  turbo-linux-64@2.8.13:
-    resolution: {integrity: sha512-j29KnQhHyzdzgCykBFeBqUPS4Wj7lWMnZ8CHqytlYDap4Jy70l4RNG46pOL9+lGu6DepK2s1rE86zQfo0IOdPw==}
-    cpu: [x64]
-    os: [linux]
-
-  turbo-linux-arm64@2.8.13:
-    resolution: {integrity: sha512-OEl1YocXGZDRDh28doOUn49QwNe82kXljO1HXApjU0LapkDiGpfl3jkAlPKxEkGDSYWc8MH5Ll8S16Rf5tEBYg==}
-    cpu: [arm64]
-    os: [linux]
-
-  turbo-windows-64@2.8.13:
-    resolution: {integrity: sha512-717bVk1+Pn2Jody7OmWludhEirEe0okoj1NpRbSm5kVZz/yNN/jfjbxWC6ilimXMz7xoMT3IDfQFJsFR3PMANA==}
-    cpu: [x64]
-    os: [win32]
-
-  turbo-windows-arm64@2.8.13:
-    resolution: {integrity: sha512-R819HShLIT0Wj6zWVnIsYvSNtRNj1q9VIyaUz0P24SMcLCbQZIm1sV09F4SDbg+KCCumqD2lcaR2UViQ8SnUJA==}
-    cpu: [arm64]
-    os: [win32]
-
-  turbo@2.8.13:
-    resolution: {integrity: sha512-nyM99hwFB9/DHaFyKEqatdayGjsMNYsQ/XBNO6MITc7roncZetKb97MpHxWf3uiU+LB9c9HUlU3Jp2Ixei2k1A==}
+  turbo@2.8.20:
+    resolution: {integrity: sha512-Rb4qk5YT8RUwwdXtkLpkVhNEe/lor6+WV7S5tTlLpxSz6MjV5Qi8jGNn4gS6NAvrYGA/rNrE6YUQM85sCZUDbQ==}
     hasBin: true
 
   type-check@0.4.0:
@@ -4719,7 +4740,7 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
-  '@emnapi/runtime@1.9.0':
+  '@emnapi/runtime@1.9.1':
     dependencies:
       tslib: 2.8.1
     optional: true
@@ -4973,7 +4994,7 @@ snapshots:
 
   '@img/sharp-wasm32@0.34.5':
     dependencies:
-      '@emnapi/runtime': 1.9.0
+      '@emnapi/runtime': 1.9.1
     optional: true
 
   '@img/sharp-win32-arm64@0.34.5':
@@ -5186,7 +5207,7 @@ snapshots:
   '@napi-rs/wasm-runtime@0.2.12':
     dependencies:
       '@emnapi/core': 1.9.0
-      '@emnapi/runtime': 1.9.0
+      '@emnapi/runtime': 1.9.1
       '@tybys/wasm-util': 0.10.1
     optional: true
 
@@ -6024,12 +6045,30 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@turbo/gen@2.8.19(@types/node@25.3.5)':
+  '@turbo/darwin-64@2.8.20':
+    optional: true
+
+  '@turbo/darwin-arm64@2.8.20':
+    optional: true
+
+  '@turbo/gen@2.8.20(@types/node@25.3.5)':
     dependencies:
       '@inquirer/prompts': 7.10.1(@types/node@25.3.5)
       esbuild: 0.25.12
     transitivePeerDependencies:
       - '@types/node'
+
+  '@turbo/linux-64@2.8.20':
+    optional: true
+
+  '@turbo/linux-arm64@2.8.20':
+    optional: true
+
+  '@turbo/windows-64@2.8.20':
+    optional: true
+
+  '@turbo/windows-arm64@2.8.20':
+    optional: true
 
   '@tybys/wasm-util@0.10.1':
     dependencies:
@@ -6490,7 +6529,7 @@ snapshots:
 
   balanced-match@4.0.4: {}
 
-  baseline-browser-mapping@2.10.8: {}
+  baseline-browser-mapping@2.10.9: {}
 
   bin-links@6.0.0:
     dependencies:
@@ -6521,7 +6560,7 @@ snapshots:
 
   browserslist@4.28.1:
     dependencies:
-      baseline-browser-mapping: 2.10.8
+      baseline-browser-mapping: 2.10.9
       caniuse-lite: 1.0.30001780
       electron-to-chromium: 1.5.321
       node-releases: 2.0.36
@@ -6947,11 +6986,11 @@ snapshots:
       - eslint-plugin-import-x
       - supports-color
 
-  eslint-config-turbo@2.8.19(eslint@9.39.4(jiti@2.6.1))(turbo@2.8.13):
+  eslint-config-turbo@2.8.19(eslint@9.39.4(jiti@2.6.1))(turbo@2.8.20):
     dependencies:
       eslint: 9.39.4(jiti@2.6.1)
-      eslint-plugin-turbo: 2.8.19(eslint@9.39.4(jiti@2.6.1))(turbo@2.8.13)
-      turbo: 2.8.13
+      eslint-plugin-turbo: 2.8.19(eslint@9.39.4(jiti@2.6.1))(turbo@2.8.20)
+      turbo: 2.8.20
 
   eslint-import-resolver-node@0.3.9:
     dependencies:
@@ -7061,11 +7100,11 @@ snapshots:
       string.prototype.matchall: 4.0.12
       string.prototype.repeat: 1.0.0
 
-  eslint-plugin-turbo@2.8.19(eslint@9.39.4(jiti@2.6.1))(turbo@2.8.13):
+  eslint-plugin-turbo@2.8.19(eslint@9.39.4(jiti@2.6.1))(turbo@2.8.20):
     dependencies:
       dotenv: 16.0.3
       eslint: 9.39.4(jiti@2.6.1)
-      turbo: 2.8.13
+      turbo: 2.8.20
 
   eslint-scope@8.4.0:
     dependencies:
@@ -7697,7 +7736,7 @@ snapshots:
     dependencies:
       '@next/env': 16.2.0
       '@swc/helpers': 0.5.15
-      baseline-browser-mapping: 2.10.8
+      baseline-browser-mapping: 2.10.9
       caniuse-lite: 1.0.30001780
       postcss: 8.4.31
       react: 19.2.4
@@ -8354,7 +8393,7 @@ snapshots:
       bin-links: 6.0.0
       https-proxy-agent: 7.0.6
       node-fetch: 3.3.2
-      tar: 7.5.11
+      tar: 7.5.12
     transitivePeerDependencies:
       - supports-color
 
@@ -8376,7 +8415,7 @@ snapshots:
 
   tapable@2.3.0: {}
 
-  tar@7.5.11:
+  tar@7.5.12:
     dependencies:
       '@isaacs/fs-minipass': 4.0.1
       chownr: 3.0.0
@@ -8422,32 +8461,14 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  turbo-darwin-64@2.8.13:
-    optional: true
-
-  turbo-darwin-arm64@2.8.13:
-    optional: true
-
-  turbo-linux-64@2.8.13:
-    optional: true
-
-  turbo-linux-arm64@2.8.13:
-    optional: true
-
-  turbo-windows-64@2.8.13:
-    optional: true
-
-  turbo-windows-arm64@2.8.13:
-    optional: true
-
-  turbo@2.8.13:
+  turbo@2.8.20:
     optionalDependencies:
-      turbo-darwin-64: 2.8.13
-      turbo-darwin-arm64: 2.8.13
-      turbo-linux-64: 2.8.13
-      turbo-linux-arm64: 2.8.13
-      turbo-windows-64: 2.8.13
-      turbo-windows-arm64: 2.8.13
+      '@turbo/darwin-64': 2.8.20
+      '@turbo/darwin-arm64': 2.8.20
+      '@turbo/linux-64': 2.8.20
+      '@turbo/linux-arm64': 2.8.20
+      '@turbo/windows-64': 2.8.20
+      '@turbo/windows-arm64': 2.8.20
 
   type-check@0.4.0:
     dependencies:
