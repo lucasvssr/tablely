@@ -841,12 +841,21 @@ export async function getAvailableSlotsAction({
         throw new Error(t('actions.fetchSlotsError'));
     }
 
-    return (data || []) as {
+    const slots = (data || []) as {
         available: boolean;
         service_id: string;
         service_name: string;
         slot_time: string;
     }[];
+
+    // Filter out past slots if the date is today
+    const today = format(new Date(), 'yyyy-MM-dd');
+    if (date === today) {
+        const nowTime = format(new Date(), 'HH:mm:ss');
+        return slots.filter((slot) => slot.slot_time > nowTime);
+    }
+
+    return slots;
 }
 
 /**
