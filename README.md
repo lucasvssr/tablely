@@ -13,7 +13,8 @@ Tablely is a modern, high-performance SaaS platform designed to empower restaura
 - **👥 Team Management**: Granular role-based access control (Admin, Member) for your staff.
 - **🛠️ Service Configuration**: Flexible management of restaurant services, hours, and capacity.
 - **📱 Responsive Diner Experience**: A premium, mobile-first interface for public restaurant pages.
-- **🔐 Secure & Robust**: Built on top of Next.js 15 and Supabase with enterprise-grade security.
+- **🔐 Secure & Robust**: Built on top of Next.js 16 and Supabase with enterprise-grade security.
+- **📍 Location Intelligence**: Integrated mapping features with latitude/longitude coordinates for restaurants.
 
 ---
 
@@ -26,6 +27,7 @@ Detailed technical documentation is available in the `docs/` directory:
 - [**Data Models**](./docs/data-models.md) : Database schema, RLS policies, and SQL functions.
 - [**API Contracts**](./docs/api-contracts.md) : Catalog of Server Actions and HTTP routes.
 - [**Development Guide**](./docs/development-guide.md) : Setup instructions and coding standards.
+- [**Technical Presentation**](./docs/technical_presentation.md) : High-level presentation for stakeholders.
 
 ---
 
@@ -33,8 +35,8 @@ Detailed technical documentation is available in the `docs/` directory:
 
 Tablely is built using the latest modern web technologies for maximum performance and scalability:
 
-- **Framework**: [Next.js 15](https://nextjs.org/) (React 19, App Router)
-- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) & [Shadcn UI](https://shadcn.com/)
+- **Framework**: [Next.js 16](https://nextjs.org/) (React 19, App Router)
+- **Styling**: [Tailwind CSS v4.1](https://tailwindcss.com/) & [Shadcn UI](https://shadcn.com/)
 - **Backend / Database**: [Supabase](https://supabase.com/) (PostgreSQL 17)
 - **State Management**: [TanStack Query v5](https://tanstack.com/query)
 - **Validation**: [Zod](https://github.com/colinhacks/zod) & [React Hook Form](https://react-hook-form.com/)

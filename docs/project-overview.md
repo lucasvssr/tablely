@@ -6,8 +6,8 @@ Tablely est une plateforme SaaS de gestion de réservations et de management pou
 
 ## 🛠️ Stack Technique Modernisée
 
-- **Frontend** : Next.js 15 (App Router), React 19, Lucide React.
-- **Styling** : Tailwind CSS v4, Shadcn UI (basé sur Radix UI).
+- **Frontend** : Next.js 16 (App Router), React 19, Lucide React.
+- **Styling** : Tailwind CSS v4.1, Shadcn UI (basé sur Radix UI).
 - **Base de Données & Infra** : Supabase (PostgreSQL 17, Auth, Realtime).
 - **Sécurité** : Row Level Security (RLS) granulaire au niveau de la base de données.
 - **Gestion d'État & Fetching** : TanStack Query v5.
@@ -44,6 +44,7 @@ L'application `web` suit les patterns modernes du Next.js App Router :
 3. **Optimisation des Tables** : Gestion de l'inventaire physique et de la capacité d'accueil.
 4. **Dashboard Temps Réel** : Interface administrative auto-actualisée lors de nouvelles réservations via Supabase Realtime.
 5. **Permissions Granulaires (RBAC)** : Gestion multi-utilisateurs avec rôles spécifiques (`owner`, `admin`, `member`).
+6. **Géolocalisation & Cartographie** : Support natif des coordonnées GPS (lat/lng) pour l'affichage cartographique des établissements.
 
 ---
-*Dernière mise à jour : 6 Mars 2026*
+*Dernière mise à jour : 26 Mars 2026*

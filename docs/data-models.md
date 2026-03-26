@@ -14,18 +14,20 @@ Le projet utilise Supabase (PostgreSQL) avec une architecture multi-tenant. La s
 
 ### Métier du Restaurant
 - **`restaurants`** : Points de vente physiques rattachés à un compte.
-  - *Champs clés* : `name`, `location`, `phone`, `account_id`.
+  - *Champs clés* : `id`, `name`, `location`, `phone`, `account_id`, `lat`, `lng` (Coordonnées GPS), `slug` (URL unique).
 - **`services`** : Périodes de service (ex: Déjeuner, Dîner) définissant les règles de réservation.
   - *Champs clés* : `name`, `start_time`, `end_time`, `duration_minutes` (durée par défaut), `buffer_minutes`.
 - **`service_operating_days`** : Table de liaison gérant les jours d'ouverture par service (1 = Lundi, 7 = Dimanche).
 - **`dining_tables`** : Inventaire des tables physiques.
   - *Champs clés* : `name`, `capacity`, `is_active`.
 - **`reservations`** : Gestion des réservations clients.
-  - *Champs clés* : `date`, `start_time`, `guest_count`, `status` (`confirmed`, `cancelled`, etc.), `notes`.
+  - *Champs clés* : `id`, `date`, `start_time`, `guest_count`, `status` (`confirmed`, `cancelled`, etc.), `notes`, `duration_minutes` (Snapshot de la durée du service au moment de la réservation).
   - *Snapshot Client* : `client_name`, `client_email`, `client_phone` (pour garder une trace même si le profil change).
 
-### Support
+### Support & Système
 - **`invitations`** : Gère l'invitation de nouveaux membres administratifs par email.
+- **`notification_queue`** : File d'attente pour l'envoi asynchrone d'emails et de rappels.
+  - *Champs clés* : `recipient_email`, `type`, `scheduled_for`, `status` (`pending`, `sent`, etc.).
 
 ## 🛡️ Sécurité (RLS)
 

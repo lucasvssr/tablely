@@ -9,7 +9,8 @@ Ce portail centralise l'architecture, les spécifications techniques et les guid
 ## 🧭 Navigation Rapide
 
 ### 📂 Vue d'Ensemble & Structure
-- [**Présentation du Projet**](./project-overview.md) : Vision, objectifs métier et fonctionnalités clés.
+- [**Présentation Stakeholders**](./technical_presentation.md) : Dossier de présentation complet pour les non-tech.
+- [**Présentation Technique**](./project-overview.md) : Vision, objectifs métier et fonctionnalités clés.
 
 ### 🏗️ Architecture & Données
 - [**Architecture Technique**](./architecture.md) : Patterns de conception (SSR, Server Actions), flux de données et intégrations.
@@ -31,11 +32,11 @@ Tablely s'appuie sur une stack moderne et performante pour garantir scalabilité
 
 | Composant | Technologie |
 | :--- | :--- |
-| **Framework UI** | Next.js 15 (React 19) • App Router |
+| **Framework UI** | Next.js 16 (React 19) • App Router |
 | **Langage** | TypeScript (Strict mode) |
 | **Base de Données** | PostgreSQL (Supabase) |
 | **Sécurité** | Row Level Security (RLS) • Supabase Auth |
-| **Styling** | Tailwind CSS v4 • Shadcn UI (Radix) |
+| **Styling** | Tailwind CSS v4.1 • Shadcn UI (Radix) |
 | **Gestion Monorepo** | Turborepo • PNPM Workspaces |
 | **Validation** | Zod • React Hook Form |
 | **État & Fetching** | TanStack Query v5 (React Query) |
@@ -44,8 +45,8 @@ Tablely s'appuie sur une stack moderne et performante pour garantir scalabilité
 
 ## 📈 État & Maintenance du Projet
 
-- **Version Actuelle** : `0.1.0-alpha.2`
-- **Dernière mise à jour** : 6 Mars 2026
+- **Version Actuelle** : `0.3.0`
+- **Dernière mise à jour** : 26 Mars 2026
 - **Environnement** : Déployé sur Vercel (Frontend) et Supabase Cloud (Backend).
 
 ---
