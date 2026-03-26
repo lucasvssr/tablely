@@ -1,5 +1,5 @@
 {
-  "name": "next-supabase-saas-kit-turbo-lite",
+  "name": "tablely",
   "version": "0.2.3",
   "private": true,
   "sideEffects": false,
@@ -7,8 +7,7 @@
     "node": ">=v18.18.0"
   },
   "author": {
-    "url": "https://makerkit.dev",
-    "name": "MakerKit"
+    "name": "Tablely"
   },
   "scripts": {
     "preinstall": "pnpm run --filter scripts requirements",
