@@ -50,7 +50,7 @@ export default async function RestaurantPublicPage({ params }: RestaurantPagePro
         return notFound();
     }
 
-    const { account, restaurant, totalCapacity } = restaurantData;
+    const { restaurant, totalCapacity } = restaurantData;
 
     const { data: { user } } = await supabase.auth.getUser();
     const userId = user?.id;
@@ -90,7 +90,7 @@ export default async function RestaurantPublicPage({ params }: RestaurantPagePro
                             <div className="absolute inset-0 -z-10 overflow-hidden rounded-[inherit] pointer-events-none">
                                 <Image
                                     src="/images/restaurant-hero.png"
-                                    alt={account.name}
+                                    alt={restaurant.name}
                                     fill
                                     className="object-cover opacity-60 group-hover/hero:scale-105 transition-transform duration-[10s] ease-out select-none"
                                     priority
@@ -111,7 +111,7 @@ export default async function RestaurantPublicPage({ params }: RestaurantPagePro
                                     </Pill>
 
                                     <h1 className="font-heading text-4xl sm:text-5xl md:text-7xl lg:text-7xl xl:text-8xl font-bold text-white tracking-tighter leading-[0.95] max-w-[15ch] break-words">
-                                        {account.name}
+                                        {restaurant.name}
                                     </h1>
 
                                     <p className="text-base sm:text-xl md:text-2xl text-zinc-300 font-medium leading-relaxed max-w-2xl">

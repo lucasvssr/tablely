@@ -331,6 +331,7 @@ export const createRestaurantAction = enhanceAction(
         });
 
         updateTag('restaurants-list');
+        revalidatePath('/sitemap.xml');
     },
     {
         auth: true,
@@ -428,18 +429,18 @@ export const updateRestaurantAction = enhanceAction(
 
         if (restError) throw new Error(restError.message);
 
-        // Fetch account to get slug for revalidation
-        const { data: account } = await supabase
-            .from('accounts')
+        // Fetch restaurant for slug revalidation
+        const { data: restaurantData } = await supabase
+            .from('restaurants')
             .select('slug')
-            .eq('id', accountId)
+            .eq('id', targetId)
             .single();
 
         revalidatePath('/home', 'layout');
         updateTag('restaurants-list');
         updateTag(`restaurant-slug`);
-        if (account?.slug) {
-            revalidatePath(`/restaurant/${account.slug}`);
+        if (restaurantData?.slug) {
+            revalidatePath(`/restaurant/${restaurantData.slug}`);
         }
     },
     { auth: true }
@@ -542,6 +543,7 @@ export const deleteRestaurantAction = enhanceAction(
         revalidatePath('/home', 'layout');
         updateTag('restaurants-list');
         updateTag('restaurant-slug');
+        revalidatePath('/sitemap.xml');
 
         return { success: true };
     },
@@ -598,6 +600,7 @@ export const deleteSingleRestaurantAction = enhanceAction(
         updateTag('restaurants-list');
         updateTag('restaurant-slug');
         revalidatePath('/home/settings/establishments', 'page');
+        revalidatePath('/sitemap.xml');
 
         return { success: true };
     },
@@ -873,7 +876,7 @@ export const createReservationAction = enhanceAction(
             // 1. Get account_id from restaurant
             const { data: restaurant, error: restaurantError } = await supabase
                 .from('restaurants')
-                .select('account_id, id')
+                .select('account_id, id, slug')
                 .eq('id', payload.restaurant_id)
                 .single();
 
@@ -1009,17 +1012,10 @@ export const createReservationAction = enhanceAction(
                 return { error: `${t('actions.validationError')}: ${insertError.message}` };
             }
 
-            // Fetch account to get slug for revalidation
-            const { data: account } = await supabase
-                .from('accounts')
-                .select('slug')
-                .eq('id', restaurant.account_id)
-                .single();
-
             revalidatePath('/home', 'layout');
-            if (account?.slug) {
-                revalidatePath(`/restaurant/${account.slug}`);
-                revalidatePath(`/restaurant/${account.slug}`, 'layout');
+            if (restaurant?.slug) {
+                revalidatePath(`/restaurant/${restaurant.slug}`);
+                revalidatePath(`/restaurant/${restaurant.slug}`, 'layout');
             }
 
             return { success: true };
@@ -1700,9 +1696,7 @@ export async function getClientReservationsAction(userId: string) {
             restaurants (
                 name,
                 location,
-                accounts (
-                    slug
-                )
+                slug
             )
         `)
         .eq('user_id', userId)
@@ -1730,9 +1724,7 @@ export async function getClientReservationsAction(userId: string) {
                 restaurants (
                     name,
                     location,
-                    accounts (
-                        slug
-                    )
+                    slug
                 )
             `)
             .eq('client_email', userEmail)
@@ -1759,9 +1751,7 @@ export async function getClientReservationsAction(userId: string) {
         const restaurantRec = res.restaurants as unknown as {
             name: string;
             location: string;
-            accounts: {
-                slug: string;
-            } | null;
+            slug: string;
         } | null;
 
         return {
@@ -1775,7 +1765,7 @@ export async function getClientReservationsAction(userId: string) {
             client_name: res.client_name || '',
             restaurant_name: restaurantRec?.name || '',
             restaurant_location: restaurantRec?.location || '',
-            restaurant_slug: restaurantRec?.accounts?.slug || ''
+            restaurant_slug: restaurantRec?.slug || ''
         };
     });
 }

@@ -34,7 +34,7 @@ async function BookingDashboardPage({ params }: BookingPageProps) {
         return notFound();
     }
 
-    const { account, restaurant } = restaurantData;
+    const { restaurant } = restaurantData;
 
     // Fetch profile
     const { data: profile } = await supabase
@@ -59,7 +59,7 @@ async function BookingDashboardPage({ params }: BookingPageProps) {
                                 {t('home:viewAllRestaurants')}
                             </Link>
                         </Button>
-                        <h1 className="text-3xl font-bold tracking-tight">{account.name}</h1>
+                        <h1 className="text-3xl font-bold tracking-tight">{restaurant.name}</h1>
                     </div>
                 }
                 description={

@@ -38,8 +38,8 @@ export default async function HomePage() {
   const restaurants = (membership?.accounts as unknown as { restaurants: { id: string; slug: string }[] })?.restaurants || [];
   const activeRestaurant = restaurants.find((r) => r.id === activeRestaurantId) || restaurants[0];
   
-  // Use restaurant slug if available, fallback to account slug
-  const restaurantSlug = activeRestaurant?.slug || (membership?.accounts as { slug: string | null } | null)?.slug;
+  // Use restaurant slug if available
+  const restaurantSlug = activeRestaurant?.slug;
 
   if (role === 'client') {
     const [clientReservations, allRestaurants] = await Promise.all([

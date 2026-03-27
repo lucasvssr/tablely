@@ -351,6 +351,7 @@ export type Database = {
           location: string
           name: string
           phone: string | null
+          slug: string
           updated_at: string | null
         }
         Insert: {
@@ -362,6 +363,7 @@ export type Database = {
           location: string
           name: string
           phone?: string | null
+          slug: string
           updated_at?: string | null
         }
         Update: {
@@ -373,6 +375,7 @@ export type Database = {
           location?: string
           name?: string
           phone?: string | null
+          slug?: string
           updated_at?: string | null
         }
         Relationships: [
