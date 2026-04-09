@@ -55,11 +55,6 @@ const config = {
       ...INTERNAL_PACKAGES,
     ],
   },
-  modularizeImports: {
-    lodash: {
-      transform: 'lodash/{{member}}',
-    },
-  },
   /** We already do linting and typechecking as separate tasks in CI */
   typescript: { ignoreBuildErrors: true },
 };
