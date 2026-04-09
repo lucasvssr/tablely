@@ -1,63 +1,147 @@
 # 🍱 Inventaire des Composants UI • Tablely
 
-Cette bibliothèque de composants partagés (`packages/ui`) assure une cohérence visuelle parfaite entre les différentes interfaces du projet.
+La bibliothèque de composants partagés (`packages/ui`) assure une cohérence visuelle parfaite entre toutes les interfaces du projet.
+
+> **Import** : `import { Button, Card, ... } from '@kit/ui';`
 
 ---
 
 ## 🎨 Design System Fondamental
 
-Le projet utilise **Tailwind CSS v4** et **Radix UI** pour des composants accessibles et performants.
+Le projet utilise **Tailwind CSS v4** et **Radix UI** pour des composants accessibles, performants et composables.
 
-### 🏗️ Composants de Base (Shadcn UI)
-| Catégorie | Composants Clés |
+### 🏗️ Primitives de Base (Shadcn UI)
+
+Ces composants se trouvent dans `packages/ui/src/shadcn/`.
+
+| Catégorie | Composants |
 | :--- | :--- |
-| **Actions** | `Button`, `Dropdown-Menu`, `Sheet`, `Dialog` |
-| **Data Entry** | `Input`, `Checkbox`, `Radio-Group`, `Switch`, `Select` |
-| **Feedback** | `Alert-Dialog`, `Alert`, `Sonner`, `Skeleton`, `Progress` |
-| **Layout** | `Card`, `Table`, `Tabs`, `Separator`, `Scroll-Area` |
-| **Navigation** | `Breadcrumb`, `Navigation-Menu`, `Sidebar` |
+| **Actions** | `Button`, `DropdownMenu`, `Sheet`, `Dialog`, `AlertDialog` |
+| **Saisie (Forms)** | `Input`, `Textarea`, `Checkbox`, `RadioGroup`, `Switch`, `Select`, `Form` (React Hook Form) |
+| **Feedback** | `Alert`, `Sonner` (toasts), `Skeleton`, `Progress`, `Badge` |
+| **Layout** | `Card`, `Table`, `Tabs`, `Separator`, `ScrollArea`, `Accordion` |
+| **Navigation** | `Breadcrumb`, `NavigationMenu`, `Sidebar` |
+| **Overlay** | `Popover`, `Tooltip`, `HoverCard`, `Command` (palette) |
 
 ---
 
 ## 🔥 Composants Métier (Makerkit)
 
-Ces composants complexes sont conçus pour les interfaces applicatives riches et le marketing.
+Composants complexes conçus pour les interfaces applicatives riches. Situés dans `packages/ui/src/makerkit/`.
 
-### 💼 Interface Dashboard
-- **`Sidebar`** : Navigation principale avec gestion multi-tenant.
-- **`App-Breadcrumbs`** : Fil d'Ariane dynamique.
-- **`Data-Table`** : Liste avancée avec filtres et actions.
-- **`Image-Uploader`** : Gestion des uploads (logos, avatars).
-- **`Stepper`** : Assistant multi-étapes.
+### 💼 Interface Dashboard & Navigation
 
-### 🌐 Internationalisation (i18n)
-- **`Language-Selector`** : Commutateur de langue (FR/EN).
-- **`Trans`** : Composant de rendu pour les traductions complexes.
+| Composant | Rôle |
+| :--- | :--- |
+| `AppSidebar` | Navigation principale avec gestion multi-tenant (sélecteur d'établissement) |
+| `AppBreadcrumbs` | Fil d'Ariane dynamique basé sur les segments d'URL |
+| `DataTable` | Tableau avancé avec tri, filtres et actions par ligne |
+| `ImageUploader` | Gestion des uploads d'images (logos, avatars) |
+| `Stepper` | Assistant multi-étapes (ex: onboarding restaurant) |
+| `IfUserHasPermission` | Rendu conditionnel basé sur le rôle RBAC |
+
+### 🌐 Internationalisation
+
+| Composant | Rôle |
+| :--- | :--- |
+| `LanguageSelector` | Commutateur de langue (FR/EN) |
+| `Trans` | Rendu de traductions complexes avec variables |
 
 ---
 
-## 🛠️ Intégration dans le Projet
+## 🗺️ Composants Locaux (`apps/web/components/`)
 
-Les composants sont importés depuis `@kit/ui` et peuvent être étendus localement si nécessaire.
+Ces composants sont spécifiques à l'application web principale et ne sont pas réexportés depuis `@kit/ui`.
+
+### Réservation Publique
+| Composant | Rôle |
+| :--- | :--- |
+| `BookingForm` | Formulaire de réservation multi-étapes avec sélection de créneau |
+| `SlotPicker` | Sélecteur de créneau temps réel (intègre `getAvailableSlotsAction`) |
+| `ReservationCard` | Carte d'affichage d'une réservation existante (avec déchiffrement des notes) |
+
+### Authentication
+| Composant | Rôle |
+| :--- | :--- |
+| `SignUpContainer` | Formulaire d'inscription avec intégration Cloudflare Turnstile CAPTCHA |
+| `LoginForm` | Formulaire de connexion avec gestion des erreurs Supabase |
+
+### Dashboard Admin
+| Composant | Rôle |
+| :--- | :--- |
+| `DashboardCharts` | Graphiques Recharts : tendances réservations, couverts, clients |
+| `TeamManagement` | Interface d'invitation et de gestion des membres |
+| `ServiceForm` | Formulaire de création/édition de période de service |
+| `TableForm` | Formulaire de création/édition de table |
+
+---
+
+## 📐 Utilitaires de Style
+
+```ts
+// packages/ui/src/lib/utils.ts
+import { cn } from '@kit/ui/lib/utils';
+
+// Fusion conditionnelle de classes Tailwind
+cn('base-class', isActive && 'active-class', className)
+```
+
+### Variables CSS Personnalisées
+
+Les tokens du design system sont définis dans `apps/web/styles/` :
+
+```css
+/* Exemple de variables disponibles */
+--background, --foreground      /* Couleurs de base */
+--primary, --primary-foreground  /* Couleur d'accent principale */
+--muted, --muted-foreground      /* Éléments secondaires */
+--border, --ring                 /* Bordures et focus */
+--radius                         /* Rayon de border-radius global */
+```
+
+---
+
+## 🛠️ Utilisation
 
 ```tsx
-import { Button, Card, Heading } from '@kit/ui';
+import { Button, Card, Heading, Badge } from '@kit/ui';
 
-export function MyComponent() {
+export function ExampleComponent() {
   return (
-    <Card className="p-4">
-      <Heading level={2}>Titre de Section</Heading>
-      <Button variant="primary">Action</Button>
+    <Card className="p-6">
+      <Heading level={2}>Réservations du jour</Heading>
+      <Badge variant="success">12 confirmées</Badge>
+      <Button variant="default" size="sm">
+        Voir détails
+      </Button>
     </Card>
   );
 }
 ```
 
+### Patterns d'Import Recommandés
+
+```tsx
+// ✅ Import depuis @kit/ui (composants partagés)
+import { Button, Input, Select } from '@kit/ui';
+
+// ✅ Import depuis @kit/ui/shadcn (primitives directes)
+import { Dialog, DialogContent, DialogHeader } from '@kit/ui/shadcn/dialog';
+
+// ✅ Composants locaux (web app uniquement)
+import { BookingForm } from '~/components/booking-form';
+```
+
 ---
 
-## 🚀 Mise à jour & Maintenance
+## 🚀 Extension & Maintenance
 
-L'inventaire est maintenu via une approche "Atomic Design" pour maximiser la réutilisation et minimiser la duplication de code.
+L'inventaire suit une approche **"Atomic Design"** :
+- **Atoms** : Primitives Shadcn (Button, Input, Badge...)
+- **Molecules** : Groupes fonctionnels (Form + Input + Label)
+- **Organisms** : Composants métier complexes (BookingForm, TeamManagement)
+
+Pour ajouter un composant Shadcn : `pnpm dlx shadcn@latest add <component> --cwd packages/ui`
 
 ---
-*Dernière mise à jour : 6 Mars 2026*
+*Dernière mise à jour : 9 Avril 2026*

@@ -59,6 +59,12 @@ export const AccountSchema = z.object({
     name: z.string().min(2, 'validation.nameMin2'),
 });
 
+export const InviteSchema = z.object({
+    email: z.string().email(),
+    role: z.enum(['admin', 'member']),
+    restaurant_id: z.string().uuid().optional().nullable(),
+});
+
 export type RestaurantSchemaType = z.infer<typeof RestaurantSchema>;
 export type ServiceSchemaType = z.infer<typeof ServiceSchema>;
 export type TableSchemaType = z.infer<typeof TableSchema>;

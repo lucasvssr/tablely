@@ -16,6 +16,7 @@ import { encrypt, decrypt } from '~/lib/security/encryption';
 import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { randomBytes } from 'crypto';
 import { verifyTurnstileToken } from '../../security/captcha';
+import { slugify } from '@kit/shared/utils';
 
 export async function getUserAccount(supabase: SupabaseClient<Database>, userId: string) {
     // 1. Check for active account cookie
@@ -221,21 +222,6 @@ export const upsertTableAction = enhanceAction(
     { auth: true }
 );
 
-/**
- * @name slugify
- */
-function slugify(text: string) {
-    return text
-        .toString()
-        .toLowerCase()
-        .normalize('NFD') // remove accents
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/\s+/g, '-') // replace spaces with -
-        .replace(/[^\w-]+/g, '') // remove all non-word chars
-        .replace(/--+/g, '-') // replace multiple - with single -
-        .replace(/^-+/, '') // trim - from start of text
-        .replace(/-+$/, ''); // trim - from end of text
-}
 
 /**
  * @name createRestaurantAction

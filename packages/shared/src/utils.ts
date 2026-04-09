@@ -19,3 +19,42 @@ export function formatCurrency(params: {
     currency: params.currencyCode,
   }).format(Number(params.value));
 }
+
+/**
+ * @name slugify
+ */
+export function slugify(text: string) {
+  return text
+    .toString()
+    .toLowerCase()
+    .normalize('NFD') // remove accents
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '-') // replace spaces with -
+    .replace(/[^\w-]+/g, '') // remove all non-word chars
+    .replace(/--+/g, '-') // replace multiple - with single -
+    .replace(/^-+/, '') // trim - from start of text
+    .replace(/-+$/, ''); // trim - from end of text
+}
+
+/**
+ * @name formatAddress
+ * @description Format a Nominatim address object into a human-readable string.
+ */
+export function formatAddress(addr: any) {
+  if (!addr) return '';
+  
+  const parts = [];
+  
+  // Format: Numéro Rue
+  const street = [addr.house_number, addr.road].filter(Boolean).join(' ');
+  if (street) parts.push(street);
+
+  // Ville / Commune
+  const city = addr.city || addr.town || addr.village || addr.hamlet;
+  if (city) parts.push(city);
+
+  if (addr.county) parts.push(addr.county);
+  if (addr.country) parts.push(addr.country);
+
+  return parts.join(', ');
+}

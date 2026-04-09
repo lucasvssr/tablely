@@ -1,6 +1,7 @@
 'use server';
 
 import { enhanceAction } from '@kit/next/actions';
+import { formatAddress } from '@kit/shared/utils';
 
 /**
  * @name geocodeAddressAction
@@ -66,21 +67,10 @@ export const geocodeAddressAction = enhanceAction(
         const details = await detailsResponse.json();
         const addr = details.address;
 
-        // Format: Numéro Rue, Ville, Département, Pays
-        const parts = [];
-        const street = [addr.house_number, addr.road].filter(Boolean).join(' ');
-        if (street) parts.push(street);
-
-        const city = addr.city || addr.town || addr.village || addr.hamlet;
-        if (city) parts.push(city);
-
-        if (addr.county) parts.push(addr.county);
-        if (addr.country) parts.push(addr.country);
-
         return {
           lat: parseFloat(data[0].lat),
           lng: parseFloat(data[0].lon),
-          display_name: parts.join(', '),
+          display_name: formatAddress(addr),
         };
       }
 
@@ -128,19 +118,8 @@ export const reverseGeocodeAction = enhanceAction(
       const details = await response.json();
       const addr = details.address;
 
-      // Format: Numéro Rue, Ville, Département, Pays
-      const parts = [];
-      const street = [addr.house_number, addr.road].filter(Boolean).join(' ');
-      if (street) parts.push(street);
-
-      const city = addr.city || addr.town || addr.village || addr.hamlet;
-      if (city) parts.push(city);
-
-      if (addr.county) parts.push(addr.county);
-      if (addr.country) parts.push(addr.country);
-
       return {
-        display_name: parts.join(', '),
+        display_name: formatAddress(addr),
       };
     } catch (error) {
       console.error('Reverse geocoding error:', error);

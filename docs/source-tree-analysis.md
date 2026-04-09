@@ -1,78 +1,154 @@
 # 🌳 Analyse de l'Arborescence • Tablely
 
-Cette vue d'ensemble détaille la structure organisationnelle du projet Tablely, un **Monorepo** moderne conçu pour la robustesse et la scalabilité.
+Cette vue d'ensemble détaille la structure organisationnelle du **Monorepo Tablely**, conçu pour la robustesse et la scalabilité via Turborepo et PNPM Workspaces.
 
 ---
 
 ## 📂 Structure Globale du Repository
 
-Le projet suit une logique de séparation des applications (Apps) et de la logique métier (Packages).
-
 ```text
-Tablely/
+tablely/
 ├── apps/
-│   ├── web/                 # Application Next.js 15 (Cœur de la plateforme)
-│   └── e2e/                 # Suites de tests critiques (Playwright)
+│   ├── web/                 # Application Next.js 16 (cœur de la plateforme)
+│   └── e2e/                 # Tests Playwright (E2E + tests unitaires)
+│
 ├── packages/
-│   ├── ui/                  # Design System & Composants Radix/Shadcn
-│   ├── supabase/            # Factory Client Supabase & types d'accès
+│   ├── ui/                  # Design System : Tailwind CSS v4 + Shadcn/Radix UI
+│   ├── supabase/            # Factory-clients Supabase & types d'accès
 │   ├── features/            # Logique métier partagée (RBAC, permissions)
-│   ├── i18n/                # Framework de traduction (i18next)
-│   ├── next/                # Infrastructure & Middlewares Next.js
-│   └── shared/              # Utilitaires techniques & types TypeScript
+│   ├── i18n/                # Framework de traduction i18next (FR/EN)
+│   ├── next/                # Infrastructure Next.js : enhanceAction, middlewares
+│   └── shared/              # Utilitaires TypeScript transverses
+│
 ├── supabase/                # Migrations SQL globales & configuration CLI
-├── tooling/                 # Standards partagés (ESLint, Prettier, TS)
-└── turbo.json               # Orchestration des builds (Turborepo)
+├── tooling/                 # Standards partagés (ESLint, Prettier, TypeScript)
+├── _bmad/                   # Agents & workflows IA (automatisation projet)
+├── turbo.json               # Orchestration des builds (Turborepo)
+└── pnpm-workspace.yaml      # Déclaration des workspaces PNPM
 ```
 
 ---
 
-## 🔍 Focus Technologique : `apps/web`
+## 🔍 Focus : `apps/web` (Application Principale)
 
-C'est l'application principale, structurée autour du **App Router** de Next.js.
+Application Next.js 16 avec App Router, structurée par domaine fonctionnel.
 
 ```text
 apps/web/
-├── app/                     # Navigation & Layouts (App Router)
-│   ├── (marketing)/         # Landing pages & pages marketing
-│   ├── auth/                # Authentification (Login, Signup, Callback)
-│   ├── home/                # Console d'administration (Restaurateurs)
-│   │   ├── _components/     # Composants métier spécifiques au dashboard
-│   │   └── settings/        # Configuration avancée (Services, Tables)
-│   └── restaurant/          # Interface de réservation publique
-│       └── [slug]/          # Page dynamique par restaurant (Booking)
-├── components/              # Librairie de composants locaux (web app)
-├── lib/                     # Logique utilitaire & serveur
-│   ├── server/              # Server Actions (Mutations DB sécurisées)
-│   │   ├── accounts/        # Gestion des profils & organisations
-│   │   ├── membership/      # Logique de rôles & accès
-│   │   └── restaurant/      # Actions métier (réservation, équipe)
-│   └── database.types.ts    # Types schématiques générés (Supabase)
-└── supabase/                # Migrations SQL locales & Seed de données
+├── app/                         # Routes & Layouts (App Router)
+│   ├── (home)/                  # Landing page marketing (public)
+│   ├── auth/                    # Authentification (login, signup, callback, confirm)
+│   ├── home/                    # Console d'administration (restaurateurs)
+│   │   ├── page.tsx             # Dashboard (stats 30j, tendances, top clients)
+│   │   ├── booking/             # Gestion des réservations du jour
+│   │   ├── restaurants/         # Sélection de l'établissement actif
+│   │   └── settings/            # Configuration avancée
+│   │       ├── establishments/  # Gestion compte/organisation
+│   │       ├── restaurant/      # Infos générales du restaurant
+│   │       ├── services/        # Périodes de service (horaires, jours)
+│   │       ├── tables/          # Inventaire des tables physiques
+│   │       └── team/            # Membres & invitations
+│   ├── join/                    # Acceptation d'invitation d'équipe
+│   ├── onboarding/              # Création du premier restaurant
+│   ├── restaurant/
+│   │   └── [slug]/              # Page publique de réservation par restaurant
+│   ├── update-password/         # Réinitialisation du mot de passe
+│   ├── sitemap.ts               # Sitemap dynamique (tous les restaurants)
+│   └── robots.ts                # Règles d'indexation
+│
+├── components/                  # Composants React locaux à l'app web
+│
+├── lib/
+│   ├── server/                  # Server Actions & helpers serveur
+│   │   ├── accounts/
+│   │   │   └── queries.ts       # Requêtes profil utilisateur
+│   │   └── restaurant/
+│   │       ├── restaurant-actions.ts  # Actions CRUD + réservations + dashboard
+│   │       ├── team-actions.ts        # Gestion d'équipe & invitations
+│   │       ├── auth-actions.ts        # Inscription avec rôle & CAPTCHA
+│   │       ├── geocode-actions.ts     # Géocodage Nominatim (adresse ↔ GPS)
+│   │       └── restaurant.schema.ts   # Schémas Zod de validation
+│   ├── security/
+│   │   ├── encryption.ts        # AES-256-GCM (chiffrement notes réservation)
+│   │   └── captcha.ts           # Vérification Cloudflare Turnstile
+│   ├── i18n/
+│   │   └── i18n.server.ts       # Initialisation i18n côté serveur
+│   └── database.types.ts        # Types TypeScript générés depuis Supabase
+│
+├── supabase/
+│   └── migrations/              # Fichiers SQL versionnés (YYYYMMDDHHMMSS_*.sql)
+│
+└── styles/                      # CSS globaux & variables du design system
 ```
 
 ---
 
-## 🔍 Focus Technologique : `packages/ui`
-
-Basée sur **Tailwind CSS v4**, cette bibliothèque assure une cohérence visuelle sur toute la plateforme.
+## 🔍 Focus : `apps/e2e` (Tests)
 
 ```text
-packages/ui/
-├── src/
-│   ├── shadcn/              # Primitives UI (Button, Dialog, etc.)
-│   ├── makerkit/            # Composants complexes haute fidélité (Sidebars, Shells)
-│   └── lib/                 # Utilitaires de style (cn, variants)
+apps/e2e/
+├── tests/
+│   └── unit/                    # Tests unitaires (Playwright, sans navigateur)
+│       ├── README.md            # Documentation de la couverture
+│       ├── encryption.spec.ts
+│       ├── captcha.spec.ts
+│       ├── mfa.spec.ts
+│       ├── auth-schemas.spec.ts
+│       ├── account-schemas.spec.ts
+│       ├── restaurant-schemas.spec.ts
+│       ├── restaurant-logic.spec.ts
+│       ├── shared-utils.spec.ts
+│       ├── mailbox.spec.ts
+│       ├── next-utils.spec.ts
+│       ├── i18n-utils.spec.ts
+│       ├── require-user.spec.ts
+│       ├── auth-po.spec.ts
+│       └── sitemap.spec.ts
+└── playwright.config.ts
 ```
 
 ---
 
-## 🚀 Autres Répertoires Stratégiques
+## 🔍 Focus : `packages/` (Bibliothèques Partagées)
 
-- **`tooling/`** : Centralise la maintenance des standards de code pour garantir une qualité uniforme entre les modules.
-- **`_bmad/`** : Contient les scripts, agents et workflows d'intelligence artificielle pilotant l'automatisation du projet.
-- **`supabase/`** : Point d'ancrage de l'infrastructure de données, gérant le cycle de vie des schémas.
+```text
+packages/
+│
+├── ui/src/
+│   ├── shadcn/              # Primitives UI : Button, Dialog, Input, Select...
+│   ├── makerkit/            # Composants complexes : Sidebar, DataTable, Stepper...
+│   └── lib/                 # Utilitaires de style : cn(), variants
+│
+├── supabase/src/
+│   ├── server-client.ts     # Client serveur (cookies, SSR)
+│   ├── server-static-client.ts  # Client statique (sans cookies, pour cache)
+│   ├── server-admin-client.ts   # Client admin (service-role, bypass RLS)
+│   ├── browser-client.ts    # Client navigateur
+│   └── database.ts          # Ré-export des types Database
+│
+├── next/src/
+│   └── actions.ts           # enhanceAction (wrapper validation + auth)
+│
+├── shared/src/
+│   └── utils.ts             # slugify, formatCurrency, formatAddress, isBrowser
+│
+└── i18n/src/
+    └── locales/
+        ├── fr/              # common.json, auth.json, restaurant.json, teams.json
+        └── en/              # (idem)
+```
 
 ---
-*Dernière mise à jour : 6 Mars 2026*
-*Note : Cette structure est optimisée pour le déploiement sur Vercel et Supabase Cloud.*
+
+## 🚀 Répertoires Stratégiques Racine
+
+| Répertoire | Rôle |
+| :--- | :--- |
+| `supabase/` | Migrations SQL globales & configuration Supabase CLI |
+| `tooling/` | ESLint, Prettier, TypeScript — standards uniformes entre modules |
+| `_bmad/` | Scripts, agents IA et workflows d'automatisation du projet |
+| `turbo.json` | Pipeline de build Turborepo (ordre, cache, filtres) |
+| `pnpm-workspace.yaml` | Déclaration des workspaces pour la résolution des dépendances |
+
+---
+*Dernière mise à jour : 9 Avril 2026*

@@ -6,6 +6,7 @@
   "scripts": {
     "report": "playwright show-report",
     "test": "playwright test --max-failures=1",
+    "test:unit": "playwright test tests/unit",
     "test:ui": "playwright test --ui"
   },
   "keywords": [],
@@ -14,6 +15,7 @@
   "devDependencies": {
     "@playwright/test": "^1.58.2",
     "@types/node": "^24.12.0",
-    "node-html-parser": "^7.1.0"
+    "node-html-parser": "^7.1.0",
+    "zod": "^3.25.76"
   }
 }

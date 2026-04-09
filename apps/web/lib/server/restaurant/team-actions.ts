@@ -6,12 +6,8 @@ import { Database } from '~/lib/database.types';
 import { enhanceAction } from '@kit/next/actions';
 import { z } from 'zod';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
+import { InviteSchema } from '~/lib/server/restaurant/restaurant.schema';
 
-const InviteSchema = z.object({
-    email: z.string().email(),
-    role: z.enum(['admin', 'member']),
-    restaurant_id: z.string().uuid().optional().nullable(),
-});
 
 import { getUserAccount } from '~/lib/server/restaurant/restaurant-actions';
 import { createI18nServerInstance } from '~/lib/i18n/i18n.server';

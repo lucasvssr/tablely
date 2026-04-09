@@ -1,49 +1,119 @@
 # 🏗️ Architecture Technique • Tablely
 
-Tablely est conçu comme une application multi-modale moderne, s'appuyant sur des bases solides de performance et de sécurité via l'écosystème **Next.js 16 & Supabase**.
+Tablely est une SaaS multi-tenant moderne reposant sur **Next.js 16** et **Supabase**, conçue pour maximiser les performances, la sécurité et la scalabilité.
 
 ---
 
-## 🏗️ Patterns d'Architecture Fondamentaux
+## 🏗️ Patterns Fondamentaux
 
-L'ensemble de la solution suit un modèle de **Monorepo distribué** orchestré par **Turborepo** et géré via **PNPM Workspaces**.
+L'ensemble du projet suit un modèle de **Monorepo distribué** orchestré par **Turborepo** et géré via **PNPM Workspaces**.
 
-### ✅ Frontend : Next.js 16 (React 19)
-- **App Router & Server Components** : Priorité au rendu côté serveur (SSR) pour optimiser les performances et le SEO.
-- **Server Actions** : Toutes les mutations (réservation, équipe, profil) sont centralisées dans `lib/server/` pour une sécurité et une robustesse accrues.
-- **Validation bout-en-bout** : Utilisation de **Zod** pour valider les données et garantir l'intégrité des échanges entre le client et le serveur.
+### ✅ Frontend : Next.js 16 (React 19, App Router)
+
+- **Server Components par défaut** : Rendu côté serveur (SSR) prioritaire pour les performances et le SEO. Les composants client (`'use client'`) sont réservés aux interactions utilisateur.
+- **Server Actions** : Toutes les mutations (réservation, équipe, profil) sont centralisées dans `lib/server/`. Elles sont wrappées par `enhanceAction` (`@kit/next/actions`) qui gère automatiquement la validation Zod et l'authentification.
+- **Cache stratifié** : Utilisation de `unstable_cache` (Next.js Data Cache) avec des tags de revalidation (`updateTag`) pour les données publiques (profils restaurants, liste restaurants). ISR automatique pour les pages statiques.
 
 ### ✅ Backend & Données : Supabase (PostgreSQL 17)
-- **Authentification Native** : Intégration de Supabase Auth avec redirection post-auth vers le dashboard restaurateur.
-- **Schémas de Base de Données** : Utilisation de plusieurs schémas PostgreSQL pour séparer les responsabilités (`public`, `kit`, `auth`).
-- **Gouvernance de Sécurité** : Mise en œuvre du **Row Level Security (RLS)** sur toutes les tables sensibles pour garantir une isolation multi-tenant stricte.
-- **Realtime (CDC)** : Utilisation des mécanismes de CDC (Change Data Capture) de Supabase pour synchroniser le dashboard admin lors de nouvelles réservations clients.
 
-### ✅ Shared Libraries & Packages
-- **`@kit/ui`** : Système de design basé sur **Tailwind CSS v4**, injectant des primitives Shadcn UI et des composants Makerkit.
-- **`@kit/supabase`** : Factory-client centralisée pour gérer les instances Supabase (browser, server, middleware, service-role) avec gestion unifiée de la session.
-- **`@kit/i18n`** : Gestion internationale s'appuyant sur `i18next` et `react-i18next`, avec des traductions partagées dans `packages/i18n`.
+- **Authentification Native** : Supabase Auth avec session gérée via cookies httpOnly (`@supabase/ssr`). Redirection post-auth vers `/home`.
+- **Multi-schémas** : `public` (tables métier), `auth` (Supabase), `kit` (utilitaires partagés).
+- **Row Level Security (RLS)** : Activé sur toutes les tables sensibles. Chaque tenant est isolé par `account_id`.
+- **Vue sécurisée** `restaurant_profiles` : Jointure dénormalisée `restaurants ⟕ accounts` exposée publiquement, évitant d'exposer la table `accounts` directement.
+- **RPC SQL** : `get_available_slots` calcule dynamiquement les créneaux en temps réel côté base de données.
+- **Realtime (CDC)** : Mécanisme CDC de Supabase pour rafraîchir le dashboard admin instantanément lors de nouvelles réservations.
+
+### ✅ Session Multi-Restaurant (Cookies)
+
+Tablely supporte plusieurs restaurants par compte (organisation). La session active est maintenue via deux cookies httpOnly :
+
+- `active_account_id` — identifie l'organisation active (30 jours)
+- `active_restaurant_id` — identifie le restaurant sélectionné (30 jours)
+
+Les helpers `getUserAccount` et `getActiveRestaurant` lisent ces cookies avec fallback automatique sur la première membership disponible.
+
+### ✅ Packages Partagés
+
+| Package | Rôle |
+| :--- | :--- |
+| `@kit/ui` | Design system (Tailwind CSS v4 + primitives Shadcn/Radix UI) |
+| `@kit/supabase` | Factory-clients Supabase (browser, server, static, admin) avec gestion de session unifiée |
+| `@kit/next` | Wrapper `enhanceAction`, middlewares Next.js, helpers de cache |
+| `@kit/i18n` | Internationalisation (i18next + react-i18next), traductions JSON dans `packages/i18n/src/locales/` |
+| `@kit/shared` | Utilitaires TypeScript transverses : `slugify`, `formatCurrency`, `formatAddress`, `isBrowser` |
+| `@kit/features` | Logique RBAC et permissions partagées |
+
+---
+
+## 🔐 Architecture de Sécurité
+
+### Chiffrement des Données Sensibles
+
+Les notes de réservation (allergies, informations personnelles) sont chiffrées avant stockage :
+- **Algorithme** : AES-256-GCM (authentifié, résistant aux falsifications)
+- **Clé** : Dérivée via `scryptSync` depuis `ENCRYPTION_SECRET` + `ENCRYPTION_SALT`
+- **Rétrocompatibilité** : Support du format CBC hérité pour les données existantes
+
+### CAPTCHA Anti-Spam (Cloudflare Turnstile)
+
+Activé conditionnellement si `TURNSTILE_SECRET_KEY` est défini :
+- **Inscription** (`signUpWithRoleAction`) : validation obligatoire
+- **Réservation** (`createReservationAction`) : validation obligatoire pour les requêtes publiques
+- Vérification côté serveur via l'API Cloudflare (`/siteverify`)
+
+### CSRF & Headers
+
+Protection CSRF native via `@edge-csrf/nextjs`. Les Server Actions Next.js ajoutent automatiquement des vérifications d'origine.
 
 ---
 
 ## 🔄 Flux de Vie d'une Réservation
 
-Voici le parcours technique type d'une réservation sur Tablely :
+Parcours technique complet d'une réservation public :
 
-1. **Intention Client** : Le client visite la page `/restaurant/[slug]`. 
-2. **Découverte (GET)** : Appel à la fonction SQL `get_available_slots` (via client Supabase anonyme) pour afficher les créneaux disponibles en fonction de la capacité et du service.
-3. **Validation & Action (POST)** : Soumission d'une **Server Action**, validation via Zod, et insertion dans `public.reservations`. 
-4. **Persistance & Notification** : Insertion sécurisée via RLS. Déclenchement d'un événement `INSERT` dans le bus Realtime de Supabase et ajout d'une tâche dans la file `public.notification_queue` pour l'envoi d'emails.
-5. **Mise à jour Admin** : Le dashboard du restaurateur (en écoute sur le canal Realtime) se rafraîchit instantanément pour afficher la nouvelle demande.
+```
+Client → GET /restaurant/[slug]
+         ↓
+  getRestaurantBySlugAction (cache 1h)
+  → query: restaurant_profiles VIEW (RLS public)
+         ↓
+  getAvailableSlotsAction
+  → RPC: get_available_slots(restaurant_id, date, guest_count)
+  → filtre les créneaux passés si date = aujourd'hui
+         ↓
+  createReservationAction (Server Action, auth: false)
+  → 1. Vérification CAPTCHA Turnstile
+  → 2. Vérification doublons (email + service + date)
+  → 3. Sélection de la table optimale (capacité minimale suffisante)
+  → 4. Vérification chevauchements temporels (durée + buffer)
+  → 5. Chiffrement des notes (AES-256-GCM)
+  → 6. INSERT reservations (via admin client)
+  → 7. revalidatePath + updateTag (rafraîchit le dashboard admin)
+         ↓
+  Dashboard Admin (Realtime)
+  → écoute canal Supabase Realtime → update instantané
+```
 
 ---
 
-## 🌍 Langues & Internationalisation
+## 🌍 Internationalisation (i18n)
 
-Le support multi-langue (Français, Anglais) est implémenté via :
-- Des fichiers JSON structurés par espace de nom (namespaces) situés dans `packages/i18n/src/locales`.
-- Un **I18nProvider** encapsulant l'application pour une réactivité fluide.
-- Une détection automatique via middleware Next.js pour servir la langue préférée de l'utilisateur.
+Support multilingue **Français / Anglais** :
+- Fichiers JSON structurés par namespace dans `packages/i18n/src/locales/`
+- Namespaces principaux : `common`, `auth`, `restaurant`, `teams`
+- `I18nProvider` encapsule l'application pour la réactivité côté client
+- Détection automatique via le middleware Next.js (préférence navigateur)
+- `createI18nServerInstance()` pour les traductions dans les Server Actions
 
 ---
-*Dernière mise à jour : 26 Mars 2026*
+
+## 🗺️ Géocodage (Nominatim / OpenStreetMap)
+
+Intégration de la localisation GPS via l'API Nominatim :
+- `geocodeAddressAction` : adresse texte → lat/lng + adresse formatée
+- `reverseGeocodeAction` : lat/lng → adresse formatée
+- `formatAddress` (`@kit/shared/utils`) : normalise les objets adresse Nominatim
+- Identifiant requis : `GEOCODING_EMAIL` dans les variables d'environnement
+
+---
+*Dernière mise à jour : 9 Avril 2026*
