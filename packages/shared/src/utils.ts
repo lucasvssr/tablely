@@ -40,7 +40,16 @@ export function slugify(text: string) {
  * @name formatAddress
  * @description Format a Nominatim address object into a human-readable string.
  */
-export function formatAddress(addr: any) {
+export function formatAddress(addr: {
+  house_number?: string;
+  road?: string;
+  city?: string;
+  town?: string;
+  village?: string;
+  hamlet?: string;
+  county?: string;
+  country?: string;
+} | null | undefined) {
   if (!addr) return '';
   
   const parts = [];

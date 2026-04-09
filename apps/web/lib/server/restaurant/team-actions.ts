@@ -4,7 +4,6 @@ import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { getSupabaseServerAdminClient } from '@kit/supabase/server-admin-client';
 import { Database } from '~/lib/database.types';
 import { enhanceAction } from '@kit/next/actions';
-import { z } from 'zod';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
 import { InviteSchema } from '~/lib/server/restaurant/restaurant.schema';
 
