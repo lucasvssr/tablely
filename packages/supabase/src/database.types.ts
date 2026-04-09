@@ -441,6 +441,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      },
+      restaurant_profiles: {
+        Row: {
+          account_id: string
+          id: string
+          lat: number | null
+          lng: number | null
+          location: string
+          name: string
+          organization_name: string
+          organization_slug: string | null
+          phone: string | null
+          slug: string
+        }
+        Insert: {
+          account_id?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          location?: string
+          name?: string
+          organization_name?: string
+          organization_slug?: string | null
+          phone?: string | null
+          slug?: string
+        }
+        Update: {
+          account_id?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          location?: string
+          name?: string
+          organization_name?: string
+          organization_slug?: string | null
+          phone?: string | null
+          slug?: string
+        }
+        Relationships: []
       }
     }
     Views: {

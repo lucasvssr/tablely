@@ -5,6 +5,8 @@ import { getSupabaseServerAdminClient } from '@kit/supabase/server-admin-client'
 import { Database } from '@kit/supabase/database';
 import { enhanceAction } from '@kit/next/actions';
 
+import { verifyTurnstileToken } from '../../security/captcha';
+
 /**
  * @name signUpWithRoleAction
  * @description Action to sign up a user with a specific role (client or restaurateur).
@@ -16,9 +18,21 @@ export const signUpWithRoleAction = enhanceAction(
         role: 'client' | 'restaurateur';
         firstName: string;
         lastName: string;
+        captchaToken?: string;
         invitationId?: string;
         redirectTo?: string;
     }) => {
+        // CAPTCHA verification
+        if (credentials.captchaToken) {
+            const isHuman = await verifyTurnstileToken(credentials.captchaToken);
+            if (!isHuman) {
+                throw new Error('Échec de la validation CAPTCHA. Veuillez réessayer.');
+            }
+        } else if (process.env.TURNSTILE_SECRET_KEY) {
+            // If secret key is set but no token provided, it's missing
+            throw new Error('La validation CAPTCHA est requise.');
+        }
+
         const adminClient = getSupabaseServerAdminClient<Database>();
         const userClient = getSupabaseServerClient<Database>();
 

@@ -43,6 +43,7 @@ export const ReservationSchema = z.object({
     notes: z.string().optional(),
     allergies: z.array(z.string()).optional(),
     user_id: z.string().uuid().optional(),
+    captchaToken: z.string().optional(),
 });
 
 export const UpdateReservationSchema = z.object({

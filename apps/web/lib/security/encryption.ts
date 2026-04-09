@@ -1,44 +1,77 @@
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
 
 // Use a secret key from environment variables or a default one for dev
-const ALGORITHM = 'aes-256-cbc';
-const SECRET_KEY = process.env.ENCRYPTION_SECRET || 'v-7H*k9P2#mL5$nQ8@bR1!zW0&xY3^jU'; // 32 chars
-const SALT = process.env.ENCRYPTION_SALT || 'salt-bmad-booking';
+const ALGORITHM_GCM = 'aes-256-gcm';
+const ALGORITHM_CBC = 'aes-256-cbc'; // Keep for backward compatibility
+const SECRET_KEY = process.env.ENCRYPTION_SECRET!;
+const SALT = process.env.ENCRYPTION_SALT!;
+
+if (!SECRET_KEY || !SALT) {
+  throw new Error(
+    'ENCRYPTION_SECRET or ENCRYPTION_SALT is missing from your environment variables.',
+  );
+}
 
 /**
  * @name encrypt
- * @description Encrypts a string using AES-256-CBC.
+ * @description Encrypts a string using AES-256-GCM.
  */
 export function encrypt(text: string): string {
-    const iv = randomBytes(16);
+    const iv = randomBytes(12); // GCM standard IV length is 12 bytes
     const key = scryptSync(SECRET_KEY, SALT, 32);
-    const cipher = createCipheriv(ALGORITHM, key, iv);
+    const cipher = createCipheriv(ALGORITHM_GCM, key, iv);
 
     let encrypted = cipher.update(text, 'utf8', 'hex');
     encrypted += cipher.final('hex');
+    
+    const authTag = cipher.getAuthTag().toString('hex');
 
-    return `${iv.toString('hex')}:${encrypted}`;
+    // New format: iv:authTag:encryptedText
+    return `${iv.toString('hex')}:${authTag}:${encrypted}`;
 }
 
 /**
  * @name decrypt
- * @description Decrypts a string encrypted with the above encrypt function.
+ * @description Decrypts a string. Supports both new GCM and old CBC formats.
  */
 export function decrypt(text: string): string {
     try {
-        const [ivHex, encryptedText] = text.split(':');
-        if (!ivHex || !encryptedText) return text;
+        const parts = text.split(':');
+        
+        // Return original if format is invalid
+        if (parts.length < 2) return text;
 
-        const iv = Buffer.from(ivHex, 'hex');
         const key = scryptSync(SECRET_KEY, SALT, 32);
-        const decipher = createDecipheriv(ALGORITHM, key, iv);
 
-        let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
-        decrypted += decipher.final('utf8');
+        // Case 1: New GCM Format (iv:authTag:encryptedText)
+        if (parts.length === 3) {
+            const [ivHex, authTagHex, encryptedText] = parts;
+            const iv = Buffer.from(ivHex!, 'hex');
+            const authTag = Buffer.from(authTagHex!, 'hex');
+            
+            const decipher = createDecipheriv(ALGORITHM_GCM, key, iv);
+            decipher.setAuthTag(authTag);
+            
+            let decrypted = decipher.update(encryptedText!, 'hex', 'utf8');
+            decrypted += decipher.final('utf8');
+            return decrypted;
+        }
 
-        return decrypted;
+        // Case 2: Old CBC Format (iv:encryptedText)
+        if (parts.length === 2) {
+            const [ivHex, encryptedText] = parts;
+            const iv = Buffer.from(ivHex!, 'hex');
+            const decipher = createDecipheriv(ALGORITHM_CBC, key, iv);
+
+            let decrypted = decipher.update(encryptedText!, 'hex', 'utf8');
+            decrypted += decipher.final('utf8');
+            return decrypted;
+        }
+
+        return text;
     } catch (error) {
         console.error('Decryption failed:', error);
-        return text; // Return original text if decryption fails (might be plain text)
+        return text; 
     }
 }
+

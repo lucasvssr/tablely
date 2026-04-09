@@ -18,6 +18,8 @@ import { useTranslation } from 'react-i18next';
 import type { ReservationSchemaType } from '~/lib/server/restaurant/restaurant.schema';
 import type { User } from '@supabase/supabase-js';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Turnstile } from '@marsidev/react-turnstile';
+
 
 interface Slot {
     service_id: string;
@@ -60,7 +62,9 @@ export function BookingContainer({
     const [notes, setNotes] = useState('');
     const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
     const [submitting, setSubmitting] = useState(false);
+    const [captchaToken, setCaptchaToken] = useState<string | null>(null);
     const lastRequestedKeyRef = useRef<string>('');
+
 
     const { t, i18n } = useTranslation('public');
     const [isMounted, setIsMounted] = useState(false);
@@ -104,7 +108,9 @@ export function BookingContainer({
             notes: notes,
             allergies: selectedAllergies,
             user_id: user?.id,
+            captchaToken: captchaToken || undefined,
         };
+
 
         if (!payload.date || !payload.start_time || !payload.service_id) {
             return;
@@ -140,7 +146,7 @@ export function BookingContainer({
         } finally {
             setSubmitting(false);
         }
-    }, [restaurantId, date, selectedSlot, guests, name, email, phone, notes, selectedAllergies, user, router, t]);
+    }, [restaurantId, date, selectedSlot, guests, name, email, phone, notes, selectedAllergies, user, router, t, captchaToken]);
 
 
 
@@ -619,7 +625,22 @@ export function BookingContainer({
                                     onChange={(e) => setNotes(e.target.value)}
                                 />
                             </div>
+
+                            {process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY && (
+                                <div className="md:col-span-2 flex justify-center py-4">
+                                    <Turnstile
+                                        siteKey={process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY}
+                                        onSuccess={(token) => setCaptchaToken(token)}
+                                        onExpire={() => setCaptchaToken(null)}
+                                        onError={() => setCaptchaToken(null)}
+                                        options={{
+                                            theme: 'light',
+                                        }}
+                                    />
+                                </div>
+                            )}
                         </div>
+
 
                         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-8">
                             <Button

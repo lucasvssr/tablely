@@ -14,6 +14,8 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
 import { encrypt, decrypt } from '~/lib/security/encryption';
 import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
+import { randomBytes } from 'crypto';
+import { verifyTurnstileToken } from '../../security/captcha';
 
 export async function getUserAccount(supabase: SupabaseClient<Database>, userId: string) {
     // 1. Check for active account cookie
@@ -291,7 +293,8 @@ export const createRestaurantAction = enhanceAction(
             }
         }
 
-        const restaurantSlug = `${slug}-${Math.random().toString(36).substring(2, 6)}`;
+        const suffix = randomBytes(2).toString('hex');
+        const restaurantSlug = `${slug}-${suffix}`;
 
         // 3. Create Restaurant
         const { data: newRestaurant, error: restError } = await supabase
@@ -873,6 +876,19 @@ export const createReservationAction = enhanceAction(
 
             const supabase = getSupabaseServerClient<Database>();
 
+            // 0. Verify Captcha
+            if (process.env.TURNSTILE_SECRET_KEY) {
+                if (!payload.captchaToken) {
+                    return { error: t('actions.captchaRequired') || 'Captcha requis' };
+                }
+
+                const isHuman = await verifyTurnstileToken(payload.captchaToken);
+                
+                if (!isHuman) {
+                    return { error: t('actions.captchaInvalid') || 'Captcha invalide' };
+                }
+            }
+
             // 1. Get account_id from restaurant
             const { data: restaurant, error: restaurantError } = await supabase
                 .from('restaurants')
@@ -1046,23 +1062,12 @@ export const getRestaurantBySlugAction = unstable_cache(
     async (slug: string) => {
         // Use Static client (anon) to avoid dynamic cookies() calls inside cache
         // and respect RLS without requiring Admin privileges
-        const supabase = getSupabaseServerStaticClient();
+        const supabase = getSupabaseServerStaticClient<Database>();
 
-        // 1. Fetch restaurant and its account
+        // 1. Fetch restaurant and its account via the secure view
         const { data: restaurant, error: restError } = await supabase
-            .from('restaurants')
-            .select(`
-                id,
-                name,
-                location,
-                phone,
-                account_id,
-                accounts (
-                    id,
-                    name,
-                    slug
-                )
-            `)
+            .from('restaurant_profiles')
+            .select('id, name, location, phone, account_id, organization_name, organization_slug')
             .eq('slug', slug)
             .single();
 
@@ -1070,22 +1075,20 @@ export const getRestaurantBySlugAction = unstable_cache(
             return null;
         }
 
-        const account = restaurant.accounts as unknown as { id: string; name: string; slug: string };
-
-        // 2. Fetch total capacity for THIS restaurant specifically
-        const { data: tables } = await supabase
-            .from('dining_tables')
-            .select('capacity')
-            .eq('restaurant_id', restaurant.id)
-            .eq('is_active', true);
-
-        const totalCapacity = tables?.reduce((acc, t) => acc + (t.capacity || 0), 0) || 0;
+        const totalCapacity = await (async () => {
+             const { data: tables } = await supabase
+                .from('dining_tables')
+                .select('capacity')
+                .eq('restaurant_id', restaurant.id)
+                .eq('is_active', true);
+             return tables?.reduce((acc, t) => acc + (t.capacity || 0), 0) || 0;
+        })();
 
         return {
             account: {
-                id: account.id,
-                name: account.name,
-                slug: account.slug
+                id: restaurant.account_id,
+                name: restaurant.organization_name,
+                slug: restaurant.organization_slug
             },
             restaurant: {
                 id: restaurant.id,
@@ -1110,30 +1113,18 @@ export const getRestaurantBySlugAction = unstable_cache(
 export const getRestaurantsAction = unstable_cache(
     async () => {
         // Use Static client (anon) to avoid dynamic cookies() calls inside cache
-        // and respect RLS without requiring Admin privileges
-        const supabase = getSupabaseServerStaticClient();
+        const supabase = getSupabaseServerStaticClient<Database>();
         const { data, error } = await supabase
-            .from('restaurants')
-            .select('id, name, location, phone, lat, lng, slug, accounts(slug)')
+            .from('restaurant_profiles')
+            .select('id, name, location, phone, lat, lng, slug, organization_slug')
             .order('name');
 
         if (error) {
-            console.error('getRestaurantsAction error:', error);
+            console.error('getRestaurantsAction error:', JSON.stringify(error, null, 2));
             return [];
         }
 
-        type RestaurantResult = {
-            id: string;
-            name: string;
-            location: string | null;
-            phone: string | null;
-            lat: string | number | null;
-            lng: string | number | null;
-            slug: string;
-            accounts: { slug: string } | { slug: string }[] | null;
-        };
-
-        return (data as unknown as RestaurantResult[] || []).map((r) => ({
+        return (data || []).map((r) => ({
             id: r.id,
             name: r.name,
             location: r.location || '',
@@ -1333,12 +1324,12 @@ export const updateReservationStatusAction = enhanceAction(
             }
         }
 
-        // 4. Update the status using admin client (to bypass RLS for clients/owners)
-        const adminClient = getSupabaseServerAdminClient<Database>();
-        const { error: updateError } = await adminClient
+        // 4. Update the status using standard client (authorized via RLS)
+        const { error: updateError } = await supabase
             .from('reservations')
             .update({ status, updated_at: new Date().toISOString() })
             .eq('id', reservationId);
+
 
         if (updateError) {
             console.error('Error updating reservation status:', updateError);
@@ -1504,11 +1495,12 @@ export const updateReservationDetailsAction = enhanceAction(
             updated_at: new Date().toISOString(),
         };
 
-        const adminSupabase = getSupabaseServerAdminClient();
-        const { error: finalUpdateError } = await adminSupabase
+        // 4. Perform update using standard client (authorized via RLS)
+        const { error: finalUpdateError } = await supabase
             .from('reservations')
             .update(updateData)
             .eq('id', payload.id);
+
 
         if (finalUpdateError) {
             console.error('Final update error (Admin):', finalUpdateError);

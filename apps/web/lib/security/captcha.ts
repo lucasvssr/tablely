@@ -1,0 +1,22 @@
+export async function verifyTurnstileToken(token: string) {
+  const secretKey = process.env.TURNSTILE_SECRET_KEY;
+
+  if (!secretKey) {
+    console.warn('TURNSTILE_SECRET_KEY is not set. Skipping CAPTCHA verification.');
+    return true;
+  }
+
+  const formData = new FormData();
+  formData.append('secret', secretKey);
+  formData.append('response', token);
+
+  const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+  const result = await fetch(url, {
+    body: formData,
+    method: 'POST',
+  });
+
+  const outcome = await result.json();
+
+  return !!outcome.success;
+}
