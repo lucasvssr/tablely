@@ -1,10 +1,8 @@
 import { BackButton } from '~/components/back-button';
 
-import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { Heading } from '@kit/ui/heading';
 import { Trans } from '@kit/ui/trans';
 
-import { SiteHeader } from '~/(home)/_components/site-header';
 import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { withI18n } from '~/lib/i18n/with-i18n';
 
@@ -18,14 +16,8 @@ export const generateMetadata = async () => {
 };
 
 const NotFoundPage = async () => {
-  const client = getSupabaseServerClient();
-
-  const { data } = await client.auth.getClaims();
-
   return (
     <div className={'flex h-screen flex-1 flex-col'}>
-      <SiteHeader user={data?.claims} />
-
       <div
         className={
           'container m-auto flex w-full flex-1 flex-col items-center justify-center'
