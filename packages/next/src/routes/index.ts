@@ -1,9 +1,9 @@
 import 'server-only';
 
 import { redirect } from 'next/navigation';
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest, NextResponse } from 'next/server';
 
-import { JwtPayload } from '@supabase/supabase-js';
+import type { JwtPayload } from '@supabase/supabase-js';
 
 import { z } from 'zod';
 
@@ -13,11 +13,17 @@ import { getSupabaseServerClient } from '@kit/supabase/server-client';
 
 import { zodParseFactory } from '../utils';
 
-interface Config<Schema> {
+interface Config<Schema extends z.ZodType | undefined> {
   auth?: boolean;
   captcha?: boolean;
   schema?: Schema;
 }
+
+type RouteBody<
+  Params extends Config<z.ZodType | undefined>,
+> = Params['schema'] extends z.ZodType
+  ? z.output<Params['schema']>
+  : undefined;
 
 interface HandlerParams<
   Schema extends z.ZodType | undefined,
@@ -25,20 +31,24 @@ interface HandlerParams<
 > {
   request: NextRequest;
   user: RequireAuth extends false ? undefined : JwtPayload;
-  body: Schema extends z.ZodType ? z.infer<Schema> : undefined;
+  body: Schema extends z.ZodType ? z.output<Schema> : undefined;
   params: Record<string, string>;
 }
+
+type RouteHandlerResponse =
+  | NextResponse
+  | Response
+  | Promise<NextResponse | Response>;
 
 /**
  * Enhanced route handler function.
  *
- * This function takes a request and parameters object as arguments and returns a route handler function.
- * The route handler function can be used to handle HTTP requests and apply additional enhancements
- * based on the provided parameters.
+ * This function takes a request and parameters object as arguments
+ * and returns a route handler function.
  *
  * Usage:
  * export const POST = enhanceRouteHandler(
- *   ({ request, body, user }) => {
+ *   ({ body }) => {
  *     return new Response(`Hello, ${body.name}!`);
  *   },
  *   {
@@ -47,63 +57,49 @@ interface HandlerParams<
  *     }),
  *   },
  * );
- *
  */
 export const enhanceRouteHandler = <
-  Body,
-  Params extends Config<z.ZodType<Body, z.ZodTypeDef>>,
+  Params extends Config<z.ZodType | undefined>,
 >(
-  // Route handler function
-  handler:
-    | ((
-        params: HandlerParams<Params['schema'], Params['auth']>,
-      ) => NextResponse | Response)
-    | ((
-        params: HandlerParams<Params['schema'], Params['auth']>,
-      ) => Promise<NextResponse | Response>),
-  // Parameters object
+  handler: (
+    params: HandlerParams<Params['schema'], Params['auth']>,
+  ) => RouteHandlerResponse,
   params?: Params,
 ) => {
-  /**
-   * Route handler function.
-   *
-   * This function takes a request object as an argument and returns a response object.
-   */
   return async function routeHandler(
     request: NextRequest,
     routeParams: {
       params: Promise<Record<string, string>>;
     },
   ) {
-    type UserParam = Params['auth'] extends false ? undefined : JwtPayload;
+    type UserParam = Params['auth'] extends false
+      ? undefined
+      : JwtPayload;
+
+    type BodyParam = RouteBody<Params>;
 
     let user: UserParam = undefined as UserParam;
 
-    // Check if the captcha token should be verified
     const shouldVerifyCaptcha = params?.captcha ?? false;
 
-    // Verify the captcha token if required and setup
     if (shouldVerifyCaptcha) {
       const token = captchaTokenGetter(request);
 
-      // If the captcha token is not provided, return a 400 response.
-      if (token) {
-        await verifyCaptchaToken(token);
-      } else {
-        return new Response('Captcha token is required', { status: 400 });
+      if (!token) {
+        return new Response('Captcha token is required', {
+          status: 400,
+        });
       }
-    }
 
-    const client = getSupabaseServerClient();
+      await verifyCaptchaToken(token);
+    }
 
     const shouldVerifyAuth = params?.auth ?? true;
 
-    // Check if the user should be authenticated
     if (shouldVerifyAuth) {
-      // Get the authenticated user
+      const client = getSupabaseServerClient();
       const auth = await requireUser(client);
 
-      // If the user is not authenticated, redirect to the specified URL.
       if (auth.error) {
         return redirect(auth.redirectTo);
       }
@@ -111,15 +107,12 @@ export const enhanceRouteHandler = <
       user = auth.data as UserParam;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let body: any;
+    let body: BodyParam = undefined as BodyParam;
 
     if (params?.schema) {
-      // clone the request to read the body
-      // so that we can pass it to the handler safely
-      const json = await request.clone().json();
+      const json: unknown = await request.clone().json();
 
-      body = zodParseFactory(params.schema)(json);
+      body = zodParseFactory(params.schema)(json) as BodyParam;
     }
 
     return handler({
@@ -133,7 +126,6 @@ export const enhanceRouteHandler = <
 
 /**
  * Get the captcha token from the request headers.
- * @param request
  */
 function captchaTokenGetter(request: NextRequest) {
   return request.headers.get('x-captcha-token');

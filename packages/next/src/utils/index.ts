@@ -1,14 +1,18 @@
 import { z } from 'zod';
 
 export const zodParseFactory =
-  <T extends z.ZodTypeAny>(schema: T) =>
-  (data: unknown): z.infer<T> => {
+  <Schema extends z.ZodType>(schema: Schema) =>
+  (data: unknown): z.output<Schema> => {
     try {
-      return schema.parse(data) as unknown;
-    } catch (err) {
-      console.error(err);
+      return schema.parse(data) as z.output<Schema>;
+    } catch (error) {
+      console.error(error);
 
-      // handle error
-      throw new Error(`Invalid data: ${err as string}`);
+      const message =
+        error instanceof Error ? error.message : String(error);
+
+      throw new Error(`Invalid data: ${message}`, {
+        cause: error,
+      });
     }
   };

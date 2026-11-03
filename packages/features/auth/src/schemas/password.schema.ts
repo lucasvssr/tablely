@@ -26,8 +26,10 @@ export const PasswordSchema = z
  * Refined password schema with additional requirements
  * This is required to validate the password requirements on sign up and password change
  */
-export const RefinedPasswordSchema = PasswordSchema.superRefine((val, ctx) =>
-  validatePassword(val, ctx),
+export const RefinedPasswordSchema = PasswordSchema.superRefine(
+  (val, ctx): void => {
+    validatePassword(val, ctx);
+  },
 );
 
 export function refineRepeatPassword(
@@ -41,8 +43,6 @@ export function refineRepeatPassword(
       code: 'custom',
     });
   }
-
-  return true;
 }
 
 function validatePassword(password: string, ctx: z.RefinementCtx) {
