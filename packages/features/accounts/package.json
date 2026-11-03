@@ -41,7 +41,7 @@
     "react-hook-form": "^7.72.1",
     "react-i18next": "^16.6.6",
     "sonner": "^2.0.7",
-    "zod": "^3.25.76"
+    "zod": "^4.6.6"
   },
   "prettier": "@kit/prettier-config",
   "typesVersions": {
