@@ -6,59 +6,109 @@ const AppConfigSchema = z
   .object({
     name: z
       .string({
-        description: `This is the name of your SaaS. Ex. "Makerkit"`,
-        required_error: `Please provide the variable NEXT_PUBLIC_PRODUCT_NAME`,
+        error:
+          'Please provide the variable NEXT_PUBLIC_PRODUCT_NAME',
       })
-      .min(1),
+      .min(1, {
+        error:
+          'Please provide the variable NEXT_PUBLIC_PRODUCT_NAME',
+      })
+      .describe(
+        'This is the name of your SaaS. Ex. "Makerkit"',
+      ),
+
     title: z
       .string({
-        description: `This is the default title tag of your SaaS.`,
-        required_error: `Please provide the variable NEXT_PUBLIC_SITE_TITLE`,
+        error:
+          'Please provide the variable NEXT_PUBLIC_SITE_TITLE',
       })
-      .min(1),
-    description: z.string({
-      description: `This is the default description of your SaaS.`,
-      required_error: `Please provide the variable NEXT_PUBLIC_SITE_DESCRIPTION`,
-    }),
+      .min(1, {
+        error:
+          'Please provide the variable NEXT_PUBLIC_SITE_TITLE',
+      })
+      .describe(
+        'This is the default title tag of your SaaS.',
+      ),
+
+    description: z
+      .string({
+        error:
+          'Please provide the variable NEXT_PUBLIC_SITE_DESCRIPTION',
+      })
+      .min(1, {
+        error:
+          'Please provide the variable NEXT_PUBLIC_SITE_DESCRIPTION',
+      })
+      .describe(
+        'This is the default description of your SaaS.',
+      ),
+
     url: z
       .string({
-        required_error: `Please provide the variable NEXT_PUBLIC_SITE_URL`,
+        error:
+          'Please provide the variable NEXT_PUBLIC_SITE_URL',
       })
       .url({
-        message: `You are deploying a production build but have entered a NEXT_PUBLIC_SITE_URL variable using http instead of https. It is very likely that you have set the incorrect URL. The build will now fail to prevent you from from deploying a faulty configuration. Please provide the variable NEXT_PUBLIC_SITE_URL with a valid URL, such as: 'https://example.com'`,
-      }),
+        error:
+          "Please provide NEXT_PUBLIC_SITE_URL with a valid URL, such as 'https://example.com'.",
+      })
+      .describe('This is the public URL of your SaaS.'),
+
     locale: z
       .string({
-        description: `This is the default locale of your SaaS.`,
-        required_error: `Please provide the variable NEXT_PUBLIC_DEFAULT_LOCALE`,
+        error:
+          'Please provide the variable NEXT_PUBLIC_DEFAULT_LOCALE',
       })
-      .default('en'),
-    theme: z.enum(['light', 'dark', 'system']),
+      .default('en')
+      .describe(
+        'This is the default locale of your SaaS.',
+      ),
+
+    theme: z.enum(['light', 'dark', 'system'], {
+      error:
+        'Please provide a valid NEXT_PUBLIC_DEFAULT_THEME_MODE',
+    }),
+
     production: z.boolean(),
-    themeColor: z.string(),
-    themeColorDark: z.string(),
+
+    themeColor: z
+      .string({
+        error:
+          'Please provide the variable NEXT_PUBLIC_THEME_COLOR',
+      })
+      .min(1),
+
+    themeColorDark: z
+      .string({
+        error:
+          'Please provide the variable NEXT_PUBLIC_THEME_COLOR_DARK',
+      })
+      .min(1),
   })
   .refine(
-    (schema) => {
-      const isCI = process.env.NEXT_PUBLIC_CI;
+    (config) => {
+      const isCI =
+        process.env.NEXT_PUBLIC_CI === 'true';
 
-      if (isCI ?? !schema.production) {
+      if (isCI || !config.production) {
         return true;
       }
 
-      return schema.url.startsWith('https:');
+      return config.url.startsWith('https:');
     },
     {
-      message: `Please provide a valid HTTPS URL. Set the variable NEXT_PUBLIC_SITE_URL with a valid URL, such as: 'https://example.com'`,
+      message:
+        "Please provide NEXT_PUBLIC_SITE_URL with a valid HTTPS URL, such as 'https://example.com'.",
       path: ['url'],
     },
   )
   .refine(
-    (schema) => {
-      return schema.themeColor !== schema.themeColorDark;
+    (config) => {
+      return config.themeColor !== config.themeColorDark;
     },
     {
-      message: `Please provide different theme colors for light and dark themes.`,
+      message:
+        'Please provide different theme colors for light and dark themes.',
       path: ['themeColor'],
     },
   );
@@ -66,12 +116,14 @@ const AppConfigSchema = z
 const appConfig = AppConfigSchema.parse({
   name: process.env.NEXT_PUBLIC_PRODUCT_NAME,
   title: process.env.NEXT_PUBLIC_SITE_TITLE,
-  description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION,
+  description:
+    process.env.NEXT_PUBLIC_SITE_DESCRIPTION,
   url: process.env.NEXT_PUBLIC_SITE_URL,
   locale: process.env.NEXT_PUBLIC_DEFAULT_LOCALE,
   theme: process.env.NEXT_PUBLIC_DEFAULT_THEME_MODE,
   themeColor: process.env.NEXT_PUBLIC_THEME_COLOR,
-  themeColorDark: process.env.NEXT_PUBLIC_THEME_COLOR_DARK,
+  themeColorDark:
+    process.env.NEXT_PUBLIC_THEME_COLOR_DARK,
   production,
 });
 
