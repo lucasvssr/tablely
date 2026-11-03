@@ -1,29 +1,30 @@
-import { Inter as SansFont, Outfit as HeadingFont } from 'next/font/google';
+import localFont from 'next/font/local';
 
-/**
- * @sans
- * @description Define here the sans font.
- * By default, it uses the Inter font from Google Fonts.
- */
-const sans = SansFont({
-  subsets: ['latin'],
+const sans = localFont({
+  src: './fonts/inter-variable.woff2',
   variable: '--font-sans',
-  fallback: ['system-ui', 'Helvetica Neue', 'Helvetica', 'Arial'],
-  preload: true,
-  weight: ['400', '500', '700'],
+  weight: '100 900',
+  style: 'normal',
+  display: 'swap',
 });
 
-/**
- * @heading
- * @description Define here the heading font.
- */
-const heading = HeadingFont({
-  subsets: ['latin'],
+const heading = localFont({
+  src: [
+    {
+      path: './fonts/Outfit-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: './fonts/Outfit-Bold.woff2',
+      weight: '700',
+      style: 'normal',
+    },
+  ],
   variable: '--font-heading',
   fallback: ['system-ui', 'Helvetica Neue', 'Helvetica', 'Arial'],
+  display: 'swap',
   preload: true,
-  weight: ['400', '700'],
 });
 
-// we export these fonts into the root layout
-export { sans, heading };
+export { heading, sans };
