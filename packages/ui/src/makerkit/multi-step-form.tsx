@@ -1,7 +1,7 @@
 'use client';
 
 import React, {
-  HTMLProps,
+  type HTMLProps,
   createContext,
   useCallback,
   useContext,
@@ -13,15 +13,27 @@ import React, {
 
 import { Slot, Slottable } from '@radix-ui/react-slot';
 import { useMutation } from '@tanstack/react-query';
-import { Path, UseFormReturn } from 'react-hook-form';
+import type {
+  FieldValues,
+  Path,
+  UseFormReturn,
+} from 'react-hook-form';
 import { z } from 'zod';
 
 import { cn } from '../lib/utils';
 
-interface MultiStepFormProps<T extends z.ZodType> {
-  schema: T;
-  form: UseFormReturn<z.infer<T>>;
-  onSubmit: (data: z.infer<T>) => void;
+/**
+ * A form schema must accept and return values compatible
+ * with React Hook Form.
+ */
+type FormSchema = z.ZodType<FieldValues, FieldValues>;
+
+type FormValues<Schema extends FormSchema> = z.output<Schema>;
+
+interface MultiStepFormProps<Schema extends FormSchema> {
+  schema: Schema;
+  form: UseFormReturn<FormValues<Schema>>;
+  onSubmit: (data: FormValues<Schema>) => void | Promise<void>;
   useStepTransition?: boolean;
   className?: string;
 }
@@ -33,32 +45,52 @@ type StepProps = React.PropsWithChildren<
   } & React.HTMLProps<HTMLDivElement>
 >;
 
-const MultiStepFormContext = createContext<ReturnType<
-  typeof useMultiStepForm
-> | null>(null);
+interface MultiStepFormContextValue<
+  Schema extends FormSchema,
+> {
+  form: UseFormReturn<FormValues<Schema>>;
+  currentStep: string;
+  currentStepIndex: number;
+  totalSteps: number;
+  isFirstStep: boolean;
+  isLastStep: boolean;
+  nextStep: <Event extends React.SyntheticEvent>(
+    event: Event,
+  ) => void;
+  prevStep: <Event extends React.SyntheticEvent>(
+    event: Event,
+  ) => void;
+  goToStep: (index: number) => void;
+  direction: 'forward' | 'backward' | undefined;
+  isStepValid: () => boolean;
+  isValid: boolean;
+  errors: UseFormReturn<FormValues<Schema>>['formState']['errors'];
+  mutation: ReturnType<typeof useMutation<void, Error, void>>;
+}
+
+/**
+ * React contexts cannot directly preserve a generic schema type.
+ * The concrete type is restored in useMultiStepFormContext.
+ */
+const MultiStepFormContext = createContext<unknown>(null);
 
 /**
  * @name MultiStepForm
- * @description Multi-step form component for React
- * @param schema
- * @param form
- * @param onSubmit
- * @param children
- * @param className
- * @constructor
+ * @description Multi-step form component for React.
  */
-export function MultiStepForm<T extends z.ZodType>({
+export function MultiStepForm<Schema extends FormSchema>({
   schema,
   form,
   onSubmit,
   children,
   className,
-}: React.PropsWithChildren<MultiStepFormProps<T>>) {
+}: React.PropsWithChildren<MultiStepFormProps<Schema>>) {
   const steps = useMemo(
     () =>
       React.Children.toArray(children).filter(
         (child): child is React.ReactElement<StepProps> =>
-          React.isValidElement(child) && child.type === MultiStepFormStep,
+          React.isValidElement(child) &&
+          child.type === MultiStepFormStep,
       ),
     [children],
   );
@@ -66,31 +98,46 @@ export function MultiStepForm<T extends z.ZodType>({
   const header = useMemo(() => {
     return React.Children.toArray(children).find(
       (child) =>
-        React.isValidElement(child) && child.type === MultiStepFormHeader,
+        React.isValidElement(child) &&
+        child.type === MultiStepFormHeader,
     );
   }, [children]);
 
   const footer = useMemo(() => {
     return React.Children.toArray(children).find(
       (child) =>
-        React.isValidElement(child) && child.type === MultiStepFormFooter,
+        React.isValidElement(child) &&
+        child.type === MultiStepFormFooter,
     );
   }, [children]);
 
-  const stepNames = steps.map((step) => step.props.name);
-  const multiStepForm = useMultiStepForm(schema, form, stepNames, onSubmit);
+  const stepNames = useMemo(
+    () => steps.map((step) => step.props.name),
+    [steps],
+  );
+
+  const multiStepForm = useMultiStepForm(
+    schema,
+    form,
+    stepNames,
+    onSubmit,
+  );
 
   return (
     <MultiStepFormContext.Provider value={multiStepForm}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn(className, 'flex size-full flex-col overflow-hidden')}
+        className={cn(
+          className,
+          'flex size-full flex-col overflow-hidden',
+        )}
       >
         {header}
 
         <div className="relative transition-transform duration-500">
           {steps.map((step, index) => {
-            const isActive = index === multiStepForm.currentStepIndex;
+            const isActive =
+              index === multiStepForm.currentStepIndex;
 
             return (
               <AnimatedStep
@@ -98,7 +145,9 @@ export function MultiStepForm<T extends z.ZodType>({
                 direction={multiStepForm.direction}
                 isActive={isActive}
                 index={index}
-                currentIndex={multiStepForm.currentStepIndex}
+                currentIndex={
+                  multiStepForm.currentStepIndex
+                }
               >
                 {step}
               </AnimatedStep>
@@ -112,20 +161,30 @@ export function MultiStepForm<T extends z.ZodType>({
   );
 }
 
-export function MultiStepFormContextProvider(props: {
-  children: (context: ReturnType<typeof useMultiStepForm>) => React.ReactNode;
+/**
+ * Provides access to the multi-step form context through
+ * a render function.
+ */
+export function MultiStepFormContextProvider<
+  Schema extends FormSchema,
+>(props: {
+  children: (
+    context: MultiStepFormContextValue<Schema>,
+  ) => React.ReactNode;
 }) {
-  const ctx = useMultiStepFormContext();
+  const context = useMultiStepFormContext<Schema>();
 
   if (Array.isArray(props.children)) {
     const [child] = props.children;
 
     return (
-      child as (context: ReturnType<typeof useMultiStepForm>) => React.ReactNode
-    )(ctx);
+      child as (
+        context: MultiStepFormContextValue<Schema>,
+      ) => React.ReactNode
+    )(context);
   }
 
-  return props.children(ctx);
+  return props.children(context);
 }
 
 export const MultiStepFormStep: React.FC<
@@ -135,20 +194,29 @@ export const MultiStepFormStep: React.FC<
       ref?: React.Ref<HTMLDivElement>;
     } & HTMLProps<HTMLDivElement>
   >
-> = function MultiStepFormStep({ children, asChild, ...props }) {
-  const Cmp = asChild ? Slot : 'div';
+> = function MultiStepFormStep({
+  children,
+  asChild,
+  ...props
+}) {
+  const Component = asChild ? Slot : 'div';
 
   return (
-    <Cmp {...props}>
+    <Component {...props}>
       <Slottable>{children}</Slottable>
-    </Cmp>
+    </Component>
   );
 };
 
-export function useMultiStepFormContext<Schema extends z.ZodType>() {
-  const context = useContext(MultiStepFormContext) as ReturnType<
-    typeof useMultiStepForm<Schema>
-  >;
+/**
+ * Access the current multi-step form context.
+ *
+ * The schema generic must match the schema passed to MultiStepForm.
+ */
+export function useMultiStepFormContext<
+  Schema extends FormSchema,
+>() {
+  const context = useContext(MultiStepFormContext);
 
   if (!context) {
     throw new Error(
@@ -156,77 +224,112 @@ export function useMultiStepFormContext<Schema extends z.ZodType>() {
     );
   }
 
-  return context;
+  return context as MultiStepFormContextValue<Schema>;
 }
 
 /**
  * @name useMultiStepForm
- * @description Hook for multi-step forms
- * @param schema
- * @param form
- * @param stepNames
- * @param onSubmit
+ * @description Hook for multi-step forms.
  */
-export function useMultiStepForm<Schema extends z.ZodType>(
+export function useMultiStepForm<
+  Schema extends FormSchema,
+>(
   schema: Schema,
-  form: UseFormReturn<z.infer<Schema>>,
+  form: UseFormReturn<FormValues<Schema>>,
   stepNames: string[],
-  onSubmit: (data: z.infer<Schema>) => void,
-) {
-  const [state, setState] = useState({
+  onSubmit: (
+    data: FormValues<Schema>,
+  ) => void | Promise<void>,
+): MultiStepFormContextValue<Schema> {
+  const [state, setState] = useState<{
+    currentStepIndex: number;
+    direction: 'forward' | 'backward' | undefined;
+  }>({
     currentStepIndex: 0,
-    direction: undefined as 'forward' | 'backward' | undefined,
+    direction: undefined,
   });
 
   const isStepValid = useCallback(() => {
-    const currentStepName = stepNames[state.currentStepIndex] as Path<
-      z.TypeOf<Schema>
-    >;
+    const currentStepName = stepNames[
+      state.currentStepIndex
+    ] as Path<FormValues<Schema>>;
 
     if (schema instanceof z.ZodObject) {
-      const currentStepSchema = schema.shape[currentStepName] as z.ZodType;
+      const shape = schema.shape as Record<
+        string,
+        z.ZodType
+      >;
 
-      // the user may not want to validate the current step
-      // or the step doesn't contain any form field
+      const currentStepSchema =
+        shape[currentStepName as string];
+
+      // The step may not contain form fields or may not
+      // require schema validation.
       if (!currentStepSchema) {
         return true;
       }
 
-      const currentStepData = form.getValues(currentStepName) ?? {};
-      const result = currentStepSchema.safeParse(currentStepData);
+      const currentStepData =
+        form.getValues(currentStepName) ?? {};
+
+      const result =
+        currentStepSchema.safeParse(currentStepData);
 
       return result.success;
     }
 
-    throw new Error(`Unsupported schema type: ${schema.constructor.name}`);
-  }, [schema, form, stepNames, state.currentStepIndex]);
+    throw new Error(
+      `Unsupported schema type: ${schema.constructor.name}`,
+    );
+  }, [
+    schema,
+    form,
+    stepNames,
+    state.currentStepIndex,
+  ]);
 
   const nextStep = useCallback(
-    <Ev extends React.SyntheticEvent>(e: Ev) => {
-      // prevent form submission when the user presses Enter
-      // or if the user forgets [type="button"] on the button
-      e.preventDefault();
+    <Event extends React.SyntheticEvent>(
+      event: Event,
+    ) => {
+      // Prevent form submission when Enter is pressed
+      // or when a button has no explicit type.
+      event.preventDefault();
 
-      const isValid = isStepValid();
+      const stepIsValid = isStepValid();
 
-      if (!isValid) {
-        const currentStepName = stepNames[state.currentStepIndex] as Path<
-          z.TypeOf<Schema>
-        >;
+      if (!stepIsValid) {
+        const currentStepName = stepNames[
+          state.currentStepIndex
+        ] as Path<FormValues<Schema>>;
 
         if (schema instanceof z.ZodObject) {
-          const currentStepSchema = schema.shape[currentStepName] as z.ZodType;
+          const shape = schema.shape as Record<
+            string,
+            z.ZodType
+          >;
 
-          if (currentStepSchema) {
+          const currentStepSchema =
+            shape[currentStepName as string];
+
+          if (
+            currentStepSchema instanceof z.ZodObject
+          ) {
             const fields = Object.keys(
-              (currentStepSchema as z.ZodObject<never>).shape,
+              currentStepSchema.shape,
             );
 
-            const keys = fields.map((field) => `${currentStepName}.${field}`);
+            const keys = fields.map(
+              (field) =>
+                `${String(currentStepName)}.${field}`,
+            );
 
-            // trigger validation for all fields in the current step
+            // Trigger validation for all fields
+            // belonging to the current step.
             for (const key of keys) {
-              void form.trigger(key as Path<z.TypeOf<Schema>>);
+              void form.trigger(
+                key as Path<FormValues<Schema>>,
+              );
             }
 
             return;
@@ -234,33 +337,42 @@ export function useMultiStepForm<Schema extends z.ZodType>(
         }
       }
 
-      if (isValid && state.currentStepIndex < stepNames.length - 1) {
-        setState((prevState) => {
-          return {
-            ...prevState,
-            direction: 'forward',
-            currentStepIndex: prevState.currentStepIndex + 1,
-          };
-        });
+      if (
+        stepIsValid &&
+        state.currentStepIndex < stepNames.length - 1
+      ) {
+        setState((previousState) => ({
+          ...previousState,
+          direction: 'forward',
+          currentStepIndex:
+            previousState.currentStepIndex + 1,
+        }));
       }
     },
-    [isStepValid, state.currentStepIndex, stepNames, schema, form],
+    [
+      isStepValid,
+      state.currentStepIndex,
+      stepNames,
+      schema,
+      form,
+    ],
   );
 
   const prevStep = useCallback(
-    <Ev extends React.SyntheticEvent>(e: Ev) => {
-      // prevent form submission when the user presses Enter
-      // or if the user forgets [type="button"] on the button
-      e.preventDefault();
+    <Event extends React.SyntheticEvent>(
+      event: Event,
+    ) => {
+      // Prevent form submission when Enter is pressed
+      // or when a button has no explicit type.
+      event.preventDefault();
 
       if (state.currentStepIndex > 0) {
-        setState((prevState) => {
-          return {
-            ...prevState,
-            direction: 'backward',
-            currentStepIndex: prevState.currentStepIndex - 1,
-          };
-        });
+        setState((previousState) => ({
+          ...previousState,
+          direction: 'backward',
+          currentStepIndex:
+            previousState.currentStepIndex - 1,
+        }));
       }
     },
     [state.currentStepIndex],
@@ -268,16 +380,21 @@ export function useMultiStepForm<Schema extends z.ZodType>(
 
   const goToStep = useCallback(
     (index: number) => {
-      if (index >= 0 && index < stepNames.length && isStepValid()) {
-        setState((prevState) => {
-          return {
-            ...prevState,
-            direction:
-              index > prevState.currentStepIndex ? 'forward' : 'backward',
-            currentStepIndex: index,
-          };
-        });
+      const indexIsValid =
+        index >= 0 && index < stepNames.length;
+
+      if (!indexIsValid || !isStepValid()) {
+        return;
       }
+
+      setState((previousState) => ({
+        ...previousState,
+        direction:
+          index > previousState.currentStepIndex
+            ? 'forward'
+            : 'backward',
+        currentStepIndex: index,
+      }));
     },
     [isStepValid, stepNames.length],
   );
@@ -285,20 +402,23 @@ export function useMultiStepForm<Schema extends z.ZodType>(
   const isValid = form.formState.isValid;
   const errors = form.formState.errors;
 
-  const mutation = useMutation({
-    mutationFn: () => {
-      return form.handleSubmit(onSubmit)();
+  const mutation = useMutation<void, Error, void>({
+    mutationFn: async () => {
+      await form.handleSubmit(onSubmit)();
     },
   });
 
   return useMemo(
     () => ({
       form,
-      currentStep: stepNames[state.currentStepIndex] as string,
+      currentStep:
+        stepNames[state.currentStepIndex] ?? '',
       currentStepIndex: state.currentStepIndex,
       totalSteps: stepNames.length,
       isFirstStep: state.currentStepIndex === 0,
-      isLastStep: state.currentStepIndex === stepNames.length - 1,
+      isLastStep:
+        state.currentStepIndex ===
+        stepNames.length - 1,
       nextStep,
       prevStep,
       goToStep,
@@ -330,13 +450,17 @@ export const MultiStepFormHeader: React.FC<
       asChild?: boolean;
     } & HTMLProps<HTMLDivElement>
   >
-> = function MultiStepFormHeader({ children, asChild, ...props }) {
-  const Cmp = asChild ? Slot : 'div';
+> = function MultiStepFormHeader({
+  children,
+  asChild,
+  ...props
+}) {
+  const Component = asChild ? Slot : 'div';
 
   return (
-    <Cmp {...props}>
+    <Component {...props}>
       <Slottable>{children}</Slottable>
-    </Cmp>
+    </Component>
   );
 };
 
@@ -346,24 +470,27 @@ export const MultiStepFormFooter: React.FC<
       asChild?: boolean;
     } & HTMLProps<HTMLDivElement>
   >
-> = function MultiStepFormFooter({ children, asChild, ...props }) {
-  const Cmp = asChild ? Slot : 'div';
+> = function MultiStepFormFooter({
+  children,
+  asChild,
+  ...props
+}) {
+  const Component = asChild ? Slot : 'div';
 
   return (
-    <Cmp {...props}>
+    <Component {...props}>
       <Slottable>{children}</Slottable>
-    </Cmp>
+    </Component>
   );
 };
 
 /**
  * @name createStepSchema
- * @description Create a schema for a multi-step form
- * @param steps
+ * @description Create a schema for a multi-step form.
  */
-export function createStepSchema<T extends Record<string, z.ZodType>>(
-  steps: T,
-) {
+export function createStepSchema<
+  Shape extends Record<string, z.ZodType>,
+>(steps: Shape) {
   return z.object(steps);
 }
 
@@ -381,29 +508,45 @@ function AnimatedStep({
   index,
   currentIndex,
 }: React.PropsWithChildren<AnimatedStepProps>) {
-  const [shouldRender, setShouldRender] = useState(isActive);
+  const [shouldRender, setShouldRender] =
+    useState(isActive);
+
   const stepRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isActive) {
       setShouldRender(true);
-    } else {
-      const timer = setTimeout(() => setShouldRender(false), 300);
 
-      return () => clearTimeout(timer);
+      return;
     }
+
+    const timer = window.setTimeout(() => {
+      setShouldRender(false);
+    }, 300);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
   }, [isActive]);
 
   useEffect(() => {
-    if (isActive && stepRef.current) {
-      const focusableElement = stepRef.current.querySelector(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    if (!isActive || !stepRef.current) {
+      return;
+    }
+
+    const focusableElement =
+      stepRef.current.querySelector<HTMLElement>(
+        [
+          'button',
+          '[href]',
+          'input',
+          'select',
+          'textarea',
+          'not([tabindex="-1"])',
+        ].join(', '),
       );
 
-      if (focusableElement) {
-        (focusableElement as HTMLElement).focus();
-      }
-    }
+    focusableElement?.focus();
   }, [isActive]);
 
   if (!shouldRender) {
@@ -411,24 +554,36 @@ function AnimatedStep({
   }
 
   const baseClasses =
-    ' top-0 left-0 w-full h-full transition-all duration-300 ease-in-out animate-in fade-in zoom-in-95';
+    'top-0 left-0 size-full transition-all duration-300 ease-in-out animate-in fade-in zoom-in-95';
 
-  const visibilityClasses = isActive ? 'opacity-100' : 'opacity-0 absolute';
+  const visibilityClasses = isActive
+    ? 'opacity-100'
+    : 'absolute opacity-0';
 
   const transformClasses = cn(
     'translate-x-0',
-    isActive
-      ? {}
-      : {
-          '-translate-x-full': direction === 'forward' || index < currentIndex,
-          'translate-x-full': direction === 'backward' || index > currentIndex,
-        },
+    !isActive && {
+      '-translate-x-full':
+        direction === 'forward' ||
+        index < currentIndex,
+      'translate-x-full':
+        direction === 'backward' ||
+        index > currentIndex,
+    },
   );
 
-  const className = cn(baseClasses, visibilityClasses, transformClasses);
+  const className = cn(
+    baseClasses,
+    visibilityClasses,
+    transformClasses,
+  );
 
   return (
-    <div ref={stepRef} className={className} aria-hidden={!isActive}>
+    <div
+      ref={stepRef}
+      className={className}
+      aria-hidden={!isActive}
+    >
       {children}
     </div>
   );

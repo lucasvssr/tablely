@@ -42,17 +42,20 @@
       "allowedVersions": {
         "next": "16"
       }
-    }
+    },
+    "ignoredBuiltDependencies": [
+      "esbuild"
+    ]
   },
   "devDependencies": {
     "@manypkg/cli": "^0.25.1",
-    "@turbo/gen": "^2.9.5",
+    "@turbo/gen": "^2.11.10",
     "cross-env": "^10.1.0",
     "next": "16.4.1",
     "prettier": "^3.8.1",
     "tar": "^7.5.22",
     "tmp": "^0.2.7",
-    "turbo": "2.9.14",
+    "turbo": "2.11.10",
     "typescript": "^5.9.3"
   }
 }

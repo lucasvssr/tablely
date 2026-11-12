@@ -17,12 +17,19 @@ const routes = [
         Icon: <Home className={iconClasses} />,
         end: true,
         roles: ['client', 'restaurateur'],
+        collapsible: false,
+        collapsed: false,
+        children: []
       },
       {
         label: 'common:routes.restaurants',
         path: pathsConfig.app.restaurants,
         Icon: <Utensils className={iconClasses} />,
         roles: ['client', 'restaurateur'],
+        collapsible: false,
+        collapsed: false,
+        children: [],
+        end: false
       },
     ],
   },
@@ -34,36 +41,60 @@ const routes = [
         path: pathsConfig.app.restaurantSettings,
         Icon: <Store className={iconClasses} />,
         roles: ['restaurateur'],
+        collapsible: false,
+        collapsed: false,
+        children: [],
+        end: false
       },
       {
         label: 'common:routes.establishments',
         path: pathsConfig.app.manageEstablishments,
         Icon: <Building2 className={iconClasses} />,
         roles: ['restaurateur'],
+        collapsible: false,
+        collapsed: false,
+        children: [],
+        end: false
       },
       {
         label: 'common:routes.profile',
         path: pathsConfig.app.profileSettings,
         Icon: <User className={iconClasses} />,
         roles: ['client', 'restaurateur'],
+        collapsible: false,
+        collapsed: false,
+        children: [],
+        end: false
       },
       {
         label: 'common:routes.services',
         path: pathsConfig.app.services,
         Icon: <Clock className={iconClasses} />,
         roles: ['restaurateur'],
+        collapsible: false,
+        collapsed: false,
+        children: [],
+        end: false
       },
       {
         label: 'common:routes.tables',
         path: pathsConfig.app.tables,
         Icon: <LayoutGrid className={iconClasses} />,
         roles: ['restaurateur'],
+        collapsible: false,
+        collapsed: false,
+        children: [],
+        end: false
       },
       {
         label: 'common:routes.team',
         path: pathsConfig.app.team,
         Icon: <Users className={iconClasses} />,
         roles: ['restaurateur'],
+        collapsible: false,
+        collapsed: false,
+        children: [],
+        end: false
       },
     ],
   },
